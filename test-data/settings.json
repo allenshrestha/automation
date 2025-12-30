@@ -1,0 +1,513 @@
+{
+  "userProfiles": [
+    {
+      "memberNumber": "100000000001",
+      "username": "john.smith@example.com",
+      "profile": {
+        "firstName": "John",
+        "lastName": "Smith",
+        "email": "john.smith@example.com",
+        "phone": "555-123-4567",
+        "alternatePhone": null,
+        "dateOfBirth": "1985-03-15",
+        "preferredName": "John",
+        "profilePicture": "/images/profile/john-smith.jpg"
+      },
+      "address": {
+        "street": "123 Main Street",
+        "street2": null,
+        "city": "Springfield",
+        "state": "IL",
+        "zip": "62701",
+        "country": "USA"
+      },
+      "preferences": {
+        "language": "en-US",
+        "timezone": "America/Chicago",
+        "dateFormat": "MM/DD/YYYY",
+        "timeFormat": "12h",
+        "currency": "USD",
+        "theme": "auto",
+        "dashboardLayout": "default"
+      },
+      "communication": {
+        "emailNotifications": true,
+        "smsNotifications": true,
+        "pushNotifications": true,
+        "marketingEmails": false,
+        "paperlessStatements": true,
+        "preferredContactMethod": "email"
+      }
+    },
+    {
+      "memberNumber": "100000000002",
+      "username": "sarah.johnson@example.com",
+      "profile": {
+        "firstName": "Sarah",
+        "lastName": "Johnson",
+        "email": "sarah.johnson@example.com",
+        "phone": "555-234-5678",
+        "alternatePhone": "555-234-5679",
+        "dateOfBirth": "1990-07-22",
+        "preferredName": "Sarah",
+        "profilePicture": null
+      },
+      "address": {
+        "street": "456 Oak Avenue",
+        "street2": "Apt 205",
+        "city": "Portland",
+        "state": "OR",
+        "zip": "97201",
+        "country": "USA"
+      },
+      "preferences": {
+        "language": "en-US",
+        "timezone": "America/Los_Angeles",
+        "dateFormat": "MM/DD/YYYY",
+        "timeFormat": "12h",
+        "currency": "USD",
+        "theme": "light",
+        "dashboardLayout": "compact"
+      },
+      "communication": {
+        "emailNotifications": true,
+        "smsNotifications": true,
+        "pushNotifications": true,
+        "marketingEmails": true,
+        "paperlessStatements": true,
+        "preferredContactMethod": "sms"
+      }
+    }
+  ],
+  "securitySettings": [
+    {
+      "memberNumber": "100000000001",
+      "lastPasswordChange": "2024-12-20T16:45:00Z",
+      "passwordExpiresIn": 90,
+      "passwordExpiryDate": "2025-03-20",
+      "twoFactorAuth": {
+        "enabled": false,
+        "method": null,
+        "phone": null,
+        "email": null,
+        "backupCodes": []
+      },
+      "securityQuestions": [
+        {
+          "question": "What is your mother's maiden name?",
+          "answerHash": "hashed_answer_1",
+          "setDate": "2020-01-15"
+        },
+        {
+          "question": "What was the name of your first pet?",
+          "answerHash": "hashed_answer_2",
+          "setDate": "2020-01-15"
+        },
+        {
+          "question": "What city were you born in?",
+          "answerHash": "hashed_answer_3",
+          "setDate": "2020-01-15"
+        }
+      ],
+      "sessionTimeout": 15,
+      "sessionTimeoutUnit": "minutes",
+      "loginHistory": [
+        {
+          "loginDate": "2024-12-29T10:15:00Z",
+          "device": "iPhone 14",
+          "os": "iOS 17",
+          "browser": "Safari",
+          "ipAddress": "192.168.1.100",
+          "location": "Springfield, IL, USA",
+          "success": true
+        },
+        {
+          "loginDate": "2024-12-28T08:30:00Z",
+          "device": "MacBook Pro",
+          "os": "macOS 14",
+          "browser": "Chrome",
+          "ipAddress": "192.168.1.101",
+          "location": "Springfield, IL, USA",
+          "success": true
+        },
+        {
+          "loginDate": "2024-12-27T15:00:00Z",
+          "device": "iPad",
+          "os": "iPadOS 17",
+          "browser": "Safari",
+          "ipAddress": "192.168.1.102",
+          "location": "Springfield, IL, USA",
+          "success": true
+        }
+      ],
+      "activeSessions": [
+        {
+          "sessionId": "sess-001",
+          "device": "iPhone 14",
+          "os": "iOS 17",
+          "browser": "Safari",
+          "ipAddress": "192.168.1.100",
+          "location": "Springfield, IL, USA",
+          "loginDate": "2024-12-29T10:15:00Z",
+          "lastActivity": "2024-12-29T14:30:00Z",
+          "current": true
+        },
+        {
+          "sessionId": "sess-002",
+          "device": "MacBook Pro",
+          "os": "macOS 14",
+          "browser": "Chrome",
+          "ipAddress": "192.168.1.101",
+          "location": "Springfield, IL, USA",
+          "loginDate": "2024-12-28T08:30:00Z",
+          "lastActivity": "2024-12-28T17:00:00Z",
+          "current": false
+        }
+      ],
+      "trustedDevices": [
+        {
+          "deviceId": "dev-001",
+          "deviceName": "iPhone 14",
+          "addedDate": "2023-01-15",
+          "lastUsed": "2024-12-29T10:15:00Z"
+        },
+        {
+          "deviceId": "dev-002",
+          "deviceName": "MacBook Pro",
+          "addedDate": "2023-01-15",
+          "lastUsed": "2024-12-28T08:30:00Z"
+        }
+      ]
+    },
+    {
+      "memberNumber": "100000000002",
+      "lastPasswordChange": "2024-11-01T10:00:00Z",
+      "passwordExpiresIn": 90,
+      "passwordExpiryDate": "2025-01-30",
+      "twoFactorAuth": {
+        "enabled": true,
+        "method": "SMS",
+        "phone": "***-***-5678",
+        "email": null,
+        "enabledDate": "2024-12-15T11:00:00Z",
+        "backupCodes": [
+          "XXXXXXXX",
+          "YYYYYYYY",
+          "ZZZZZZZZ"
+        ]
+      },
+      "securityQuestions": [
+        {
+          "question": "What is your favorite book?",
+          "answerHash": "hashed_answer_4",
+          "setDate": "2018-06-15"
+        },
+        {
+          "question": "What street did you grow up on?",
+          "answerHash": "hashed_answer_5",
+          "setDate": "2018-06-15"
+        },
+        {
+          "question": "What is your favorite movie?",
+          "answerHash": "hashed_answer_6",
+          "setDate": "2018-06-15"
+        }
+      ],
+      "sessionTimeout": 30,
+      "sessionTimeoutUnit": "minutes",
+      "loginHistory": [
+        {
+          "loginDate": "2024-12-29T09:00:00Z",
+          "device": "Samsung Galaxy S23",
+          "os": "Android 14",
+          "browser": "Chrome Mobile",
+          "ipAddress": "192.168.2.100",
+          "location": "Portland, OR, USA",
+          "success": true
+        }
+      ],
+      "activeSessions": [
+        {
+          "sessionId": "sess-003",
+          "device": "Samsung Galaxy S23",
+          "os": "Android 14",
+          "browser": "Chrome Mobile",
+          "ipAddress": "192.168.2.100",
+          "location": "Portland, OR, USA",
+          "loginDate": "2024-12-29T09:00:00Z",
+          "lastActivity": "2024-12-29T14:45:00Z",
+          "current": true
+        }
+      ],
+      "trustedDevices": [
+        {
+          "deviceId": "dev-003",
+          "deviceName": "Samsung Galaxy S23",
+          "addedDate": "2023-06-15",
+          "lastUsed": "2024-12-29T09:00:00Z"
+        }
+      ]
+    }
+  ],
+  "notificationSettings": [
+    {
+      "memberNumber": "100000000001",
+      "email": {
+        "enabled": true,
+        "address": "john.smith@example.com",
+        "verified": true,
+        "verifiedDate": "2020-01-15",
+        "notifications": {
+          "accountAlerts": true,
+          "transactionAlerts": true,
+          "securityAlerts": true,
+          "paymentReminders": true,
+          "statements": true,
+          "taxDocuments": true,
+          "promotions": false,
+          "newsletter": false
+        }
+      },
+      "sms": {
+        "enabled": true,
+        "number": "555-123-4567",
+        "verified": true,
+        "verifiedDate": "2020-01-15",
+        "notifications": {
+          "accountAlerts": true,
+          "transactionAlerts": true,
+          "securityAlerts": true,
+          "paymentReminders": true,
+          "promotions": false
+        }
+      },
+      "push": {
+        "enabled": true,
+        "devices": [
+          {
+            "deviceId": "push-dev-001",
+            "deviceName": "iPhone 14",
+            "platform": "iOS",
+            "token": "push_token_encrypted",
+            "registeredDate": "2023-01-15"
+          }
+        ],
+        "notifications": {
+          "accountAlerts": true,
+          "transactionAlerts": true,
+          "securityAlerts": true,
+          "paymentReminders": true
+        }
+      },
+      "quietHours": {
+        "enabled": true,
+        "startTime": "22:00",
+        "endTime": "08:00",
+        "timezone": "America/Chicago",
+        "exemptions": ["securityAlerts"]
+      }
+    }
+  ],
+  "accountNicknames": [
+    {
+      "memberNumber": "100000000001",
+      "accounts": [
+        {
+          "accountNumber": "1001-0001-0001",
+          "nickname": "Primary Checking",
+          "defaultAccount": true
+        },
+        {
+          "accountNumber": "2001-0001-0001",
+          "nickname": "Emergency Fund",
+          "defaultAccount": false
+        }
+      ]
+    },
+    {
+      "memberNumber": "100000000002",
+      "accounts": [
+        {
+          "accountNumber": "2001-0002-0001",
+          "nickname": "Vacation Fund",
+          "defaultAccount": false
+        },
+        {
+          "accountNumber": "4001-0001-0001",
+          "nickname": "12-Month CD",
+          "defaultAccount": false
+        }
+      ]
+    }
+  ],
+  "displaySettings": [
+    {
+      "memberNumber": "100000000001",
+      "dashboard": {
+        "layout": "default",
+        "widgetsEnabled": ["accounts", "recentTransactions", "quickActions", "alerts"],
+        "defaultView": "summary",
+        "showBalances": true,
+        "accountOrder": [
+          "1001-0001-0001",
+          "2001-0001-0001"
+        ]
+      },
+      "transactions": {
+        "itemsPerPage": 25,
+        "defaultDateRange": "30days",
+        "showPending": true,
+        "groupByDate": true
+      },
+      "accessibility": {
+        "highContrast": false,
+        "largeText": false,
+        "screenReaderOptimized": false,
+        "keyboardNavigation": true
+      }
+    }
+  ],
+  "privacySettings": [
+    {
+      "memberNumber": "100000000001",
+      "dataSharing": {
+        "shareWithAffiliates": false,
+        "shareForMarketing": false,
+        "shareWithThirdParties": false,
+        "allowCookies": true,
+        "allowAnalytics": true
+      },
+      "accountVisibility": {
+        "showInSearch": false,
+        "showOnStatements": true,
+        "allowJointAccountAccess": true
+      },
+      "communicationPreferences": {
+        "allowPhoneCalls": true,
+        "allowSMS": true,
+        "allowEmail": true,
+        "allowDirectMail": false
+      }
+    }
+  ],
+  "linkedAccounts": [
+    {
+      "memberNumber": "100000000001",
+      "externalAccounts": [
+        {
+          "accountId": "EXT-001",
+          "bankName": "National Bank",
+          "accountType": "Checking",
+          "accountNumber": "****8901",
+          "nickname": "My National Bank Checking",
+          "status": "Active",
+          "linkedDate": "2023-06-15",
+          "lastUsed": "2024-12-10"
+        },
+        {
+          "accountId": "EXT-002",
+          "bankName": "Regional Credit Union",
+          "accountType": "Savings",
+          "accountNumber": "****4567",
+          "nickname": "Regional CU Savings",
+          "status": "Active",
+          "linkedDate": "2023-08-01",
+          "lastUsed": "2024-12-18"
+        }
+      ]
+    }
+  ],
+  "beneficiaries": [
+    {
+      "memberNumber": "100000000001",
+      "accounts": [
+        {
+          "accountNumber": "2001-0001-0001",
+          "beneficiaries": [
+            {
+              "beneficiaryId": "BEN-001",
+              "type": "Primary",
+              "firstName": "Jane",
+              "lastName": "Smith",
+              "relationship": "Spouse",
+              "percentage": 100,
+              "dateAdded": "2020-01-15"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "autoPaySettings": [
+    {
+      "memberNumber": "100000000001",
+      "creditCards": [
+        {
+          "accountNumber": "CC-1234-5678-9012-3456",
+          "autopayEnabled": true,
+          "autopayType": "Minimum Payment",
+          "autopayAccount": "1001-0001-0001",
+          "autopayDay": 25
+        }
+      ],
+      "loans": [
+        {
+          "loanNumber": "AUTO-2022-001",
+          "autopayEnabled": true,
+          "autopayAccount": "1001-0001-0001",
+          "autopayDay": 15
+        }
+      ]
+    }
+  ],
+  "mobileAppSettings": [
+    {
+      "memberNumber": "100000000001",
+      "biometricLogin": {
+        "enabled": true,
+        "type": "FaceID",
+        "enrolledDate": "2023-01-15"
+      },
+      "quickBalance": {
+        "enabled": true,
+        "accounts": ["1001-0001-0001", "2001-0001-0001"]
+      },
+      "mobileDeposit": {
+        "enabled": true,
+        "defaultAccount": "1001-0001-0001"
+      },
+      "notifications": {
+        "enabled": true,
+        "badge": true,
+        "sound": true,
+        "banner": true
+      }
+    }
+  ],
+  "availableLanguages": [
+    { "code": "en-US", "name": "English (US)" },
+    { "code": "es-US", "name": "Spanish" },
+    { "code": "fr-FR", "name": "French" },
+    { "code": "de-DE", "name": "German" }
+  ],
+  "availableTimezones": [
+    { "code": "America/New_York", "name": "Eastern Time" },
+    { "code": "America/Chicago", "name": "Central Time" },
+    { "code": "America/Denver", "name": "Mountain Time" },
+    { "code": "America/Los_Angeles", "name": "Pacific Time" },
+    { "code": "America/Anchorage", "name": "Alaska Time" },
+    { "code": "Pacific/Honolulu", "name": "Hawaii Time" }
+  ],
+  "securityQuestions": [
+    "What is your mother's maiden name?",
+    "What was the name of your first pet?",
+    "What city were you born in?",
+    "What is your favorite book?",
+    "What street did you grow up on?",
+    "What is your favorite movie?",
+    "What was your childhood nickname?",
+    "What is the name of your favorite teacher?",
+    "What was your first car?",
+    "What is your favorite food?"
+  ]
+}

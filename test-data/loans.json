@@ -1,0 +1,55 @@
+{
+  "autoLoans": [
+    {
+      "loanNumber": "AUTO-2022-001",
+      "memberNumber": "100000000002",
+      "nickname": "Toyota Camry Loan",
+      "originalAmount": 25000.00,
+      "currentBalance": 15400.00,
+      "interestRate": 4.99,
+      "termMonths": 60,
+      "startDate": "2022-01-15",
+      "maturityDate": "2027-01-15",
+      "monthlyPayment": 385.00,
+      "nextPaymentDate": "2025-01-15",
+      "lastPaymentDate": "2024-12-15",
+      "lastPaymentAmount": 385.00,
+      "status": "Active"
+    }
+  ],
+  "mortgages": [
+    {
+      "loanNumber": "MTG-2020-555",
+      "memberNumber": "100000000001",
+      "nickname": "Home Mortgage",
+      "originalAmount": 350000.00,
+      "currentBalance": 312000.00,
+      "interestRate": 3.25,
+      "termMonths": 360,
+      "startDate": "2020-03-01",
+      "maturityDate": "2050-03-01",
+      "monthlyPayment": 1525.00,
+      "escrowBalance": 4200.00,
+      "nextPaymentDate": "2025-01-01",
+      "status": "Active"
+    }
+  ],
+  "creditCards": [
+    {
+      "accountNumber": "CC-1234-5678-9012-3456",
+      "memberNumber": "100000000001",
+      "nickname": "Visa Signature",
+      "creditLimit": 15000.00,
+      "currentBalance": 1250.00,
+      "availableCredit": 13750.00,
+      "interestRate": 16.99,
+      "cashAdvanceRate": 24.99,
+      "minPaymentDue": 35.00,
+      "paymentDueDate": "2025-01-25",
+      "lastStatementBalance": 850.00,
+      "status": "Active",
+      "rewardsPoints": 12450
+    }
+  ],
+  "personalLoans": []
+}

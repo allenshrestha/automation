@@ -1,0 +1,310 @@
+{
+  "validMembers": [
+    {
+      "id": "mem-001",
+      "accountNumber": "100000000001",
+      "firstName": "John",
+      "lastName": "Smith",
+      "email": "john.smith@example.com",
+      "phone": "555-123-4567",
+      "ssn": "123-45-6789",
+      "dateOfBirth": "1985-03-15",
+      "address": {
+        "street": "123 Main Street",
+        "city": "Springfield",
+        "state": "IL",
+        "zip": "62701",
+        "country": "USA"
+      },
+      "memberSince": "2015-01-10T00:00:00Z",
+      "status": "Active",
+      "creditScore": 750,
+      "employmentStatus": "Employed",
+      "annualIncome": 75000
+    },
+    {
+      "id": "mem-002",
+      "accountNumber": "100000000002",
+      "firstName": "Sarah",
+      "lastName": "Johnson",
+      "email": "sarah.johnson@example.com",
+      "phone": "555-234-5678",
+      "ssn": "234-56-7890",
+      "dateOfBirth": "1990-07-22",
+      "address": {
+        "street": "456 Oak Avenue",
+        "city": "Portland",
+        "state": "OR",
+        "zip": "97201",
+        "country": "USA"
+      },
+      "memberSince": "2018-06-15T00:00:00Z",
+      "status": "Active",
+      "creditScore": 820,
+      "employmentStatus": "Employed",
+      "annualIncome": 95000
+    },
+    {
+      "id": "mem-003",
+      "accountNumber": "100000000003",
+      "firstName": "Michael",
+      "lastName": "Davis",
+      "email": "michael.davis@example.com",
+      "phone": "555-345-6789",
+      "ssn": "345-67-8901",
+      "dateOfBirth": "1978-11-30",
+      "address": {
+        "street": "789 Pine Road",
+        "city": "Austin",
+        "state": "TX",
+        "zip": "78701",
+        "country": "USA"
+      },
+      "memberSince": "2012-03-20T00:00:00Z",
+      "status": "Active",
+      "creditScore": 680,
+      "employmentStatus": "Self-Employed",
+      "annualIncome": 62000
+    },
+    {
+      "id": "mem-004",
+      "accountNumber": "100000000004",
+      "firstName": "Emily",
+      "lastName": "Rodriguez",
+      "email": "emily.rodriguez@example.com",
+      "phone": "555-456-7890",
+      "ssn": "456-78-9012",
+      "dateOfBirth": "1995-05-18",
+      "address": {
+        "street": "321 Elm Street",
+        "city": "Denver",
+        "state": "CO",
+        "zip": "80201",
+        "country": "USA"
+      },
+      "memberSince": "2020-09-01T00:00:00Z",
+      "status": "Active",
+      "creditScore": 710,
+      "employmentStatus": "Employed",
+      "annualIncome": 68000
+    },
+    {
+      "id": "mem-005",
+      "accountNumber": "100000000005",
+      "firstName": "Robert",
+      "lastName": "Chen",
+      "email": "robert.chen@example.com",
+      "phone": "555-567-8901",
+      "ssn": "567-89-0123",
+      "dateOfBirth": "1982-09-25",
+      "address": {
+        "street": "654 Maple Drive",
+        "city": "Seattle",
+        "state": "WA",
+        "zip": "98101",
+        "country": "USA"
+      },
+      "memberSince": "2016-11-12T00:00:00Z",
+      "status": "Active",
+      "creditScore": 790,
+      "employmentStatus": "Employed",
+      "annualIncome": 110000
+    }
+  ],
+  "inactiveMembers": [
+    {
+      "id": "mem-006",
+      "accountNumber": "100000000006",
+      "firstName": "Jennifer",
+      "lastName": "Wilson",
+      "email": "jennifer.wilson@example.com",
+      "phone": "555-678-9012",
+      "ssn": "678-90-1234",
+      "dateOfBirth": "1988-12-10",
+      "address": {
+        "street": "987 Cedar Lane",
+        "city": "Phoenix",
+        "state": "AZ",
+        "zip": "85001",
+        "country": "USA"
+      },
+      "memberSince": "2014-04-15T00:00:00Z",
+      "status": "Inactive",
+      "creditScore": 650,
+      "employmentStatus": "Unemployed",
+      "annualIncome": 0
+    }
+  ],
+  "suspendedMembers": [
+    {
+      "id": "mem-007",
+      "accountNumber": "100000000007",
+      "firstName": "David",
+      "lastName": "Martinez",
+      "email": "david.martinez@example.com",
+      "phone": "555-789-0123",
+      "ssn": "789-01-2345",
+      "dateOfBirth": "1975-02-28",
+      "address": {
+        "street": "147 Birch Court",
+        "city": "Miami",
+        "state": "FL",
+        "zip": "33101",
+        "country": "USA"
+      },
+      "memberSince": "2010-08-22T00:00:00Z",
+      "status": "Suspended",
+      "creditScore": 550,
+      "suspensionReason": "Fraudulent activity investigation",
+      "suspendedDate": "2024-11-15T00:00:00Z"
+    }
+  ],
+  "jointAccountMembers": [
+    {
+      "primaryMember": {
+        "id": "mem-008",
+        "accountNumber": "100000000008",
+        "firstName": "Amanda",
+        "lastName": "Taylor",
+        "email": "amanda.taylor@example.com",
+        "phone": "555-890-1234",
+        "ssn": "890-12-3456",
+        "dateOfBirth": "1987-06-14"
+      },
+      "jointMember": {
+        "firstName": "James",
+        "lastName": "Taylor",
+        "ssn": "901-23-4567",
+        "dateOfBirth": "1985-04-20",
+        "relationship": "Spouse"
+      },
+      "address": {
+        "street": "258 Willow Way",
+        "city": "Boston",
+        "state": "MA",
+        "zip": "02101",
+        "country": "USA"
+      },
+      "memberSince": "2019-02-10T00:00:00Z",
+      "status": "Active"
+    }
+  ],
+  "businessMembers": [
+    {
+      "id": "mem-009",
+      "accountNumber": "200000000001",
+      "businessName": "Tech Solutions LLC",
+      "taxId": "12-3456789",
+      "contactFirstName": "Lisa",
+      "contactLastName": "Anderson",
+      "email": "lisa.anderson@techsolutions.com",
+      "phone": "555-012-3456",
+      "address": {
+        "street": "369 Corporate Boulevard",
+        "city": "San Francisco",
+        "state": "CA",
+        "zip": "94101",
+        "country": "USA"
+      },
+      "memberSince": "2017-05-30T00:00:00Z",
+      "status": "Active",
+      "businessType": "LLC",
+      "industry": "Technology",
+      "annualRevenue": 2500000
+    }
+  ],
+  "newMemberApplications": [
+    {
+      "firstName": "Christopher",
+      "lastName": "White",
+      "email": "christopher.white@example.com",
+      "phone": "555-123-7890",
+      "ssn": "234-56-8901",
+      "dateOfBirth": "1992-08-05",
+      "address": {
+        "street": "741 Sunset Drive",
+        "city": "Las Vegas",
+        "state": "NV",
+        "zip": "89101",
+        "country": "USA"
+      },
+      "employmentStatus": "Employed",
+      "employer": "Global Enterprises",
+      "annualIncome": 58000,
+      "initialDeposit": 1000,
+      "accountTypeRequested": "Checking"
+    }
+  ],
+  "invalidMembers": [
+    {
+      "description": "Missing required email",
+      "firstName": "Invalid",
+      "lastName": "NoEmail",
+      "phone": "555-999-9999",
+      "ssn": "999-99-9999",
+      "dateOfBirth": "1990-01-01"
+    },
+    {
+      "description": "Invalid email format",
+      "firstName": "Invalid",
+      "lastName": "BadEmail",
+      "email": "not-an-email",
+      "phone": "555-999-9998",
+      "ssn": "999-99-9998",
+      "dateOfBirth": "1990-01-01"
+    },
+    {
+      "description": "Invalid SSN format",
+      "firstName": "Invalid",
+      "lastName": "BadSSN",
+      "email": "invalid.ssn@example.com",
+      "phone": "555-999-9997",
+      "ssn": "123456789",
+      "dateOfBirth": "1990-01-01"
+    },
+    {
+      "description": "Future date of birth",
+      "firstName": "Invalid",
+      "lastName": "FutureDOB",
+      "email": "invalid.dob@example.com",
+      "phone": "555-999-9996",
+      "ssn": "999-99-9996",
+      "dateOfBirth": "2030-01-01"
+    },
+    {
+      "description": "Underage member",
+      "firstName": "Invalid",
+      "lastName": "Underage",
+      "email": "underage@example.com",
+      "phone": "555-999-9995",
+      "ssn": "999-99-9995",
+      "dateOfBirth": "2020-01-01"
+    }
+  ],
+  "credentials": {
+    "validUser": {
+      "username": "john.smith@example.com",
+      "password": "Test@1234",
+      "accountNumber": "100000000001"
+    },
+    "adminUser": {
+      "username": "admin@creditunion.com",
+      "password": "Admin@1234",
+      "role": "administrator"
+    },
+    "tellerUser": {
+      "username": "teller@creditunion.com",
+      "password": "Teller@1234",
+      "role": "teller"
+    },
+    "invalidUser": {
+      "username": "invalid@example.com",
+      "password": "WrongPassword123"
+    },
+    "lockedUser": {
+      "username": "locked.user@example.com",
+      "password": "Locked@1234",
+      "status": "locked"
+    }
+  }
+}

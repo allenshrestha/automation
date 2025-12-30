@@ -1,0 +1,598 @@
+{
+  "accountAlerts": [
+    {
+      "alertId": "ALERT-ACC-001",
+      "memberNumber": "100000000001",
+      "accountNumber": "1001-0001-0001",
+      "alertType": "Low Balance",
+      "severity": "Warning",
+      "title": "Low Account Balance",
+      "message": "Your Primary Checking account balance is below $100.00",
+      "currentBalance": 85.50,
+      "threshold": 100.00,
+      "dateCreated": "2024-12-28T08:00:00Z",
+      "status": "Unread",
+      "actionRequired": false,
+      "canDismiss": true
+    },
+    {
+      "alertId": "ALERT-ACC-002",
+      "memberNumber": "100000000001",
+      "accountNumber": "1001-0001-0001",
+      "alertType": "Large Deposit",
+      "severity": "Info",
+      "title": "Large Deposit Received",
+      "message": "A deposit of $3,250.00 was posted to your Primary Checking account",
+      "amount": 3250.00,
+      "transactionId": "TXN-DEP-001",
+      "dateCreated": "2024-12-27T08:15:00Z",
+      "status": "Read",
+      "readDate": "2024-12-27T09:00:00Z",
+      "actionRequired": false,
+      "canDismiss": true
+    },
+    {
+      "alertId": "ALERT-ACC-003",
+      "memberNumber": "100000000001",
+      "accountNumber": "2001-0001-0001",
+      "alertType": "Interest Posted",
+      "severity": "Info",
+      "title": "Interest Credited",
+      "message": "Your Emergency Fund savings account earned $31.25 in interest this month",
+      "amount": 31.25,
+      "dateCreated": "2024-12-31T23:59:59Z",
+      "status": "Unread",
+      "actionRequired": false,
+      "canDismiss": true
+    },
+    {
+      "alertId": "ALERT-ACC-004",
+      "memberNumber": "100000000002",
+      "accountNumber": "4001-0001-0001",
+      "alertType": "CD Maturing",
+      "severity": "Action Required",
+      "title": "Certificate of Deposit Maturing Soon",
+      "message": "Your 12-Month CD will mature on 2025-01-15. Please choose a renewal option.",
+      "maturityDate": "2025-01-15",
+      "currentBalance": 25929.17,
+      "dateCreated": "2024-12-15T00:00:00Z",
+      "status": "Unread",
+      "actionRequired": true,
+      "actionUrl": "/accounts/cd/renew/4001-0001-0001",
+      "canDismiss": false,
+      "expiresOn": "2025-01-15"
+    },
+    {
+      "alertId": "ALERT-ACC-005",
+      "memberNumber": "100000000001",
+      "accountNumber": "1001-0001-0001",
+      "alertType": "Overdraft Protection Used",
+      "severity": "Warning",
+      "title": "Overdraft Protection Activated",
+      "message": "Overdraft protection transferred $150.00 from your savings to cover transactions",
+      "amount": 150.00,
+      "transferFrom": "2001-0001-0001",
+      "dateCreated": "2024-11-15T14:30:00Z",
+      "status": "Read",
+      "readDate": "2024-11-15T15:00:00Z",
+      "actionRequired": false,
+      "canDismiss": true
+    }
+  ],
+  "transactionAlerts": [
+    {
+      "alertId": "ALERT-TXN-001",
+      "memberNumber": "100000000001",
+      "accountNumber": "1001-0001-0001",
+      "alertType": "Large Transaction",
+      "severity": "Info",
+      "title": "Large Purchase Detected",
+      "message": "A purchase of $1,250.00 was made at Electronics World",
+      "amount": 1250.00,
+      "merchant": "Electronics World",
+      "transactionId": "CARD-TXN-003",
+      "cardNumber": "************3456",
+      "dateCreated": "2024-12-20T15:46:00Z",
+      "status": "Confirmed",
+      "confirmedDate": "2024-12-20T16:00:00Z",
+      "actionRequired": false,
+      "canDismiss": true
+    },
+    {
+      "alertId": "ALERT-TXN-002",
+      "memberNumber": "100000000002",
+      "accountNumber": "CC-9876-5432-1098-7654",
+      "alertType": "International Transaction",
+      "severity": "Security",
+      "title": "International Transaction Alert",
+      "message": "A transaction of $2,500.00 was processed in London, UK",
+      "amount": 2500.00,
+      "merchant": "Airline Tickets International",
+      "location": "London, GBR",
+      "transactionId": "CARD-TXN-005",
+      "cardNumber": "************7654",
+      "dateCreated": "2024-12-15T10:01:00Z",
+      "status": "Confirmed",
+      "confirmedDate": "2024-12-15T10:05:00Z",
+      "actionRequired": false,
+      "canDismiss": true
+    },
+    {
+      "alertId": "ALERT-TXN-003",
+      "memberNumber": "100000000001",
+      "accountNumber": "1001-0001-0001",
+      "alertType": "Failed Transaction",
+      "severity": "Error",
+      "title": "Transaction Declined",
+      "message": "A transaction of $10,000.00 was declined due to insufficient funds",
+      "amount": 10000.00,
+      "merchant": "Large Purchase Store",
+      "declineReason": "Insufficient funds",
+      "dateCreated": "2024-12-05T14:30:00Z",
+      "status": "Read",
+      "readDate": "2024-12-05T15:00:00Z",
+      "actionRequired": false,
+      "canDismiss": true
+    },
+    {
+      "alertId": "ALERT-TXN-004",
+      "memberNumber": "100000000001",
+      "accountNumber": "1001-0001-0001",
+      "alertType": "ATM Withdrawal",
+      "severity": "Info",
+      "title": "ATM Withdrawal",
+      "message": "You withdrew $200.00 from ATM #005 at Downtown Mall",
+      "amount": 200.00,
+      "atmId": "ATM-005",
+      "location": "Downtown Mall, Springfield, IL",
+      "transactionId": "CARD-TXN-002",
+      "cardNumber": "************4567",
+      "dateCreated": "2024-12-24T18:31:00Z",
+      "status": "Read",
+      "readDate": "2024-12-24T19:00:00Z",
+      "actionRequired": false,
+      "canDismiss": true
+    }
+  ],
+  "securityAlerts": [
+    {
+      "alertId": "ALERT-SEC-001",
+      "memberNumber": "100000000001",
+      "alertType": "Login From New Device",
+      "severity": "Security",
+      "title": "Login from New Device",
+      "message": "Your account was accessed from a new device: iPhone 14",
+      "device": {
+        "type": "Mobile",
+        "os": "iOS 17",
+        "browser": "Safari",
+        "deviceName": "iPhone 14"
+      },
+      "location": {
+        "city": "Springfield",
+        "state": "IL",
+        "country": "USA",
+        "ipAddress": "192.168.1.100"
+      },
+      "dateCreated": "2024-12-28T10:15:00Z",
+      "status": "Confirmed",
+      "confirmedDate": "2024-12-28T10:20:00Z",
+      "actionRequired": false,
+      "canDismiss": true
+    },
+    {
+      "alertId": "ALERT-SEC-002",
+      "memberNumber": "100000000007",
+      "alertType": "Suspicious Activity",
+      "severity": "Critical",
+      "title": "Suspicious Activity Detected",
+      "message": "Multiple failed login attempts detected from unknown location",
+      "attempts": 5,
+      "location": {
+        "city": "Unknown",
+        "state": null,
+        "country": "RUS",
+        "ipAddress": "45.123.45.67"
+      },
+      "dateCreated": "2024-11-15T02:30:00Z",
+      "status": "Action Taken",
+      "actionTaken": "Account temporarily locked",
+      "actionDate": "2024-11-15T02:35:00Z",
+      "actionRequired": true,
+      "actionUrl": "/security/review",
+      "canDismiss": false
+    },
+    {
+      "alertId": "ALERT-SEC-003",
+      "memberNumber": "100000000001",
+      "alertType": "Password Changed",
+      "severity": "Security",
+      "title": "Password Changed Successfully",
+      "message": "Your account password was changed on 2024-12-20",
+      "dateCreated": "2024-12-20T16:45:00Z",
+      "status": "Read",
+      "readDate": "2024-12-20T17:00:00Z",
+      "actionRequired": false,
+      "canDismiss": true
+    },
+    {
+      "alertId": "ALERT-SEC-004",
+      "memberNumber": "100000000002",
+      "alertType": "2FA Enabled",
+      "severity": "Info",
+      "title": "Two-Factor Authentication Enabled",
+      "message": "Two-factor authentication has been successfully enabled for your account",
+      "method": "SMS",
+      "phone": "***-***-5678",
+      "dateCreated": "2024-12-15T11:00:00Z",
+      "status": "Read",
+      "readDate": "2024-12-15T11:05:00Z",
+      "actionRequired": false,
+      "canDismiss": true
+    }
+  ],
+  "paymentAlerts": [
+    {
+      "alertId": "ALERT-PAY-001",
+      "memberNumber": "100000000001",
+      "alertType": "Payment Due Soon",
+      "severity": "Reminder",
+      "title": "Bill Payment Due in 3 Days",
+      "message": "Your payment to Major Credit Card Company of $450.00 is due on 2025-01-25",
+      "paymentId": "PMT-SCH-001",
+      "payee": "Major Credit Card Company",
+      "amount": 450.00,
+      "dueDate": "2025-01-25",
+      "dateCreated": "2025-01-22T08:00:00Z",
+      "status": "Unread",
+      "actionRequired": false,
+      "actionUrl": "/bill-pay/payments/PMT-SCH-001",
+      "canDismiss": true
+    },
+    {
+      "alertId": "ALERT-PAY-002",
+      "memberNumber": "100000000001",
+      "alertType": "Payment Processed",
+      "severity": "Info",
+      "title": "Payment Successfully Sent",
+      "message": "Your payment of $125.50 to City Electric Company has been processed",
+      "paymentId": "PMT-001",
+      "payee": "City Electric Company",
+      "amount": 125.50,
+      "confirmationNumber": "CONF-2024-12-15-001",
+      "dateCreated": "2024-12-15T00:00:00Z",
+      "status": "Read",
+      "readDate": "2024-12-15T08:00:00Z",
+      "actionRequired": false,
+      "canDismiss": true
+    },
+    {
+      "alertId": "ALERT-PAY-003",
+      "memberNumber": "100000000001",
+      "alertType": "Payment Failed",
+      "severity": "Error",
+      "title": "Payment Failed",
+      "message": "Your payment to City Electric Company failed due to insufficient funds",
+      "paymentId": "PMT-FAIL-001",
+      "payee": "City Electric Company",
+      "amount": 125.00,
+      "failureReason": "Insufficient funds",
+      "dateCreated": "2024-11-15T00:00:00Z",
+      "status": "Read",
+      "readDate": "2024-11-15T08:00:00Z",
+      "actionRequired": true,
+      "actionUrl": "/bill-pay/retry/PMT-FAIL-001",
+      "canDismiss": false
+    },
+    {
+      "alertId": "ALERT-PAY-004",
+      "memberNumber": "100000000001",
+      "alertType": "Recurring Payment Processed",
+      "severity": "Info",
+      "title": "Recurring Payment Sent",
+      "message": "Your automatic payment of $89.99 to FastNet Internet Services has been processed",
+      "paymentId": "PMT-002",
+      "payee": "FastNet Internet Services",
+      "amount": 89.99,
+      "recurringId": "REC-BP-001",
+      "confirmationNumber": "CONF-2024-12-20-001",
+      "dateCreated": "2024-12-20T00:00:00Z",
+      "status": "Read",
+      "readDate": "2024-12-20T08:00:00Z",
+      "actionRequired": false,
+      "canDismiss": true
+    }
+  ],
+  "transferAlerts": [
+    {
+      "alertId": "ALERT-TRF-001",
+      "memberNumber": "100000000001",
+      "alertType": "Transfer Completed",
+      "severity": "Info",
+      "title": "Transfer Successful",
+      "message": "Your transfer of $1,000.00 from Primary Checking to Emergency Fund has been completed",
+      "transferId": "TRF-INT-001",
+      "fromAccount": "1001-0001-0001",
+      "toAccount": "2001-0001-0001",
+      "amount": 1000.00,
+      "dateCreated": "2024-12-01T00:00:00Z",
+      "status": "Read",
+      "readDate": "2024-12-01T08:00:00Z",
+      "actionRequired": false,
+      "canDismiss": true
+    },
+    {
+      "alertId": "ALERT-TRF-002",
+      "memberNumber": "100000000001",
+      "alertType": "Transfer Failed",
+      "severity": "Error",
+      "title": "Transfer Failed",
+      "message": "Your transfer of $10,000.00 failed due to insufficient funds",
+      "transferId": "TRF-FAIL-001",
+      "fromAccount": "1001-0001-0001",
+      "toAccount": "2001-0001-0001",
+      "amount": 10000.00,
+      "failureReason": "Insufficient funds",
+      "dateCreated": "2024-12-05T10:00:00Z",
+      "status": "Read",
+      "readDate": "2024-12-05T11:00:00Z",
+      "actionRequired": false,
+      "canDismiss": true
+    },
+    {
+      "alertId": "ALERT-TRF-003",
+      "memberNumber": "100000000001",
+      "alertType": "External Transfer Pending",
+      "severity": "Info",
+      "title": "External Transfer In Progress",
+      "message": "Your external transfer of $2,000.00 to National Bank is processing and will arrive in 2 business days",
+      "transferId": "TRF-EXT-001",
+      "fromAccount": "1001-0001-0001",
+      "toBank": "National Bank",
+      "amount": 2000.00,
+      "estimatedArrival": "2024-12-12",
+      "dateCreated": "2024-12-10T09:00:00Z",
+      "status": "Read",
+      "readDate": "2024-12-10T10:00:00Z",
+      "actionRequired": false,
+      "canDismiss": true
+    }
+  ],
+  "loanAlerts": [
+    {
+      "alertId": "ALERT-LOAN-001",
+      "memberNumber": "100000000002",
+      "loanNumber": "AUTO-2022-001",
+      "alertType": "Payment Due",
+      "severity": "Reminder",
+      "title": "Auto Loan Payment Due",
+      "message": "Your auto loan payment of $385.00 is due on 2025-01-15",
+      "amount": 385.00,
+      "dueDate": "2025-01-15",
+      "dateCreated": "2025-01-10T08:00:00Z",
+      "status": "Unread",
+      "actionRequired": false,
+      "canDismiss": true
+    },
+    {
+      "alertId": "ALERT-LOAN-002",
+      "memberNumber": "100000000006",
+      "loanNumber": "AUTO-2021-999",
+      "alertType": "Payment Overdue",
+      "severity": "Critical",
+      "title": "Auto Loan Payment Past Due",
+      "message": "Your auto loan payment is 45 days past due. Please make a payment immediately to avoid further action.",
+      "amount": 650.00,
+      "daysPastDue": 45,
+      "lateFees": 70.00,
+      "totalDue": 720.00,
+      "dateCreated": "2024-12-30T00:00:00Z",
+      "status": "Unread",
+      "actionRequired": true,
+      "actionUrl": "/loans/make-payment/AUTO-2021-999",
+      "canDismiss": false
+    },
+    {
+      "alertId": "ALERT-LOAN-003",
+      "memberNumber": "100000000002",
+      "loanNumber": "AUTO-2022-001",
+      "alertType": "Payment Processed",
+      "severity": "Info",
+      "title": "Loan Payment Received",
+      "message": "Your auto loan payment of $385.00 has been processed",
+      "amount": 385.00,
+      "confirmationNumber": "LOAN-PMT-2024-12-15",
+      "dateCreated": "2024-12-15T00:00:00Z",
+      "status": "Read",
+      "readDate": "2024-12-15T08:00:00Z",
+      "actionRequired": false,
+      "canDismiss": true
+    }
+  ],
+  "systemAlerts": [
+    {
+      "alertId": "ALERT-SYS-001",
+      "memberNumber": "100000000001",
+      "alertType": "Scheduled Maintenance",
+      "severity": "Info",
+      "title": "Scheduled System Maintenance",
+      "message": "Online banking will be unavailable on 2025-01-05 from 2:00 AM to 4:00 AM EST for scheduled maintenance",
+      "maintenanceStart": "2025-01-05T02:00:00Z",
+      "maintenanceEnd": "2025-01-05T04:00:00Z",
+      "dateCreated": "2025-01-01T00:00:00Z",
+      "status": "Unread",
+      "actionRequired": false,
+      "canDismiss": true,
+      "expiresOn": "2025-01-05T04:00:00Z"
+    },
+    {
+      "alertId": "ALERT-SYS-002",
+      "memberNumber": "100000000001",
+      "alertType": "New Feature",
+      "severity": "Info",
+      "title": "New Mobile Check Deposit Available",
+      "message": "You can now deposit checks using your mobile device! Try it today.",
+      "dateCreated": "2024-12-01T00:00:00Z",
+      "status": "Read",
+      "readDate": "2024-12-02T10:00:00Z",
+      "actionRequired": false,
+      "actionUrl": "/features/mobile-deposit",
+      "canDismiss": true
+    }
+  ],
+  "alertPreferences": {
+    "memberNumber": "100000000001",
+    "emailAlerts": true,
+    "emailAddress": "john.smith@example.com",
+    "smsAlerts": true,
+    "smsNumber": "555-123-4567",
+    "pushNotifications": true,
+    "preferences": {
+      "accountAlerts": {
+        "lowBalance": {
+          "enabled": true,
+          "threshold": 100.00,
+          "channels": ["email", "sms", "push"]
+        },
+        "largeDeposit": {
+          "enabled": true,
+          "threshold": 1000.00,
+          "channels": ["email", "push"]
+        },
+        "largeWithdrawal": {
+          "enabled": true,
+          "threshold": 1000.00,
+          "channels": ["email", "sms", "push"]
+        },
+        "interestPosted": {
+          "enabled": true,
+          "channels": ["email"]
+        },
+        "monthlyStatement": {
+          "enabled": true,
+          "channels": ["email"]
+        }
+      },
+      "transactionAlerts": {
+        "allTransactions": {
+          "enabled": false,
+          "channels": []
+        },
+        "largeTransaction": {
+          "enabled": true,
+          "threshold": 500.00,
+          "channels": ["sms", "push"]
+        },
+        "internationalTransaction": {
+          "enabled": true,
+          "channels": ["sms", "push"]
+        },
+        "atmWithdrawal": {
+          "enabled": true,
+          "channels": ["push"]
+        },
+        "declinedTransaction": {
+          "enabled": true,
+          "channels": ["sms", "push"]
+        }
+      },
+      "securityAlerts": {
+        "loginNewDevice": {
+          "enabled": true,
+          "channels": ["email", "sms"]
+        },
+        "passwordChanged": {
+          "enabled": true,
+          "channels": ["email", "sms"]
+        },
+        "suspiciousActivity": {
+          "enabled": true,
+          "channels": ["email", "sms", "push"]
+        }
+      },
+      "paymentAlerts": {
+        "paymentDue": {
+          "enabled": true,
+          "daysBefore": 3,
+          "channels": ["email", "push"]
+        },
+        "paymentProcessed": {
+          "enabled": true,
+          "channels": ["email"]
+        },
+        "paymentFailed": {
+          "enabled": true,
+          "channels": ["email", "sms", "push"]
+        }
+      },
+      "transferAlerts": {
+        "transferCompleted": {
+          "enabled": true,
+          "channels": ["email", "push"]
+        },
+        "transferFailed": {
+          "enabled": true,
+          "channels": ["email", "sms", "push"]
+        }
+      },
+      "loanAlerts": {
+        "paymentDue": {
+          "enabled": true,
+          "daysBefore": 5,
+          "channels": ["email", "sms"]
+        },
+        "paymentOverdue": {
+          "enabled": true,
+          "channels": ["email", "sms", "push"]
+        }
+      }
+    },
+    "quietHours": {
+      "enabled": true,
+      "startTime": "22:00",
+      "endTime": "08:00",
+      "timezone": "America/Chicago"
+    }
+  },
+  "alertCategories": [
+    "Account",
+    "Transaction",
+    "Security",
+    "Payment",
+    "Transfer",
+    "Loan",
+    "System"
+  ],
+  "severityLevels": [
+    {
+      "level": "Info",
+      "color": "blue",
+      "icon": "info-circle"
+    },
+    {
+      "level": "Reminder",
+      "color": "green",
+      "icon": "bell"
+    },
+    {
+      "level": "Warning",
+      "color": "yellow",
+      "icon": "exclamation-triangle"
+    },
+    {
+      "level": "Error",
+      "color": "orange",
+      "icon": "times-circle"
+    },
+    {
+      "level": "Critical",
+      "color": "red",
+      "icon": "exclamation-circle"
+    },
+    {
+      "level": "Security",
+      "color": "purple",
+      "icon": "shield-alt"
+    }
+  ]
+}

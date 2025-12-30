@@ -1,0 +1,467 @@
+{
+  "statements": [
+    {
+      "statementId": "STMT-2024-12-001",
+      "accountNumber": "1001-0001-0001",
+      "accountType": "Checking",
+      "statementDate": "2024-12-31",
+      "statementPeriod": {
+        "startDate": "2024-12-01",
+        "endDate": "2024-12-31"
+      },
+      "openingBalance": 2182.50,
+      "closingBalance": 5432.50,
+      "totalDeposits": 4750.00,
+      "totalWithdrawals": 1500.00,
+      "totalFees": 0,
+      "interestEarned": 0.05,
+      "numberOfTransactions": 28,
+      "format": "PDF",
+      "status": "Available",
+      "fileSize": "245KB",
+      "downloadUrl": "/statements/STMT-2024-12-001.pdf",
+      "canEmail": true,
+      "canPrint": true
+    },
+    {
+      "statementId": "STMT-2024-11-001",
+      "accountNumber": "1001-0001-0001",
+      "accountType": "Checking",
+      "statementDate": "2024-11-30",
+      "statementPeriod": {
+        "startDate": "2024-11-01",
+        "endDate": "2024-11-30"
+      },
+      "openingBalance": 3250.00,
+      "closingBalance": 2182.50,
+      "totalDeposits": 3500.00,
+      "totalWithdrawals": 4567.50,
+      "totalFees": 35.00,
+      "interestEarned": 0.04,
+      "numberOfTransactions": 32,
+      "format": "PDF",
+      "status": "Available",
+      "fileSize": "268KB",
+      "downloadUrl": "/statements/STMT-2024-11-001.pdf",
+      "canEmail": true,
+      "canPrint": true
+    },
+    {
+      "statementId": "STMT-2024-10-001",
+      "accountNumber": "1001-0001-0001",
+      "accountType": "Checking",
+      "statementDate": "2024-10-31",
+      "statementPeriod": {
+        "startDate": "2024-10-01",
+        "endDate": "2024-10-31"
+      },
+      "openingBalance": 2875.00,
+      "closingBalance": 3250.00,
+      "totalDeposits": 3800.00,
+      "totalWithdrawals": 3425.00,
+      "totalFees": 0,
+      "interestEarned": 0.04,
+      "numberOfTransactions": 25,
+      "format": "PDF",
+      "status": "Available",
+      "fileSize": "234KB",
+      "downloadUrl": "/statements/STMT-2024-10-001.pdf",
+      "canEmail": true,
+      "canPrint": true
+    },
+    {
+      "statementId": "STMT-2024-12-002",
+      "accountNumber": "2001-0001-0001",
+      "accountType": "Savings",
+      "statementDate": "2024-12-31",
+      "statementPeriod": {
+        "startDate": "2024-12-01",
+        "endDate": "2024-12-31"
+      },
+      "openingBalance": 14219.50,
+      "closingBalance": 15250.75,
+      "totalDeposits": 1000.00,
+      "totalWithdrawals": 0,
+      "totalFees": 0,
+      "interestEarned": 31.25,
+      "interestRate": 2.50,
+      "apy": 2.53,
+      "numberOfTransactions": 2,
+      "format": "PDF",
+      "status": "Available",
+      "fileSize": "198KB",
+      "downloadUrl": "/statements/STMT-2024-12-002.pdf",
+      "canEmail": true,
+      "canPrint": true
+    },
+    {
+      "statementId": "STMT-2024-12-003",
+      "accountNumber": "1001-0001-0002",
+      "accountType": "Checking",
+      "statementDate": "2024-12-31",
+      "statementPeriod": {
+        "startDate": "2024-12-01",
+        "endDate": "2024-12-31"
+      },
+      "openingBalance": 12250.00,
+      "closingBalance": 12750.00,
+      "totalDeposits": 750.00,
+      "totalWithdrawals": 250.00,
+      "totalFees": 5.00,
+      "interestEarned": 0.05,
+      "numberOfTransactions": 18,
+      "format": "PDF",
+      "status": "Available",
+      "fileSize": "215KB",
+      "downloadUrl": "/statements/STMT-2024-12-003.pdf",
+      "canEmail": true,
+      "canPrint": true,
+      "jointAccount": true,
+      "jointOwner": "James Taylor"
+    },
+    {
+      "statementId": "STMT-2024-12-004",
+      "accountNumber": "3001-0001-0001",
+      "accountType": "Money Market",
+      "statementDate": "2024-12-31",
+      "statementPeriod": {
+        "startDate": "2024-12-01",
+        "endDate": "2024-12-31"
+      },
+      "openingBalance": 50000.00,
+      "closingBalance": 50177.08,
+      "totalDeposits": 0,
+      "totalWithdrawals": 0,
+      "totalFees": 0,
+      "interestEarned": 177.08,
+      "interestRate": 4.25,
+      "apy": 4.33,
+      "numberOfTransactions": 1,
+      "format": "PDF",
+      "status": "Available",
+      "fileSize": "185KB",
+      "downloadUrl": "/statements/STMT-2024-12-004.pdf",
+      "canEmail": true,
+      "canPrint": true
+    },
+    {
+      "statementId": "STMT-2024-Q4-001",
+      "accountNumber": "4001-0001-0001",
+      "accountType": "Certificate of Deposit",
+      "statementDate": "2024-12-31",
+      "statementPeriod": {
+        "startDate": "2024-10-01",
+        "endDate": "2024-12-31"
+      },
+      "openingBalance": 25641.67,
+      "closingBalance": 25929.17,
+      "principalAmount": 25000.00,
+      "totalInterestEarned": 218.75,
+      "interestRate": 3.50,
+      "apy": 3.56,
+      "maturityDate": "2025-01-15",
+      "format": "PDF",
+      "status": "Available",
+      "fileSize": "165KB",
+      "downloadUrl": "/statements/STMT-2024-Q4-001.pdf",
+      "canEmail": true,
+      "canPrint": true,
+      "statementFrequency": "Quarterly"
+    },
+    {
+      "statementId": "STMT-2025-01-001",
+      "accountNumber": "1001-0001-0001",
+      "accountType": "Checking",
+      "statementDate": "2025-01-31",
+      "statementPeriod": {
+        "startDate": "2025-01-01",
+        "endDate": "2025-01-31"
+      },
+      "format": "PDF",
+      "status": "Generating",
+      "estimatedAvailableDate": "2025-02-01",
+      "canEmail": false,
+      "canPrint": false
+    }
+  ],
+  "taxDocuments": [
+    {
+      "documentId": "TAX-2024-001",
+      "documentType": "1099-INT",
+      "taxYear": 2024,
+      "accountNumber": "2001-0001-0001",
+      "accountType": "Savings",
+      "totalInterest": 362.50,
+      "federalTaxWithheld": 0,
+      "stateTaxWithheld": 0,
+      "issueDate": "2025-01-31",
+      "format": "PDF",
+      "status": "Available",
+      "fileSize": "125KB",
+      "downloadUrl": "/tax-documents/1099-INT-2024-001.pdf",
+      "canEmail": true,
+      "canPrint": true
+    },
+    {
+      "documentId": "TAX-2024-002",
+      "documentType": "1099-INT",
+      "taxYear": 2024,
+      "accountNumber": "3001-0001-0001",
+      "accountType": "Money Market",
+      "totalInterest": 2125.00,
+      "federalTaxWithheld": 0,
+      "stateTaxWithheld": 0,
+      "issueDate": "2025-01-31",
+      "format": "PDF",
+      "status": "Available",
+      "fileSize": "125KB",
+      "downloadUrl": "/tax-documents/1099-INT-2024-002.pdf",
+      "canEmail": true,
+      "canPrint": true
+    },
+    {
+      "documentId": "TAX-2024-003",
+      "documentType": "1099-INT",
+      "taxYear": 2024,
+      "accountNumber": "4001-0001-0001",
+      "accountType": "Certificate of Deposit",
+      "totalInterest": 856.25,
+      "federalTaxWithheld": 0,
+      "stateTaxWithheld": 0,
+      "issueDate": "2025-01-31",
+      "format": "PDF",
+      "status": "Available",
+      "fileSize": "125KB",
+      "downloadUrl": "/tax-documents/1099-INT-2024-003.pdf",
+      "canEmail": true,
+      "canPrint": true
+    },
+    {
+      "documentId": "TAX-2023-001",
+      "documentType": "1099-INT",
+      "taxYear": 2023,
+      "accountNumber": "2001-0001-0001",
+      "accountType": "Savings",
+      "totalInterest": 325.00,
+      "federalTaxWithheld": 0,
+      "stateTaxWithheld": 0,
+      "issueDate": "2024-01-31",
+      "format": "PDF",
+      "status": "Available",
+      "fileSize": "125KB",
+      "downloadUrl": "/tax-documents/1099-INT-2023-001.pdf",
+      "canEmail": true,
+      "canPrint": true
+    }
+  ],
+  "accountDisclosures": [
+    {
+      "documentId": "DISC-2024-001",
+      "documentType": "Truth in Savings Disclosure",
+      "accountType": "Checking",
+      "issueDate": "2024-01-01",
+      "effectiveDate": "2024-01-15",
+      "format": "PDF",
+      "status": "Available",
+      "fileSize": "450KB",
+      "downloadUrl": "/disclosures/TIS-Checking-2024.pdf",
+      "canEmail": true,
+      "canPrint": true
+    },
+    {
+      "documentId": "DISC-2024-002",
+      "documentType": "Truth in Savings Disclosure",
+      "accountType": "Savings",
+      "issueDate": "2024-01-01",
+      "effectiveDate": "2024-01-15",
+      "format": "PDF",
+      "status": "Available",
+      "fileSize": "485KB",
+      "downloadUrl": "/disclosures/TIS-Savings-2024.pdf",
+      "canEmail": true,
+      "canPrint": true
+    },
+    {
+      "documentId": "DISC-2024-003",
+      "documentType": "Electronic Funds Transfer Disclosure",
+      "issueDate": "2024-01-01",
+      "effectiveDate": "2024-01-15",
+      "format": "PDF",
+      "status": "Available",
+      "fileSize": "520KB",
+      "downloadUrl": "/disclosures/EFT-Disclosure-2024.pdf",
+      "canEmail": true,
+      "canPrint": true
+    },
+    {
+      "documentId": "DISC-2024-004",
+      "documentType": "Privacy Policy",
+      "issueDate": "2024-01-01",
+      "effectiveDate": "2024-01-15",
+      "format": "PDF",
+      "status": "Available",
+      "fileSize": "625KB",
+      "downloadUrl": "/disclosures/Privacy-Policy-2024.pdf",
+      "canEmail": true,
+      "canPrint": true
+    },
+    {
+      "documentId": "DISC-2024-005",
+      "documentType": "Fee Schedule",
+      "issueDate": "2024-01-01",
+      "effectiveDate": "2024-01-15",
+      "format": "PDF",
+      "status": "Available",
+      "fileSize": "325KB",
+      "downloadUrl": "/disclosures/Fee-Schedule-2024.pdf",
+      "canEmail": true,
+      "canPrint": true
+    }
+  ],
+  "checkImages": [
+    {
+      "checkId": "CHK-IMG-001",
+      "checkNumber": "2345",
+      "accountNumber": "1001-0001-0001",
+      "amount": 150.00,
+      "payee": "Electric Company",
+      "date": "2024-12-21",
+      "clearedDate": "2024-12-21",
+      "frontImageUrl": "/check-images/2345-front.jpg",
+      "backImageUrl": "/check-images/2345-back.jpg",
+      "format": "JPG",
+      "status": "Available"
+    },
+    {
+      "checkId": "CHK-IMG-002",
+      "checkNumber": "2346",
+      "accountNumber": "1001-0001-0001",
+      "amount": 500.00,
+      "payee": "Home Repair Services",
+      "date": "2024-12-15",
+      "clearedDate": "2024-12-16",
+      "frontImageUrl": "/check-images/2346-front.jpg",
+      "backImageUrl": "/check-images/2346-back.jpg",
+      "format": "JPG",
+      "status": "Available"
+    }
+  ],
+  "eStatementPreferences": {
+    "memberId": "100000000001",
+    "enrolledDate": "2020-01-15",
+    "paperlessEnabled": true,
+    "emailNotification": true,
+    "emailAddress": "john.smith@example.com",
+    "accounts": [
+      {
+        "accountNumber": "1001-0001-0001",
+        "accountType": "Checking",
+        "eStatementEnabled": true,
+        "statementFrequency": "Monthly"
+      },
+      {
+        "accountNumber": "2001-0001-0001",
+        "accountType": "Savings",
+        "eStatementEnabled": true,
+        "statementFrequency": "Monthly"
+      },
+      {
+        "accountNumber": "1001-0001-0002",
+        "accountType": "Checking",
+        "eStatementEnabled": true,
+        "statementFrequency": "Monthly"
+      },
+      {
+        "accountNumber": "3001-0001-0001",
+        "accountType": "Money Market",
+        "eStatementEnabled": true,
+        "statementFrequency": "Monthly"
+      },
+      {
+        "accountNumber": "4001-0001-0001",
+        "accountType": "CD",
+        "eStatementEnabled": true,
+        "statementFrequency": "Quarterly"
+      }
+    ]
+  },
+  "statementHistory": {
+    "accountNumber": "1001-0001-0001",
+    "accountType": "Checking",
+    "oldestAvailable": "2020-01-31",
+    "newestAvailable": "2024-12-31",
+    "totalStatements": 60,
+    "storagePolicy": "7 years online, permanent archive available upon request"
+  },
+  "exportOptions": [
+    {
+      "format": "PDF",
+      "description": "Portable Document Format - Best for printing and archiving",
+      "extension": ".pdf"
+    },
+    {
+      "format": "CSV",
+      "description": "Comma-Separated Values - Best for spreadsheets",
+      "extension": ".csv"
+    },
+    {
+      "format": "QFX",
+      "description": "Quicken Format - Import into Quicken",
+      "extension": ".qfx"
+    },
+    {
+      "format": "OFX",
+      "description": "Open Financial Exchange - Import into financial software",
+      "extension": ".ofx"
+    },
+    {
+      "format": "QBO",
+      "description": "QuickBooks Format - Import into QuickBooks",
+      "extension": ".qbo"
+    }
+  ],
+  "statementNotices": [
+    {
+      "noticeId": "NOTICE-2024-001",
+      "accountNumber": "1001-0001-0001",
+      "noticeType": "Fee Change",
+      "title": "Important Account Fee Update",
+      "description": "Effective February 1, 2025, monthly maintenance fee will change from $0 to $5 for balances below $500",
+      "effectiveDate": "2025-02-01",
+      "issueDate": "2024-12-15",
+      "status": "Active",
+      "acknowledged": false
+    },
+    {
+      "noticeId": "NOTICE-2024-002",
+      "accountNumber": "2001-0001-0001",
+      "noticeType": "Interest Rate Change",
+      "title": "Savings Account Interest Rate Increase",
+      "description": "Your savings account interest rate will increase from 2.50% to 2.75% effective January 1, 2025",
+      "effectiveDate": "2025-01-01",
+      "issueDate": "2024-12-01",
+      "status": "Active",
+      "acknowledged": true,
+      "acknowledgedDate": "2024-12-05"
+    }
+  ],
+  "documentRetentionPolicy": {
+    "statements": {
+      "onlineAvailability": "7 years",
+      "permanentArchive": "Available upon request",
+      "eStatementStorage": "Unlimited"
+    },
+    "taxDocuments": {
+      "onlineAvailability": "7 years",
+      "permanentArchive": "Available upon request"
+    },
+    "checkImages": {
+      "onlineAvailability": "2 years",
+      "extendedArchive": "Available upon request for additional fee"
+    },
+    "disclosures": {
+      "onlineAvailability": "Current version + 2 years of historical",
+      "permanentArchive": "Available upon request"
+    }
+  }
+}

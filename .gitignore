@@ -1,0 +1,63 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn.lock
+
+# Test Results
+test-results/
+playwright-report/
+reports/
+playwright/.cache/
+
+# Screenshots & Media
+screenshots/actual/
+screenshots/diff/
+videos/
+traces/
+
+# Environment & Secrets
+.env
+.env.local
+.env.*.local
+auth.json
+*.pem
+*.key
+
+# Logs
+logs/
+*.log
+metrics/*.json
+metrics/*.txt
+
+# Audit Logs (keep structure, ignore content)
+audit-logs/*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS
+Thumbs.db
+desktop.ini
+
+# Build
+dist/
+build/
+*.tsbuildinfo
+
+# Temporary
+tmp/
+temp/
+*.tmp
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Database
+*.sqlite
+*.db

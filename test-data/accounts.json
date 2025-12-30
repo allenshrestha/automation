@@ -1,0 +1,97 @@
+{
+  "checkingAccounts": [
+    {
+      "accountNumber": "1001-0001-0001",
+      "memberNumber": "100000000001",
+      "accountType": "Checking",
+      "nickname": "Primary Checking",
+      "balance": 5432.50,
+      "availableBalance": 5182.50,
+      "currency": "USD",
+      "status": "Active",
+      "openDate": "2015-01-10",
+      "interestRate": 0.05,
+      "routingNumber": "123456789",
+      "overdraftProtection": true,
+      "overdraftAccount": "2001-0001-0001"
+    },
+    {
+      "accountNumber": "1001-0001-0002",
+      "memberNumber": "100000000001",
+      "accountType": "Checking",
+      "nickname": "Joint Checking",
+      "balance": 12750.00,
+      "availableBalance": 12750.00,
+      "currency": "USD",
+      "status": "Active",
+      "openDate": "2019-02-10",
+      "interestRate": 0.05,
+      "routingNumber": "123456789",
+      "jointOwner": "James Taylor"
+    }
+  ],
+  "savingsAccounts": [
+    {
+      "accountNumber": "2001-0001-0001",
+      "memberNumber": "100000000001",
+      "accountType": "Savings",
+      "nickname": "Emergency Fund",
+      "balance": 15250.75,
+      "availableBalance": 15250.75,
+      "currency": "USD",
+      "status": "Active",
+      "openDate": "2015-01-10",
+      "interestRate": 2.50,
+      "apy": 2.53,
+      "routingNumber": "123456789"
+    },
+    {
+      "accountNumber": "2001-0002-0001",
+      "memberNumber": "100000000002",
+      "accountType": "Savings",
+      "nickname": "Vacation Fund",
+      "balance": 3500.00,
+      "availableBalance": 3500.00,
+      "currency": "USD",
+      "status": "Active",
+      "openDate": "2018-06-15",
+      "interestRate": 1.50,
+      "apy": 1.51,
+      "routingNumber": "123456789"
+    }
+  ],
+  "moneyMarketAccounts": [
+    {
+      "accountNumber": "3001-0001-0001",
+      "memberNumber": "100000000001",
+      "accountType": "Money Market",
+      "nickname": "High Yield Savings",
+      "balance": 50177.08,
+      "availableBalance": 50177.08,
+      "currency": "USD",
+      "status": "Active",
+      "openDate": "2022-05-20",
+      "interestRate": 4.25,
+      "apy": 4.33,
+      "routingNumber": "123456789"
+    }
+  ],
+  "cdAccounts": [
+    {
+      "accountNumber": "4001-0001-0001",
+      "memberNumber": "100000000002",
+      "accountType": "Certificate of Deposit",
+      "nickname": "12-Month CD",
+      "balance": 25929.17,
+      "principal": 25000.00,
+      "currency": "USD",
+      "status": "Active",
+      "openDate": "2024-01-15",
+      "maturityDate": "2025-01-15",
+      "interestRate": 3.50,
+      "apy": 3.56,
+      "termMonths": 12,
+      "routingNumber": "123456789"
+    }
+  ]
+}

@@ -1,0 +1,468 @@
+{
+  "internalTransfers": [
+    {
+      "transferId": "TRF-INT-001",
+      "fromAccount": "1001-0001-0001",
+      "fromAccountName": "Primary Checking",
+      "toAccount": "2001-0001-0001",
+      "toAccountName": "Emergency Fund",
+      "amount": 1000.00,
+      "memo": "Monthly Savings",
+      "transferDate": "2024-12-01T00:00:00Z",
+      "completedDate": "2024-12-01T00:00:00Z",
+      "status": "Completed",
+      "confirmationNumber": "INT-TRF-2024-12-001",
+      "transferType": "Internal",
+      "recurring": true,
+      "recurringId": "REC-TRF-001",
+      "frequency": "Monthly"
+    },
+    {
+      "transferId": "TRF-INT-002",
+      "fromAccount": "1001-0001-0001",
+      "fromAccountName": "Primary Checking",
+      "toAccount": "1001-0001-0002",
+      "toAccountName": "Joint Checking",
+      "amount": 500.00,
+      "memo": "Split expenses",
+      "transferDate": "2024-12-15T10:30:00Z",
+      "completedDate": "2024-12-15T10:30:00Z",
+      "status": "Completed",
+      "confirmationNumber": "INT-TRF-2024-12-002",
+      "transferType": "Internal",
+      "recurring": false
+    },
+    {
+      "transferId": "TRF-INT-003",
+      "fromAccount": "2001-0001-0001",
+      "fromAccountName": "Emergency Fund",
+      "toAccount": "1001-0001-0001",
+      "toAccountName": "Primary Checking",
+      "amount": 500.00,
+      "memo": "Emergency withdrawal",
+      "transferDate": "2024-12-20T14:00:00Z",
+      "completedDate": "2024-12-20T14:00:00Z",
+      "status": "Completed",
+      "confirmationNumber": "INT-TRF-2024-12-003",
+      "transferType": "Internal",
+      "recurring": false
+    }
+  ],
+  "externalTransfers": [
+    {
+      "transferId": "TRF-EXT-001",
+      "fromAccount": "1001-0001-0001",
+      "fromAccountName": "Primary Checking",
+      "toExternalAccount": {
+        "accountId": "EXT-001",
+        "bankName": "National Bank",
+        "accountNumber": "****8901",
+        "accountType": "Checking",
+        "routingNumber": "987654321",
+        "nickname": "My National Bank Checking"
+      },
+      "amount": 2000.00,
+      "memo": "Transfer to other bank",
+      "transferDate": "2024-12-10T09:00:00Z",
+      "completedDate": "2024-12-12T00:00:00Z",
+      "status": "Completed",
+      "confirmationNumber": "EXT-TRF-2024-12-001",
+      "transferType": "External",
+      "method": "ACH",
+      "processingDays": 2,
+      "fee": 0
+    },
+    {
+      "transferId": "TRF-EXT-002",
+      "fromExternalAccount": {
+        "accountId": "EXT-002",
+        "bankName": "Regional Credit Union",
+        "accountNumber": "****4567",
+        "accountType": "Savings",
+        "routingNumber": "456789123",
+        "nickname": "Regional CU Savings"
+      },
+      "toAccount": "1001-0001-0001",
+      "toAccountName": "Primary Checking",
+      "amount": 1500.00,
+      "memo": "Transfer from other credit union",
+      "transferDate": "2024-12-18T10:00:00Z",
+      "completedDate": "2024-12-20T00:00:00Z",
+      "status": "Completed",
+      "confirmationNumber": "EXT-TRF-2024-12-002",
+      "transferType": "External",
+      "method": "ACH",
+      "processingDays": 2,
+      "fee": 0
+    },
+    {
+      "transferId": "TRF-EXT-003",
+      "fromAccount": "2001-0002-0001",
+      "fromAccountName": "Vacation Fund",
+      "toExternalAccount": {
+        "accountId": "EXT-003",
+        "bankName": "Online Bank",
+        "accountNumber": "****2345",
+        "accountType": "Savings",
+        "routingNumber": "234567891",
+        "nickname": "Online High Yield Savings"
+      },
+      "amount": 3000.00,
+      "memo": "Moving to high yield savings",
+      "transferDate": "2024-12-22T08:00:00Z",
+      "completedDate": null,
+      "status": "Pending",
+      "confirmationNumber": "EXT-TRF-2024-12-003",
+      "transferType": "External",
+      "method": "ACH",
+      "processingDays": 2,
+      "estimatedCompletionDate": "2024-12-24T00:00:00Z",
+      "fee": 0
+    }
+  ],
+  "wireTransfers": [
+    {
+      "transferId": "TRF-WIRE-001",
+      "fromAccount": "1001-0001-0003",
+      "fromAccountName": "Business Checking",
+      "recipient": {
+        "name": "ABC Suppliers Inc",
+        "accountNumber": "9999999999",
+        "routingNumber": "987654321",
+        "bankName": "International Bank",
+        "bankAddress": "500 Finance Street, New York, NY 10001",
+        "swiftCode": "INTLUS33"
+      },
+      "amount": 5000.00,
+      "purpose": "Payment for goods",
+      "memo": "Invoice #INV-2024-1234",
+      "transferDate": "2024-12-27T11:00:00Z",
+      "completedDate": "2024-12-27T14:00:00Z",
+      "status": "Completed",
+      "confirmationNumber": "WIRE-2024-12-001",
+      "transferType": "Wire",
+      "wireFee": 25.00,
+      "totalCharge": 5025.00,
+      "intermediaryBank": null,
+      "trackingNumber": "WIRE-TRK-2024-12-001"
+    },
+    {
+      "transferId": "TRF-WIRE-002",
+      "fromAccount": "1001-0001-0001",
+      "fromAccountName": "Primary Checking",
+      "recipient": {
+        "name": "International Vendor Ltd",
+        "accountNumber": "GB29NWBK60161331926819",
+        "routingNumber": null,
+        "bankName": "London International Bank",
+        "bankAddress": "10 Downing Street, London, UK",
+        "swiftCode": "LONIGB2L"
+      },
+      "amount": 10000.00,
+      "purpose": "International payment",
+      "memo": "Contract payment",
+      "transferDate": "2024-12-23T09:00:00Z",
+      "completedDate": "2024-12-23T16:00:00Z",
+      "status": "Completed",
+      "confirmationNumber": "WIRE-2024-12-002",
+      "transferType": "Wire",
+      "wireFee": 45.00,
+      "totalCharge": 10045.00,
+      "currency": "GBP",
+      "exchangeRate": 0.79,
+      "amountReceived": 7900.00,
+      "intermediaryBank": {
+        "name": "Correspondent Bank",
+        "swiftCode": "CORRUS33"
+      },
+      "trackingNumber": "WIRE-TRK-2024-12-002"
+    }
+  ],
+  "scheduledTransfers": [
+    {
+      "scheduledTransferId": "SCH-TRF-001",
+      "fromAccount": "1001-0001-0001",
+      "fromAccountName": "Primary Checking",
+      "toAccount": "2001-0001-0001",
+      "toAccountName": "Emergency Fund",
+      "amount": 1000.00,
+      "memo": "January savings",
+      "scheduledDate": "2025-01-01",
+      "status": "Scheduled",
+      "transferType": "Internal",
+      "canCancel": true,
+      "canModify": true
+    },
+    {
+      "scheduledTransferId": "SCH-TRF-002",
+      "fromAccount": "1001-0001-0002",
+      "fromAccountName": "Joint Checking",
+      "toExternalAccount": {
+        "accountId": "EXT-001",
+        "nickname": "My National Bank Checking"
+      },
+      "amount": 1500.00,
+      "memo": "Scheduled external transfer",
+      "scheduledDate": "2025-01-05",
+      "status": "Scheduled",
+      "transferType": "External",
+      "method": "ACH",
+      "processingDays": 2,
+      "estimatedCompletionDate": "2025-01-07",
+      "canCancel": true,
+      "canModify": true
+    }
+  ],
+  "recurringTransfers": [
+    {
+      "recurringTransferId": "REC-TRF-001",
+      "fromAccount": "1001-0001-0001",
+      "fromAccountName": "Primary Checking",
+      "toAccount": "2001-0001-0001",
+      "toAccountName": "Emergency Fund",
+      "amount": 1000.00,
+      "memo": "Monthly savings",
+      "frequency": "Monthly",
+      "dayOfMonth": 1,
+      "startDate": "2024-01-01",
+      "endDate": null,
+      "nextTransferDate": "2025-01-01",
+      "lastTransferDate": "2024-12-01",
+      "status": "Active",
+      "transferType": "Internal",
+      "totalTransfersMade": 12,
+      "canPause": true,
+      "canModify": true,
+      "canCancel": true
+    },
+    {
+      "recurringTransferId": "REC-TRF-002",
+      "fromAccount": "1001-0001-0001",
+      "fromAccountName": "Primary Checking",
+      "toAccount": "2001-0002-0001",
+      "toAccountName": "Vacation Fund",
+      "amount": 250.00,
+      "memo": "Vacation savings",
+      "frequency": "Biweekly",
+      "dayOfWeek": "Friday",
+      "startDate": "2024-01-05",
+      "endDate": null,
+      "nextTransferDate": "2025-01-03",
+      "lastTransferDate": "2024-12-20",
+      "status": "Active",
+      "transferType": "Internal",
+      "totalTransfersMade": 26,
+      "canPause": true,
+      "canModify": true,
+      "canCancel": true
+    },
+    {
+      "recurringTransferId": "REC-TRF-003",
+      "fromAccount": "1001-0001-0002",
+      "fromAccountName": "Joint Checking",
+      "toExternalAccount": {
+        "accountId": "EXT-002",
+        "nickname": "Regional CU Savings"
+      },
+      "amount": 500.00,
+      "memo": "Monthly external savings",
+      "frequency": "Monthly",
+      "dayOfMonth": 15,
+      "startDate": "2024-06-15",
+      "endDate": null,
+      "nextTransferDate": "2025-01-15",
+      "lastTransferDate": "2024-12-15",
+      "status": "Active",
+      "transferType": "External",
+      "method": "ACH",
+      "totalTransfersMade": 7,
+      "canPause": true,
+      "canModify": true,
+      "canCancel": true
+    }
+  ],
+  "failedTransfers": [
+    {
+      "transferId": "TRF-FAIL-001",
+      "fromAccount": "1001-0001-0001",
+      "fromAccountName": "Primary Checking",
+      "toAccount": "2001-0001-0001",
+      "toAccountName": "Emergency Fund",
+      "amount": 10000.00,
+      "memo": "Large transfer",
+      "transferDate": "2024-12-05T10:00:00Z",
+      "status": "Failed",
+      "failureReason": "Insufficient funds",
+      "failureCode": "NSF",
+      "confirmationNumber": "TRF-FAIL-2024-12-001",
+      "canRetry": true
+    },
+    {
+      "transferId": "TRF-FAIL-002",
+      "fromAccount": "1001-0001-0001",
+      "fromAccountName": "Primary Checking",
+      "toExternalAccount": {
+        "accountId": "EXT-004",
+        "nickname": "Invalid External Account"
+      },
+      "amount": 500.00,
+      "memo": "External transfer",
+      "transferDate": "2024-12-08T14:00:00Z",
+      "status": "Failed",
+      "failureReason": "Invalid account information",
+      "failureCode": "INVALID_ACCOUNT",
+      "confirmationNumber": "TRF-FAIL-2024-12-002",
+      "canRetry": false
+    }
+  ],
+  "cancelledTransfers": [
+    {
+      "transferId": "TRF-CANC-001",
+      "fromAccount": "1001-0001-0001",
+      "fromAccountName": "Primary Checking",
+      "toAccount": "2001-0001-0001",
+      "toAccountName": "Emergency Fund",
+      "amount": 750.00,
+      "memo": "Cancelled transfer",
+      "scheduledDate": "2024-12-28",
+      "cancelledDate": "2024-12-27T16:00:00Z",
+      "cancelledBy": "Customer",
+      "status": "Cancelled",
+      "reason": "Changed mind"
+    }
+  ],
+  "externalAccounts": [
+    {
+      "accountId": "EXT-001",
+      "bankName": "National Bank",
+      "accountNumber": "****8901",
+      "fullAccountNumber": "1234567890128901",
+      "accountType": "Checking",
+      "routingNumber": "987654321",
+      "nickname": "My National Bank Checking",
+      "status": "Active",
+      "addedDate": "2023-06-15",
+      "verificationMethod": "Micro-deposits",
+      "verificationStatus": "Verified",
+      "verifiedDate": "2023-06-20",
+      "lastUsedDate": "2024-12-10",
+      "canDelete": true
+    },
+    {
+      "accountId": "EXT-002",
+      "bankName": "Regional Credit Union",
+      "accountNumber": "****4567",
+      "fullAccountNumber": "9876543214567",
+      "accountType": "Savings",
+      "routingNumber": "456789123",
+      "nickname": "Regional CU Savings",
+      "status": "Active",
+      "addedDate": "2023-08-01",
+      "verificationMethod": "Instant verification",
+      "verificationStatus": "Verified",
+      "verifiedDate": "2023-08-01",
+      "lastUsedDate": "2024-12-18",
+      "canDelete": true
+    },
+    {
+      "accountId": "EXT-003",
+      "bankName": "Online Bank",
+      "accountNumber": "****2345",
+      "fullAccountNumber": "5555666677772345",
+      "accountType": "Savings",
+      "routingNumber": "234567891",
+      "nickname": "Online High Yield Savings",
+      "status": "Active",
+      "addedDate": "2024-11-01",
+      "verificationMethod": "Micro-deposits",
+      "verificationStatus": "Verified",
+      "verifiedDate": "2024-11-05",
+      "lastUsedDate": "2024-12-22",
+      "canDelete": true
+    },
+    {
+      "accountId": "EXT-004",
+      "bankName": "Another Bank",
+      "accountNumber": "****9999",
+      "fullAccountNumber": null,
+      "accountType": "Checking",
+      "routingNumber": "111222333",
+      "nickname": "Pending Verification Account",
+      "status": "Pending Verification",
+      "addedDate": "2024-12-20",
+      "verificationMethod": "Micro-deposits",
+      "verificationStatus": "Pending",
+      "verifiedDate": null,
+      "microDepositAmount1": 0.12,
+      "microDepositAmount2": 0.34,
+      "verificationDeadline": "2024-12-27",
+      "lastUsedDate": null,
+      "canDelete": true
+    }
+  ],
+  "transferLimits": {
+    "internal": {
+      "singleTransferMax": 100000.00,
+      "dailyLimit": 250000.00,
+      "monthlyLimit": 1000000.00,
+      "minimumTransfer": 1.00,
+      "fee": 0
+    },
+    "external": {
+      "singleTransferMax": 25000.00,
+      "dailyLimit": 50000.00,
+      "monthlyLimit": 100000.00,
+      "minimumTransfer": 10.00,
+      "fee": 0,
+      "processingDays": 2
+    },
+    "wire": {
+      "domestic": {
+        "singleTransferMax": 1000000.00,
+        "dailyLimit": 1000000.00,
+        "minimumTransfer": 100.00,
+        "fee": 25.00,
+        "sameDay": true
+      },
+      "international": {
+        "singleTransferMax": 500000.00,
+        "dailyLimit": 500000.00,
+        "minimumTransfer": 100.00,
+        "fee": 45.00,
+        "processingDays": 1
+      }
+    }
+  },
+  "transferFrequencies": [
+    {
+      "code": "ONCE",
+      "description": "One-time transfer",
+      "recurring": false
+    },
+    {
+      "code": "WEEKLY",
+      "description": "Every week",
+      "recurring": true
+    },
+    {
+      "code": "BIWEEKLY",
+      "description": "Every two weeks",
+      "recurring": true
+    },
+    {
+      "code": "MONTHLY",
+      "description": "Every month",
+      "recurring": true
+    },
+    {
+      "code": "QUARTERLY",
+      "description": "Every quarter",
+      "recurring": true
+    },
+    {
+      "code": "ANNUALLY",
+      "description": "Every year",
+      "recurring": true
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "debitCards": [
+    {
+      "cardId": "CARD-DB-001",
+      "cardNumber": "************4567",
+      "expiryDate": "12/27",
+      "cardholderName": "John Smith",
+      "linkedAccountNumber": "1001-0001-0001",
+      "status": "Active",
+      "type": "Visa Debit",
+      "isDigitalWalletEnabled": true,
+      "dailyLimit": 2500.00,
+      "dailyAtmLimit": 500.00,
+      "hasTravelNotice": false
+    },
+    {
+      "cardId": "CARD-DB-002",
+      "cardNumber": "************8899",
+      "expiryDate": "05/26",
+      "cardholderName": "Sarah Johnson",
+      "linkedAccountNumber": "1001-0001-0002",
+      "status": "Active",
+      "type": "MasterCard Debit",
+      "isDigitalWalletEnabled": false,
+      "dailyLimit": 3000.00,
+      "dailyAtmLimit": 1000.00
+    }
+  ],
+  "creditCards": [
+    {
+      "cardId": "CARD-CC-001",
+      "cardNumber": "************3456",
+      "expiryDate": "08/28",
+      "cardholderName": "John Smith",
+      "linkedLoanNumber": "CC-1234-5678-9012-3456",
+      "status": "Active",
+      "type": "Visa Signature",
+      "isDigitalWalletEnabled": true,
+      "rewardType": "Cashback"
+    }
+  ]
+}

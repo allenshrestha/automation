@@ -1,0 +1,553 @@
+{
+  "deposits": [
+    {
+      "transactionId": "TXN-DEP-001",
+      "accountNumber": "1001-0001-0001",
+      "type": "Deposit",
+      "subType": "Direct Deposit",
+      "amount": 3250.00,
+      "description": "Payroll - ABC Company",
+      "date": "2024-12-27T08:00:00Z",
+      "postDate": "2024-12-27T08:00:00Z",
+      "balance": 5432.50,
+      "status": "Posted",
+      "reference": "DD-2024-12-27-001",
+      "source": "ACH",
+      "merchant": "ABC Company Payroll"
+    },
+    {
+      "transactionId": "TXN-DEP-002",
+      "accountNumber": "1001-0001-0001",
+      "type": "Deposit",
+      "subType": "Check Deposit",
+      "amount": 500.00,
+      "description": "Check #1234",
+      "date": "2024-12-25T10:30:00Z",
+      "postDate": "2024-12-25T10:30:00Z",
+      "balance": 2682.50,
+      "status": "Posted",
+      "reference": "CHK-1234",
+      "checkNumber": "1234",
+      "source": "Branch"
+    },
+    {
+      "transactionId": "TXN-DEP-003",
+      "accountNumber": "2001-0001-0001",
+      "type": "Deposit",
+      "subType": "Transfer In",
+      "amount": 1000.00,
+      "description": "Transfer from Checking",
+      "date": "2024-12-20T14:15:00Z",
+      "postDate": "2024-12-20T14:15:00Z",
+      "balance": 15250.75,
+      "status": "Posted",
+      "reference": "TRF-IN-2024-12-20-001",
+      "source": "Internal Transfer",
+      "fromAccount": "1001-0001-0001"
+    },
+    {
+      "transactionId": "TXN-DEP-004",
+      "accountNumber": "1001-0001-0002",
+      "type": "Deposit",
+      "subType": "Cash Deposit",
+      "amount": 250.00,
+      "description": "ATM Cash Deposit",
+      "date": "2024-12-28T16:45:00Z",
+      "postDate": "2024-12-28T16:45:00Z",
+      "balance": 12750.00,
+      "status": "Posted",
+      "reference": "ATM-CD-2024-12-28-001",
+      "source": "ATM",
+      "atmId": "ATM-001",
+      "location": "123 Main St Branch"
+    },
+    {
+      "transactionId": "TXN-DEP-005",
+      "accountNumber": "1001-0001-0001",
+      "type": "Deposit",
+      "subType": "Mobile Check Deposit",
+      "amount": 750.00,
+      "description": "Mobile Check Deposit #5678",
+      "date": "2024-12-26T11:20:00Z",
+      "postDate": "2024-12-26T11:20:00Z",
+      "balance": 2182.50,
+      "status": "Pending",
+      "reference": "MCD-5678",
+      "checkNumber": "5678",
+      "source": "Mobile App",
+      "holdUntil": "2024-12-28T00:00:00Z"
+    }
+  ],
+  "withdrawals": [
+    {
+      "transactionId": "TXN-WD-001",
+      "accountNumber": "1001-0001-0001",
+      "type": "Withdrawal",
+      "subType": "ATM Withdrawal",
+      "amount": -200.00,
+      "description": "ATM Withdrawal",
+      "date": "2024-12-24T18:30:00Z",
+      "postDate": "2024-12-24T18:30:00Z",
+      "balance": 1982.50,
+      "status": "Posted",
+      "reference": "ATM-WD-2024-12-24-001",
+      "source": "ATM",
+      "atmId": "ATM-005",
+      "location": "Downtown Mall",
+      "fee": 0
+    },
+    {
+      "transactionId": "TXN-WD-002",
+      "accountNumber": "1001-0001-0001",
+      "type": "Withdrawal",
+      "subType": "Debit Card Purchase",
+      "amount": -85.50,
+      "description": "Grocery Store Purchase",
+      "date": "2024-12-23T12:15:00Z",
+      "postDate": "2024-12-23T12:15:00Z",
+      "balance": 2068.00,
+      "status": "Posted",
+      "reference": "DC-2024-12-23-001",
+      "merchant": "Fresh Foods Market",
+      "merchantCategory": "Groceries",
+      "cardLastFour": "4567"
+    },
+    {
+      "transactionId": "TXN-WD-003",
+      "accountNumber": "2001-0001-0001",
+      "type": "Withdrawal",
+      "subType": "Transfer Out",
+      "amount": -500.00,
+      "description": "Transfer to Checking",
+      "date": "2024-12-22T09:00:00Z",
+      "postDate": "2024-12-22T09:00:00Z",
+      "balance": 14750.75,
+      "status": "Posted",
+      "reference": "TRF-OUT-2024-12-22-001",
+      "toAccount": "1001-0001-0001"
+    },
+    {
+      "transactionId": "TXN-WD-004",
+      "accountNumber": "1001-0001-0001",
+      "type": "Withdrawal",
+      "subType": "Check Written",
+      "amount": -150.00,
+      "description": "Check #2345",
+      "date": "2024-12-21T00:00:00Z",
+      "postDate": "2024-12-21T14:30:00Z",
+      "balance": 2218.00,
+      "status": "Posted",
+      "reference": "CHK-2345",
+      "checkNumber": "2345",
+      "payee": "Electric Company"
+    },
+    {
+      "transactionId": "TXN-WD-005",
+      "accountNumber": "1001-0001-0001",
+      "type": "Withdrawal",
+      "subType": "Online Bill Payment",
+      "amount": -125.00,
+      "description": "Internet Service Payment",
+      "date": "2024-12-20T00:00:00Z",
+      "postDate": "2024-12-20T00:00:00Z",
+      "balance": 2343.00,
+      "status": "Posted",
+      "reference": "BP-2024-12-20-001",
+      "payee": "FastNet Internet",
+      "confirmationNumber": "BP-123456"
+    }
+  ],
+  "transfers": [
+    {
+      "transactionId": "TXN-TRF-001",
+      "fromAccount": "1001-0001-0001",
+      "toAccount": "2001-0001-0001",
+      "type": "Transfer",
+      "subType": "Internal Transfer",
+      "amount": 1000.00,
+      "description": "Monthly Savings Transfer",
+      "date": "2024-12-01T00:00:00Z",
+      "postDate": "2024-12-01T00:00:00Z",
+      "status": "Posted",
+      "reference": "INT-TRF-2024-12-01-001",
+      "recurring": true,
+      "frequency": "Monthly"
+    },
+    {
+      "transactionId": "TXN-TRF-002",
+      "fromAccount": "1001-0001-0001",
+      "toAccount": "1001-0002-0001",
+      "type": "Transfer",
+      "subType": "External Transfer",
+      "amount": 500.00,
+      "description": "Transfer to Other Bank",
+      "date": "2024-12-15T10:00:00Z",
+      "postDate": "2024-12-17T00:00:00Z",
+      "status": "Posted",
+      "reference": "EXT-TRF-2024-12-15-001",
+      "externalBankName": "National Bank",
+      "externalAccountLast4": "8901",
+      "processingDays": 2
+    },
+    {
+      "transactionId": "TXN-TRF-003",
+      "fromAccount": "1001-0001-0002",
+      "toAccount": "1001-0001-0001",
+      "type": "Transfer",
+      "subType": "Internal Transfer",
+      "amount": 250.00,
+      "description": "Quick Transfer",
+      "date": "2024-12-28T15:30:00Z",
+      "postDate": "2024-12-28T15:30:00Z",
+      "status": "Pending",
+      "reference": "INT-TRF-2024-12-28-001"
+    },
+    {
+      "transactionId": "TXN-TRF-004",
+      "fromAccount": "1001-0001-0003",
+      "toAccount": "9999-9999-9999",
+      "type": "Transfer",
+      "subType": "Wire Transfer",
+      "amount": 5000.00,
+      "description": "Wire Transfer to Vendor",
+      "date": "2024-12-27T11:00:00Z",
+      "postDate": "2024-12-27T14:00:00Z",
+      "status": "Posted",
+      "reference": "WIRE-2024-12-27-001",
+      "recipientName": "ABC Suppliers Inc",
+      "recipientBank": "International Bank",
+      "recipientBankRouting": "987654321",
+      "recipientAccount": "9999999999",
+      "swiftCode": "INTLUS33",
+      "wireFee": 25.00
+    }
+  ],
+  "fees": [
+    {
+      "transactionId": "TXN-FEE-001",
+      "accountNumber": "1001-0001-0002",
+      "type": "Fee",
+      "subType": "Monthly Maintenance Fee",
+      "amount": -5.00,
+      "description": "Monthly Account Fee",
+      "date": "2024-12-01T00:00:00Z",
+      "postDate": "2024-12-01T00:00:00Z",
+      "balance": 12495.00,
+      "status": "Posted",
+      "reference": "FEE-MAINT-2024-12"
+    },
+    {
+      "transactionId": "TXN-FEE-002",
+      "accountNumber": "1001-0001-0001",
+      "type": "Fee",
+      "subType": "Overdraft Fee",
+      "amount": -35.00,
+      "description": "Overdraft Fee",
+      "date": "2024-11-15T00:00:00Z",
+      "postDate": "2024-11-15T00:00:00Z",
+      "balance": 1947.50,
+      "status": "Posted",
+      "reference": "FEE-OD-2024-11-15",
+      "relatedTransaction": "TXN-WD-025"
+    },
+    {
+      "transactionId": "TXN-FEE-003",
+      "accountNumber": "1001-0001-0001",
+      "type": "Fee",
+      "subType": "Foreign ATM Fee",
+      "amount": -3.50,
+      "description": "Out-of-Network ATM Fee",
+      "date": "2024-12-20T00:00:00Z",
+      "postDate": "2024-12-20T00:00:00Z",
+      "balance": 2339.50,
+      "status": "Posted",
+      "reference": "FEE-ATM-2024-12-20",
+      "atmOperator": "QuickCash ATM Network"
+    },
+    {
+      "transactionId": "TXN-FEE-004",
+      "accountNumber": "1001-0001-0003",
+      "type": "Fee",
+      "subType": "Wire Transfer Fee",
+      "amount": -25.00,
+      "description": "Outgoing Wire Transfer Fee",
+      "date": "2024-12-27T11:00:00Z",
+      "postDate": "2024-12-27T14:00:00Z",
+      "balance": 40655.25,
+      "status": "Posted",
+      "reference": "FEE-WIRE-2024-12-27",
+      "relatedTransaction": "TXN-TRF-004"
+    }
+  ],
+  "interest": [
+    {
+      "transactionId": "TXN-INT-001",
+      "accountNumber": "2001-0001-0001",
+      "type": "Interest",
+      "subType": "Interest Earned",
+      "amount": 31.25,
+      "description": "Monthly Interest",
+      "date": "2024-12-31T23:59:59Z",
+      "postDate": "2024-12-31T23:59:59Z",
+      "balance": 15282.00,
+      "status": "Posted",
+      "reference": "INT-2024-12",
+      "interestRate": 2.50,
+      "calculationMethod": "Daily Balance"
+    },
+    {
+      "transactionId": "TXN-INT-002",
+      "accountNumber": "3001-0001-0001",
+      "type": "Interest",
+      "subType": "Interest Earned",
+      "amount": 177.08,
+      "description": "Monthly Interest",
+      "date": "2024-12-31T23:59:59Z",
+      "postDate": "2024-12-31T23:59:59Z",
+      "balance": 50177.08,
+      "status": "Posted",
+      "reference": "INT-2024-12",
+      "interestRate": 4.25,
+      "calculationMethod": "Daily Balance"
+    },
+    {
+      "transactionId": "TXN-INT-003",
+      "accountNumber": "4001-0001-0001",
+      "type": "Interest",
+      "subType": "Interest Earned",
+      "amount": 72.92,
+      "description": "Monthly CD Interest",
+      "date": "2024-12-31T23:59:59Z",
+      "postDate": "2024-12-31T23:59:59Z",
+      "balance": 25929.17,
+      "status": "Posted",
+      "reference": "INT-CD-2024-12",
+      "interestRate": 3.50,
+      "calculationMethod": "Compound Monthly"
+    }
+  ],
+  "pendingTransactions": [
+    {
+      "transactionId": "TXN-PND-001",
+      "accountNumber": "1001-0001-0001",
+      "type": "Withdrawal",
+      "subType": "Debit Card Purchase",
+      "amount": -45.00,
+      "description": "Gas Station Purchase",
+      "date": "2024-12-29T08:15:00Z",
+      "status": "Pending",
+      "merchant": "QuickFuel Gas",
+      "merchantCategory": "Gas Stations",
+      "cardLastFour": "4567",
+      "estimatedPostDate": "2024-12-30T00:00:00Z"
+    },
+    {
+      "transactionId": "TXN-PND-002",
+      "accountNumber": "1001-0001-0002",
+      "type": "Deposit",
+      "subType": "Check Deposit",
+      "amount": 1250.00,
+      "description": "Check #9876",
+      "date": "2024-12-29T14:30:00Z",
+      "status": "Pending",
+      "checkNumber": "9876",
+      "source": "Mobile App",
+      "holdReason": "Large check hold",
+      "estimatedPostDate": "2025-01-02T00:00:00Z"
+    },
+    {
+      "transactionId": "TXN-PND-003",
+      "accountNumber": "1001-0001-0001",
+      "type": "Withdrawal",
+      "subType": "Online Bill Payment",
+      "amount": -89.99,
+      "description": "Credit Card Payment",
+      "date": "2024-12-29T00:00:00Z",
+      "status": "Pending",
+      "payee": "Major Credit Card Co",
+      "scheduledDate": "2024-12-30T00:00:00Z",
+      "confirmationNumber": "BP-789012"
+    }
+  ],
+  "voidedTransactions": [
+    {
+      "transactionId": "TXN-VD-001",
+      "accountNumber": "1001-0001-0001",
+      "type": "Withdrawal",
+      "subType": "Check Written",
+      "amount": -75.00,
+      "description": "Check #2344 - VOIDED",
+      "date": "2024-12-18T00:00:00Z",
+      "postDate": "2024-12-19T10:00:00Z",
+      "voidDate": "2024-12-19T15:30:00Z",
+      "status": "Voided",
+      "reference": "CHK-2344-VOID",
+      "checkNumber": "2344",
+      "voidReason": "Stop payment requested"
+    }
+  ],
+  "disputedTransactions": [
+    {
+      "transactionId": "TXN-DSP-001",
+      "accountNumber": "1001-0001-0001",
+      "type": "Withdrawal",
+      "subType": "Debit Card Purchase",
+      "amount": -250.00,
+      "description": "Online Purchase - DISPUTED",
+      "date": "2024-12-10T16:45:00Z",
+      "postDate": "2024-12-10T16:45:00Z",
+      "status": "Disputed",
+      "merchant": "Online Retailer XYZ",
+      "cardLastFour": "4567",
+      "disputeDate": "2024-12-12T09:00:00Z",
+      "disputeReason": "Item not received",
+      "disputeStatus": "Under Investigation",
+      "caseNumber": "DISP-2024-12-001",
+      "provisionalCreditIssued": true,
+      "provisionalCreditAmount": 250.00
+    }
+  ],
+  "recurringTransactions": [
+    {
+      "recurringId": "REC-001",
+      "accountNumber": "1001-0001-0001",
+      "type": "Withdrawal",
+      "subType": "Automatic Payment",
+      "amount": -99.99,
+      "description": "Streaming Service Subscription",
+      "frequency": "Monthly",
+      "dayOfMonth": 1,
+      "startDate": "2024-01-01",
+      "endDate": null,
+      "status": "Active",
+      "merchant": "StreamFlix",
+      "nextPaymentDate": "2025-01-01",
+      "lastPaymentDate": "2024-12-01",
+      "lastTransactionId": "TXN-REC-001-12"
+    },
+    {
+      "recurringId": "REC-002",
+      "accountNumber": "1001-0001-0001",
+      "type": "Transfer",
+      "subType": "Automatic Savings",
+      "amount": 500.00,
+      "description": "Automatic Transfer to Savings",
+      "frequency": "Biweekly",
+      "dayOfWeek": "Friday",
+      "startDate": "2024-01-05",
+      "endDate": null,
+      "status": "Active",
+      "toAccount": "2001-0001-0001",
+      "nextTransferDate": "2025-01-03",
+      "lastTransferDate": "2024-12-20",
+      "lastTransactionId": "TXN-REC-002-26"
+    },
+    {
+      "recurringId": "REC-003",
+      "accountNumber": "1001-0001-0002",
+      "type": "Withdrawal",
+      "subType": "Bill Payment",
+      "amount": -150.00,
+      "description": "Utility Bill Payment",
+      "frequency": "Monthly",
+      "dayOfMonth": 15,
+      "startDate": "2024-01-15",
+      "endDate": null,
+      "status": "Active",
+      "payee": "City Utilities",
+      "nextPaymentDate": "2025-01-15",
+      "lastPaymentDate": "2024-12-15",
+      "lastTransactionId": "TXN-REC-003-12"
+    }
+  ],
+  "scheduledTransactions": [
+    {
+      "scheduledId": "SCH-001",
+      "accountNumber": "1001-0001-0001",
+      "type": "Transfer",
+      "subType": "One-Time Transfer",
+      "amount": 2000.00,
+      "description": "Tax Payment Transfer",
+      "scheduledDate": "2025-01-15",
+      "status": "Scheduled",
+      "toAccount": "2001-0001-0001",
+      "canCancel": true,
+      "canModify": true
+    },
+    {
+      "scheduledId": "SCH-002",
+      "accountNumber": "1001-0001-0001",
+      "type": "Withdrawal",
+      "subType": "Bill Payment",
+      "amount": 500.00,
+      "description": "Insurance Premium",
+      "scheduledDate": "2025-01-05",
+      "status": "Scheduled",
+      "payee": "Insurance Company",
+      "confirmationNumber": "SCH-BP-001",
+      "canCancel": true,
+      "canModify": true
+    }
+  ],
+  "transactionCategories": [
+    "Groceries",
+    "Gas",
+    "Dining",
+    "Shopping",
+    "Utilities",
+    "Rent/Mortgage",
+    "Insurance",
+    "Healthcare",
+    "Entertainment",
+    "Transportation",
+    "Travel",
+    "Education",
+    "Personal Care",
+    "Home Improvement",
+    "Gifts/Donations",
+    "Subscriptions",
+    "Other"
+  ],
+  "merchantCategories": [
+    {
+      "code": "5411",
+      "description": "Grocery Stores, Supermarkets"
+    },
+    {
+      "code": "5541",
+      "description": "Service Stations (Gas)"
+    },
+    {
+      "code": "5812",
+      "description": "Eating Places, Restaurants"
+    },
+    {
+      "code": "5999",
+      "description": "Miscellaneous and Specialty Retail"
+    },
+    {
+      "code": "4900",
+      "description": "Utilities"
+    },
+    {
+      "code": "6011",
+      "description": "Financial Institutions"
+    },
+    {
+      "code": "5912",
+      "description": "Drug Stores, Pharmacies"
+    },
+    {
+      "code": "5944",
+      "description": "Jewelry, Watch, Clock Stores"
+    },
+    {
+      "code": "7011",
+      "description": "Hotels, Motels, Resorts"
+    },
+    {
+      "code": "5732",
+      "description": "Electronics Stores"
+    }
+  ]
+}
