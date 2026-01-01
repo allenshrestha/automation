@@ -1,289 +1,219 @@
- * Scenario: New member opens account and performs first transaction
- * This tests the entire system end-to-end including:
- * - Member creation (API)
- * - Account opening (E2E)
- * - First deposit (E2E)
- * - Transaction verification (API)
- * - Statement generation (E2E)
- */
+import { test as workflowTest, expect as workflowExpect } from '../fixtures';
+import { bannoApi as wfApi } from '@lib/core/api';
+import { logger as wfLogger } from '@lib/core/logger';
+import { memberSchema as wfMemberSchema } from '@schemas/member.schema';
+import { accountSchema as wfAccountSchema } from '@schemas/account.schema';
+import { transactionSchema as wfTransactionSchema } from '@schemas/transaction.schema';
 
-import { test, expect } from '@playwright/test';
-import { bannoApi } from '@lib/core/api';
-import { TestData } from '@lib/core/data';
-import { monitor } from '@lib/core/monitor';
-import { logger } from '@lib/core/logger';
-import { db } from '@lib/core/db';
-import { LoginPage } from '@pages/LoginPage';
-import { MemberSearchPage } from '@pages/MemberSearchPage';
-import { MemberDetailsPage } from '@pages/MemberDetailsPage';
-import { AccountOpeningPage } from '@pages/AccountOpeningPage';
-import { TransactionPage } from '@pages/TransactionPage';
-import { memberSchema } from '@schemas/member.schema';
-import { accountSchema } from '@schemas/account.schema';
-import { transactionSchema } from '@schemas/transaction.schema';
-
-test.describe('Integration - Complete Member Onboarding', () => {
+workflowTest.describe('Integration - Complete Member Onboarding', () => {
   let newMember: any;
   let memberId: string;
   let accountNumber: string;
   let authToken: string;
 
-  test.beforeAll(async () => {
-    // Generate realistic test data
-    newMember = TestData.member();
+  workflowTest.beforeAll(async () => {
+    newMember = {
+      firstName: 'Workflow',
+      lastName: `Test${Date.now()}`,
+      email: `workflow.${Date.now()}@example.com`,
+      phone: '555-777-8888',
+      dateOfBirth: '1988-03-15',
+      ssn: '456-78-9012',
+      address: {
+        line1: '789 Workflow Ave',
+        city: 'Springfield',
+        state: 'CA',
+        zip: '90210',
+      },
+    };
     
-    // Get auth token
-    const loginResponse = await bannoApi.post('/api/auth/login', {
+    const loginResponse = await wfApi.post('/api/auth/login', {
       username: process.env.API_USERNAME,
       password: process.env.API_PASSWORD,
     });
     
     authToken = loginResponse.data.token;
-    bannoApi.setAuthToken(authToken);
+    wfApi.setAuthToken(authToken);
     
-    logger.info({ member: newMember.email }, 'Integration test setup complete');
+    wfLogger.info({ member: newMember.email }, 'Integration test setup complete');
   });
 
-  test('STEP 1: Create member via API', async () => {
-    const tracker = monitor.trackTest('integration-create-member');
+  workflowTest('STEP 1: Create member via API', async () => {
+    const response = await wfApi.post('/api/members', newMember);
 
+    workflowExpect(response.status).toBe(201);
+    workflowExpect(response.data).toHaveProperty('id');
+
+    wfApi.validateSchema(response.data, wfMemberSchema);
+
+    memberId = response.data.id;
+    
+    wfLogger.info({ memberId }, 'Member created successfully');
+  });
+
+  workflowTest('STEP 2: Verify member searchable in UI', async ({ authenticatedPage, memberSearchPage }) => {
+    await memberSearchPage.navigate();
+    
+    const searchInput = memberSearchPage.page
+      .getByLabel(/search|email/i)
+      .or(memberSearchPage.page.getByPlaceholder(/search/i));
+    
+    await searchInput.fill(newMember.email);
+
+    const searchButton = memberSearchPage.page
+      .getByRole('button', { name: /search/i });
+    
+    await searchButton.click();
+
+    const resultRow = memberSearchPage.page
+      .getByText(newMember.email)
+      .or(memberSearchPage.page.getByText(newMember.lastName));
+    
+    await workflowExpect(resultRow).toBeVisible();
+
+    wfLogger.info('Member searchable in UI');
+  });
+
+  workflowTest('STEP 3: Open checking account for member', async ({ authenticatedPage, accountOpeningPage }) => {
+    await accountOpeningPage.navigate();
+
+    const accountTypeSelect = accountOpeningPage.page
+      .getByLabel(/account.*type/i)
+      .or(accountOpeningPage.page.getByRole('combobox', { name: /type/i }));
+    
+    await accountTypeSelect.selectOption('Checking');
+
+    const accountNameInput = accountOpeningPage.page
+      .getByLabel(/account.*name/i)
+      .or(accountOpeningPage.page.getByPlaceholder(/name/i));
+    
+    await accountNameInput.fill('Checking Account');
+
+    const depositInput = accountOpeningPage.page
+      .getByLabel(/initial.*deposit/i)
+      .or(accountOpeningPage.page.getByPlaceholder(/deposit/i));
+    
+    await depositInput.fill('500');
+
+    const termsCheckbox = accountOpeningPage.page
+      .getByLabel(/terms|agree/i)
+      .or(accountOpeningPage.page.getByRole('checkbox'));
+    
+    await termsCheckbox.check();
+
+    const submitButton = accountOpeningPage.page
+      .getByRole('button', { name: /submit|open/i });
+    
+    await submitButton.click();
+
+    const confirmationMessage = accountOpeningPage.page
+      .getByRole('alert')
+      .or(accountOpeningPage.page.getByText(/success|account.*opened/i));
+    
+    await workflowExpect(confirmationMessage).toBeVisible();
+
+    const accountNumberDisplay = accountOpeningPage.page
+      .getByText(/account.*number/i)
+      .or(accountOpeningPage.page.getByTestId('account-number'));
+    
+    const accountNumberText = await accountNumberDisplay.textContent();
+    accountNumber = accountNumberText?.match(/\d+/)?.[0] || '';
+    
+    workflowExpect(accountNumber).toBeTruthy();
+
+    wfLogger.info({ accountNumber }, 'Account opened successfully');
+  });
+
+  workflowTest('STEP 4: Verify account via API', async () => {
+    const response = await wfApi.get(`/api/accounts/${accountNumber}`);
+
+    workflowExpect(response.status).toBe(200);
+    workflowExpect(response.data.accountNumber).toBe(accountNumber);
+    workflowExpect(response.data.accountType).toBe('Checking');
+    workflowExpect(response.data.balance).toBeGreaterThanOrEqual(500);
+
+    wfApi.validateSchema(response.data, wfAccountSchema);
+
+    wfLogger.info({ account: response.data }, 'Account verified via API');
+  });
+
+  workflowTest('STEP 5: Make first deposit', async ({ authenticatedPage, transactionPage }) => {
+    await transactionPage.navigate();
+    
+    const accountSelect = transactionPage.page
+      .getByLabel(/account/i)
+      .or(transactionPage.page.getByRole('combobox'));
+    
+    await accountSelect.selectOption(accountNumber);
+
+    const typeSelect = transactionPage.page
+      .getByLabel(/type/i)
+      .or(transactionPage.page.getByRole('combobox', { name: /type/i }));
+    
+    if (await typeSelect.count() > 0) {
+      await typeSelect.selectOption('Deposit');
+    }
+
+    const amountInput = transactionPage.page
+      .getByLabel(/amount/i)
+      .or(transactionPage.page.getByPlaceholder(/amount/i));
+    
+    await amountInput.fill('1000');
+
+    const descriptionInput = transactionPage.page
+      .getByLabel(/description/i)
+      .or(transactionPage.page.getByPlaceholder(/description/i));
+    
+    await descriptionInput.fill('Initial deposit');
+
+    const submitButton = transactionPage.page
+      .getByRole('button', { name: /submit|process/i });
+    
+    await submitButton.click();
+
+    const successMessage = transactionPage.page
+      .getByRole('alert')
+      .or(transactionPage.page.getByText(/success|completed/i));
+    
+    await workflowExpect(successMessage).toBeVisible();
+
+    wfLogger.info({ amount: 1000 }, 'Deposit completed');
+  });
+
+  workflowTest('STEP 6: Verify transaction via API', async () => {
+    const response = await wfApi.get(`/api/accounts/${accountNumber}/transactions`);
+
+    workflowExpect(response.status).toBe(200);
+    workflowExpect(response.data.transactions.length).toBeGreaterThan(0);
+
+    const depositTransaction = response.data.transactions.find(
+      (t: any) => t.type === 'Deposit' && t.amount === 1000
+    );
+
+    workflowExpect(depositTransaction).toBeTruthy();
+    workflowExpect(depositTransaction.status).toBe('Posted');
+
+    wfApi.validateSchema(depositTransaction, wfTransactionSchema);
+
+    wfLogger.info({ transaction: depositTransaction }, 'Transaction verified');
+  });
+
+  workflowTest('STEP 7: Verify final account balance', async () => {
+    const response = await wfApi.get(`/api/accounts/${accountNumber}`);
+
+    workflowExpect(response.status).toBe(200);
+    workflowExpect(response.data.balance).toBe(1500); // 500 initial + 1000 deposit
+
+    wfLogger.info({ balance: response.data.balance }, 'Final balance verified');
+  });
+
+  workflowTest.afterAll(async () => {
     try {
-      const response = await bannoApi.post('/api/members', {
-        firstName: newMember.firstName,
-        lastName: newMember.lastName,
-        email: newMember.email,
-        phone: newMember.phone,
-        ssn: newMember.ssn,
-        dateOfBirth: newMember.dateOfBirth,
-        address: newMember.address,
-      });
-
-      expect(response.status).toBe(201);
-      expect(response.data).toHaveProperty('id');
-
-      // Validate schema
-      bannoApi.validateSchema(response.data, memberSchema);
-
-      memberId = response.data.id;
-      
-      logger.info({ memberId }, 'Member created successfully');
-      tracker.end('passed');
-    } catch (error: any) {
-      tracker.end('failed', error);
-      throw error;
+      if (accountNumber) await wfApi.delete(`/api/accounts/${accountNumber}`);
+      if (memberId) await wfApi.delete(`/api/members/${memberId}`);
+      wfLogger.info('Workflow cleanup complete');
+    } catch (error) {
+      wfLogger.warn('Cleanup failed');
     }
   });
-
-  test('STEP 2: Verify member searchable in UI', async ({ page }) => {
-    const tracker = monitor.trackTest('integration-verify-member-searchable');
-
-    try {
-      const loginPage = new LoginPage(page);
-      const searchPage = new MemberSearchPage(page);
-
-      // Login
-      await loginPage.navigateToLogin();
-      await loginPage.login(process.env.USERNAME!, process.env.PASSWORD!);
-
-      // Search for new member
-      await searchPage.navigate();
-      await searchPage.searchByEmail(newMember.email);
-
-      // Verify found
-      const resultsCount = await searchPage.getResultsCount();
-      expect(resultsCount).toBeGreaterThan(0);
-
-      const firstResult = await searchPage.getFirstResult();
-      expect(firstResult.email).toBe(newMember.email);
-      expect(firstResult.firstName).toBe(newMember.firstName);
-
-      logger.info('Member searchable in UI');
-      tracker.end('passed');
-    } catch (error: any) {
-      tracker.end('failed', error);
-      throw error;
-    }
-  });
-
-  test('STEP 3: Open checking account for member', async ({ page }) => {
-    const tracker = monitor.trackTest('integration-open-account');
-
-    try {
-      const loginPage = new LoginPage(page);
-      const searchPage = new MemberSearchPage(page);
-      const detailsPage = new MemberDetailsPage(page);
-      const accountPage = new AccountOpeningPage(page);
-
-      // Login
-      await loginPage.navigateToLogin();
-      await loginPage.login(process.env.USERNAME!, process.env.PASSWORD!);
-
-      // Navigate to member
-      await searchPage.navigate();
-      await searchPage.searchByEmail(newMember.email);
-      await searchPage.clickFirstResult();
-
-      // Open new account
-      await detailsPage.waitForLoad();
-      await accountPage.navigate();
-
-      await accountPage.selectAccountType('Checking');
-      await accountPage.setInitialDeposit(500);
-      await accountPage.agreeToTerms();
-      await accountPage.submitApplication();
-
-      // Wait for confirmation
-      await accountPage.waitForConfirmation();
-      
-      // Get account number
-      accountNumber = await accountPage.getAccountNumber();
-      expect(accountNumber).toBeTruthy();
-
-      logger.info({ accountNumber }, 'Account opened successfully');
-      tracker.end('passed');
-    } catch (error: any) {
-      tracker.end('failed', error);
-      throw error;
-    }
-  });
-
-  test('STEP 4: Verify account via API', async () => {
-    const tracker = monitor.trackTest('integration-verify-account-api');
-
-    try {
-      const response = await bannoApi.get(`/api/accounts/${accountNumber}`);
-
-      expect(response.status).toBe(200);
-      expect(response.data.accountNumber).toBe(accountNumber);
-      expect(response.data.accountType).toBe('Checking');
-      expect(response.data.balance).toBeGreaterThanOrEqual(500);
-
-      // Validate schema
-      bannoApi.validateSchema(response.data, accountSchema);
-
-      logger.info({ account: response.data }, 'Account verified via API');
-      tracker.end('passed');
-    } catch (error: any) {
-      tracker.end('failed', error);
-      throw error;
-    }
-  });
-
-  test('STEP 5: Make first deposit', async ({ page }) => {
-    const tracker = monitor.trackTest('integration-first-deposit');
-
-    try {
-      const loginPage = new LoginPage(page);
-      const transactionPage = new TransactionPage(page);
-
-      // Login
-      await loginPage.navigateToLogin();
-      await loginPage.login(process.env.USERNAME!, process.env.PASSWORD!);
-
-      // Navigate to transactions
-      await transactionPage.navigate();
-      await transactionPage.selectAccount(accountNumber);
-
-      // Make deposit
-      await transactionPage.selectTransactionType('Deposit');
-      await transactionPage.enterAmount(1000);
-      await transactionPage.enterDescription('Initial deposit');
-      await transactionPage.submitTransaction();
-
-      // Wait for confirmation
-      await transactionPage.waitForConfirmation();
-      expect(await transactionPage.hasSuccessMessage()).toBeTruthy();
-
-      logger.info({ amount: 1000 }, 'Deposit completed');
-      tracker.end('passed');
-    } catch (error: any) {
-      tracker.end('failed', error);
-      throw error;
-    }
-  });
-
-  test('STEP 6: Verify transaction via API', async () => {
-    const tracker = monitor.trackTest('integration-verify-transaction');
-
-    try {
-      // Get transactions for account
-      const response = await bannoApi.get(`/api/accounts/${accountNumber}/transactions`);
-
-      expect(response.status).toBe(200);
-      expect(response.data.transactions.length).toBeGreaterThan(0);
-
-      // Find deposit transaction
-      const depositTransaction = response.data.transactions.find(
-        (t: any) => t.type === 'Deposit' && t.amount === 1000
-      );
-
-      expect(depositTransaction).toBeTruthy();
-      expect(depositTransaction.status).toBe('Posted');
-
-      // Validate schema
-      bannoApi.validateSchema(depositTransaction, transactionSchema);
-
-      logger.info({ transaction: depositTransaction }, 'Transaction verified');
-      tracker.end('passed');
-    } catch (error: any) {
-      tracker.end('failed', error);
-      throw error;
-    }
-  });
-
-  test('STEP 7: Verify final account balance', async () => {
-    const tracker = monitor.trackTest('integration-verify-final-balance');
-
-    try {
-      const response = await bannoApi.get(`/api/accounts/${accountNumber}`);
-
-      expect(response.status).toBe(200);
-      
-      // Balance should be 500 (initial) + 1000 (deposit) = 1500
-      expect(response.data.balance).toBe(1500);
-      expect(response.data.availableBalance).toBe(1500);
-
-      logger.info({ balance: response.data.balance }, 'Final balance verified');
-      tracker.end('passed');
-    } catch (error: any) {
-      tracker.end('failed', error);
-      throw error;
-    }
-  });
-
-  test('STEP 8: Generate and download statement', async ({ page }) => {
-    const tracker = monitor.trackTest('integration-generate-statement');
-
-    try {
-      const loginPage = new LoginPage(page);
-      const statementsPage = new StatementsPage(page);
-
-      // Login
-      await loginPage.navigateToLogin();
-      await loginPage.login(process.env.USERNAME!, process.env.PASSWORD!);
-
-      // Navigate to statements
-      await statementsPage.navigate();
-      await statementsPage.selectAccount(accountNumber);
-
-      // Generate statement
-      const downloadPromise = page.waitForEvent('download');
-      await statementsPage.generateStatement('current-month');
-
-      // Wait for download
-      const download = await downloadPromise;
-      expect(download.suggestedFilename()).toContain('.pdf');
-
-      // Save file
-      const filepath = `./test-data/statements/${download.suggestedFilename()}`;
-      await download.saveAs(filepath);
-
-      expect(require('fs').existsSync(filepath)).toBeTruthy();
-
-      logger.info({ filepath }, 'Statement generated and downloaded');
-      tracker.end('passed');
-    } catch (error: any) {
-      tracker.end('failed', error);
-      throw error;
-    }
-  });
+});

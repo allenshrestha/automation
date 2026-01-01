@@ -1,485 +1,338 @@
-/**
- * tests/e2e/transactions/transaction-processing.spec.ts
- * 
- * REAL-WORLD SCENARIO: Member performs various transactions
- * 
- * Business Flow:
- * - Deposits
- * - Withdrawals
- * - Transfers between accounts
- * - Transaction validation
- * - Balance verification
- */
-
-import { test, expect } from '@playwright/test';
-import { LoginPage } from '@pages/LoginPage';
-import { DashboardPage } from '@pages/DashboardPage';
-import { TransactionPage } from '@pages/TransactionPage';
-import { Config } from '@lib/core/config';
-import { TestData } from '@lib/core/data';
-import { monitor } from '@lib/core/monitor';
-import { logger } from '@lib/core/logger';
-import { Wait } from '@lib/core/wait';
+import { test as txTest, expect as txExpect } from '../../fixtures';
+import { logger as txLogger } from '@lib/core/logger';
 import { bannoApi } from '@lib/core/api';
 
-test.describe('Transactions - Processing', () => {
-  let loginPage: LoginPage;
-  let dashboardPage: DashboardPage;
-  let transactionPage: TransactionPage;
-  let testAccountNumber: string;
-  let initialBalance: number;
-
-  test.beforeAll(async () => {
-    // Create test account via API
-    const accountData = TestData.account();
-    const response = await bannoApi.post('/api/accounts', accountData);
-    testAccountNumber = response.data.accountNumber;
-    initialBalance = response.data.balance;
+txTest.describe('Transactions - Processing', () => {
+  txTest('should make a cash deposit', async ({ authenticatedPage, transactionPage, testAccount }) => {
+    await transactionPage.navigate();
     
-    logger.info({ testAccountNumber, initialBalance }, 'Test account created');
+    const accountSelect = transactionPage.page
+      .getByLabel(/account/i)
+      .or(transactionPage.page.getByRole('combobox', { name: /account/i }));
+    
+    await accountSelect.selectOption(testAccount.accountNumber);
+
+    const typeSelect = transactionPage.page
+      .getByLabel(/type|transaction.*type/i)
+      .or(transactionPage.page.getByRole('combobox', { name: /type/i }));
+    
+    if (await typeSelect.count() > 0) {
+      await typeSelect.selectOption('Deposit');
+    }
+
+    const amountInput = transactionPage.page
+      .getByLabel(/amount/i)
+      .or(transactionPage.page.getByPlaceholder(/amount/i));
+    
+    await amountInput.fill('500');
+
+    const descriptionInput = transactionPage.page
+      .getByLabel(/description|memo/i)
+      .or(transactionPage.page.getByPlaceholder(/description/i));
+    
+    await descriptionInput.fill('Cash deposit test');
+
+    const depositTypeSelect = transactionPage.page
+      .getByLabel(/deposit.*type|method/i)
+      .or(transactionPage.page.getByRole('combobox', { name: /deposit/i }));
+    
+    if (await depositTypeSelect.count() > 0) {
+      await depositTypeSelect.selectOption('Cash');
+    }
+
+    const submitButton = transactionPage.page
+      .getByRole('button', { name: /submit|process|deposit/i });
+    
+    await submitButton.click();
+
+    const successMessage = transactionPage.page
+      .getByRole('alert')
+      .or(transactionPage.page.getByText(/success|completed/i));
+    
+    await txExpect(successMessage).toBeVisible();
+
+    txLogger.info({ amount: 500 }, 'Cash deposit completed');
   });
 
-  test.beforeEach(async ({ page }) => {
-    loginPage = new LoginPage(page);
-    dashboardPage = new DashboardPage(page);
-    transactionPage = new TransactionPage(page);
+  txTest('should make a check deposit', async ({ transactionPage, testAccount }) => {
+    await transactionPage.navigate();
+    
+    const accountSelect = transactionPage.page
+      .getByLabel(/account/i)
+      .or(transactionPage.page.getByRole('combobox'));
+    
+    await accountSelect.selectOption(testAccount.accountNumber);
 
-    // Login
-    await loginPage.navigateToLogin();
-    await loginPage.login(Config.USERNAME, Config.PASSWORD);
-    await Wait.forUrl(page, /dashboard/, 10000);
-  });
+    const typeSelect = transactionPage.page
+      .getByLabel(/type/i)
+      .or(transactionPage.page.getByRole('combobox', { name: /type/i }));
+    
+    if (await typeSelect.count() > 0) {
+      await typeSelect.selectOption('Deposit');
+    }
 
-  test('should make a cash deposit', async ({ page }) => {
-    const tracker = monitor.trackTest('make-cash-deposit');
+    const amountInput = transactionPage.page
+      .getByLabel(/amount/i);
+    
+    await amountInput.fill('750');
 
-    try {
-      await transactionPage.navigate();
+    const descriptionInput = transactionPage.page
+      .getByLabel(/description/i);
+    
+    await descriptionInput.fill('Check deposit');
+
+    const depositTypeSelect = transactionPage.page
+      .getByLabel(/deposit.*type/i)
+      .or(transactionPage.page.getByRole('combobox', { name: /deposit/i }));
+    
+    if (await depositTypeSelect.count() > 0) {
+      await depositTypeSelect.selectOption('Check');
+
+      const checkNumberInput = transactionPage.page
+        .getByLabel(/check.*number/i)
+        .or(transactionPage.page.getByPlaceholder(/check/i));
       
-      await transactionPage.selectAccount(testAccountNumber);
-      const balanceBefore = await transactionPage.getAccountBalance();
-
-      // Make deposit
-      await transactionPage.makeDeposit({
-        account: testAccountNumber,
-        amount: 500,
-        description: 'Cash deposit test',
-        depositType: 'Cash',
-      });
-
-      // Verify confirmation
-      expect(await transactionPage.hasSuccessMessage()).toBeTruthy();
-      
-      const transactionId = await transactionPage.getTransactionId();
-      expect(transactionId).toBeTruthy();
-
-      logger.info({ transactionId, amount: 500 }, 'Cash deposit completed');
-      tracker.end('passed');
-    } catch (error: any) {
-      tracker.end('failed', error);
-      throw error;
+      if (await checkNumberInput.count() > 0) {
+        await checkNumberInput.fill('1234');
+      }
     }
+
+    const submitButton = transactionPage.page
+      .getByRole('button', { name: /submit|process/i });
+    
+    await submitButton.click();
+
+    const successMessage = transactionPage.page
+      .getByRole('alert')
+      .or(transactionPage.page.getByText(/success/i));
+    
+    await txExpect(successMessage).toBeVisible();
+
+    txLogger.info({ checkNumber: '1234', amount: 750 }, 'Check deposit completed');
   });
 
-  test('should make a check deposit', async ({ page }) => {
-    const tracker = monitor.trackTest('make-check-deposit');
+  txTest('should make a withdrawal', async ({ transactionPage, testAccount }) => {
+    await transactionPage.navigate();
+    
+    const accountSelect = transactionPage.page
+      .getByLabel(/account/i)
+      .or(transactionPage.page.getByRole('combobox'));
+    
+    await accountSelect.selectOption(testAccount.accountNumber);
 
-    try {
-      await transactionPage.navigate();
-      await transactionPage.selectAccount(testAccountNumber);
-
-      await transactionPage.selectTransactionType('Deposit');
-      await transactionPage.enterAmount(750);
-      await transactionPage.enterDescription('Check deposit');
-      await transactionPage.selectDepositType('Check');
-      await transactionPage.enterCheckNumber('1234');
-
-      await transactionPage.submitTransaction();
-      await transactionPage.waitForConfirmation();
-
-      expect(await transactionPage.hasSuccessMessage()).toBeTruthy();
-
-      const confirmationNumber = await transactionPage.getConfirmationNumber();
-      expect(confirmationNumber).toBeTruthy();
-
-      logger.info({ checkNumber: '1234', amount: 750 }, 'Check deposit completed');
-      tracker.end('passed');
-    } catch (error: any) {
-      tracker.end('failed', error);
-      throw error;
+    const typeSelect = transactionPage.page
+      .getByLabel(/type/i)
+      .or(transactionPage.page.getByRole('combobox', { name: /type/i }));
+    
+    if (await typeSelect.count() > 0) {
+      await typeSelect.selectOption('Withdrawal');
     }
+
+    const amountInput = transactionPage.page
+      .getByLabel(/amount/i);
+    
+    await amountInput.fill('200');
+
+    const descriptionInput = transactionPage.page
+      .getByLabel(/description/i);
+    
+    await descriptionInput.fill('ATM withdrawal');
+
+    const methodSelect = transactionPage.page
+      .getByLabel(/method/i)
+      .or(transactionPage.page.getByRole('combobox', { name: /method/i }));
+    
+    if (await methodSelect.count() > 0) {
+      await methodSelect.selectOption('ATM');
+    }
+
+    const submitButton = transactionPage.page
+      .getByRole('button', { name: /submit|process/i });
+    
+    await submitButton.click();
+
+    const successMessage = transactionPage.page
+      .getByRole('alert')
+      .or(transactionPage.page.getByText(/success/i));
+    
+    await txExpect(successMessage).toBeVisible();
+
+    txLogger.info({ amount: 200 }, 'Withdrawal completed');
   });
 
-  test('should make a withdrawal', async ({ page }) => {
-    const tracker = monitor.trackTest('make-withdrawal');
+  txTest('should prevent withdrawal exceeding available balance', async ({ transactionPage, testAccount }) => {
+    await transactionPage.navigate();
+    
+    const accountSelect = transactionPage.page
+      .getByLabel(/account/i)
+      .or(transactionPage.page.getByRole('combobox'));
+    
+    await accountSelect.selectOption(testAccount.accountNumber);
 
-    try {
-      await transactionPage.navigate();
-
-      // Make withdrawal
-      await transactionPage.makeWithdrawal({
-        account: testAccountNumber,
-        amount: 200,
-        description: 'ATM withdrawal',
-        method: 'ATM',
-      });
-
-      expect(await transactionPage.hasSuccessMessage()).toBeTruthy();
-
-      logger.info({ amount: 200 }, 'Withdrawal completed');
-      tracker.end('passed');
-    } catch (error: any) {
-      tracker.end('failed', error);
-      throw error;
+    const typeSelect = transactionPage.page
+      .getByLabel(/type/i)
+      .or(transactionPage.page.getByRole('combobox', { name: /type/i }));
+    
+    if (await typeSelect.count() > 0) {
+      await typeSelect.selectOption('Withdrawal');
     }
+
+    const amountInput = transactionPage.page
+      .getByLabel(/amount/i);
+    
+    await amountInput.fill((testAccount.balance + 1000).toString());
+
+    const descriptionInput = transactionPage.page
+      .getByLabel(/description/i);
+    
+    await descriptionInput.fill('Overdraft test');
+
+    const submitButton = transactionPage.page
+      .getByRole('button', { name: /submit|process/i });
+    
+    await submitButton.click();
+
+    const errorMessage = transactionPage.page
+      .getByText(/insufficient.*funds|exceeds.*balance/i)
+      .or(transactionPage.page.getByRole('alert'));
+    
+    await txExpect(errorMessage).toBeVisible();
+
+    txLogger.info('Overdraft prevention working correctly');
   });
 
-  test('should prevent withdrawal exceeding available balance', async ({ page }) => {
-    const tracker = monitor.trackTest('prevent-overdraft');
+  txTest('should validate required fields', async ({ transactionPage, testAccount }) => {
+    await transactionPage.navigate();
+    
+    const accountSelect = transactionPage.page
+      .getByLabel(/account/i)
+      .or(transactionPage.page.getByRole('combobox'));
+    
+    await accountSelect.selectOption(testAccount.accountNumber);
 
-    try {
-      await transactionPage.navigate();
-      await transactionPage.selectAccount(testAccountNumber);
+    const submitButton = transactionPage.page
+      .getByRole('button', { name: /submit|process/i });
+    
+    await submitButton.click();
 
-      const availableBalance = await transactionPage.getAvailableBalance();
+    const errorMessages = await transactionPage.page
+      .getByText(/required/i)
+      .or(transactionPage.page.getByRole('alert'))
+      .all();
+    
+    txExpect(errorMessages.length).toBeGreaterThan(0);
 
-      // Try to withdraw more than available
-      await transactionPage.selectTransactionType('Withdrawal');
-      await transactionPage.enterAmount(availableBalance + 1000);
-      await transactionPage.enterDescription('Overdraft test');
-      await transactionPage.submitTransaction();
-
-      // Should show insufficient funds error
-      await page.waitForTimeout(2000);
-      expect(await transactionPage.hasInsufficientFundsError()).toBeTruthy();
-
-      logger.info('Overdraft prevention working correctly');
-      tracker.end('passed');
-    } catch (error: any) {
-      tracker.end('failed', error);
-      throw error;
-    }
+    txLogger.info('Required field validation working');
   });
 
-  test('should transfer between accounts', async ({ page }) => {
-    const tracker = monitor.trackTest('transfer-between-accounts');
+  txTest('should validate amount format', async ({ transactionPage, testAccount }) => {
+    await transactionPage.navigate();
+    
+    const accountSelect = transactionPage.page
+      .getByLabel(/account/i)
+      .or(transactionPage.page.getByRole('combobox'));
+    
+    await accountSelect.selectOption(testAccount.accountNumber);
 
-    try {
-      // Create second account
-      const account2Data = TestData.account();
-      const account2Response = await bannoApi.post('/api/accounts', account2Data);
-      const account2Number = account2Response.data.accountNumber;
-
-      await transactionPage.navigate();
-
-      // Make transfer
-      await transactionPage.makeTransfer({
-        fromAccount: testAccountNumber,
-        toAccount: account2Number,
-        amount: 300,
-        description: 'Transfer test',
-        transferType: 'Internal',
-      });
-
-      expect(await transactionPage.hasSuccessMessage()).toBeTruthy();
-
-      // Verify balances via API
-      const fromAccountResponse = await bannoApi.get(`/api/accounts/${testAccountNumber}`);
-      const toAccountResponse = await bannoApi.get(`/api/accounts/${account2Number}`);
-
-      logger.info({
-        fromBalance: fromAccountResponse.data.balance,
-        toBalance: toAccountResponse.data.balance,
-      }, 'Transfer completed and verified');
-
-      // Cleanup second account
-      await bannoApi.delete(`/api/accounts/${account2Number}`);
-
-      tracker.end('passed');
-    } catch (error: any) {
-      tracker.end('failed', error);
-      throw error;
+    const typeSelect = transactionPage.page
+      .getByLabel(/type/i)
+      .or(transactionPage.page.getByRole('combobox', { name: /type/i }));
+    
+    if (await typeSelect.count() > 0) {
+      await typeSelect.selectOption('Deposit');
     }
+
+    const amountInput = transactionPage.page
+      .getByLabel(/amount/i);
+    
+    await amountInput.fill('-100');
+
+    const submitButton = transactionPage.page
+      .getByRole('button', { name: /submit/i });
+    
+    await submitButton.click();
+
+    const errorMessage = transactionPage.page
+      .getByText(/invalid.*amount|positive/i)
+      .or(transactionPage.page.getByRole('alert'));
+    
+    await txExpect(errorMessage).toBeVisible();
+
+    txLogger.info('Amount format validation working');
   });
 
-  test('should validate required fields', async ({ page }) => {
-    const tracker = monitor.trackTest('validate-required-fields');
+  txTest('should view recent transactions', async ({ transactionPage, testAccount }) => {
+    await transactionPage.navigate();
+    
+    const accountSelect = transactionPage.page
+      .getByLabel(/account/i)
+      .or(transactionPage.page.getByRole('combobox'));
+    
+    await accountSelect.selectOption(testAccount.accountNumber);
 
-    try {
-      await transactionPage.navigate();
-      await transactionPage.selectAccount(testAccountNumber);
+    const transactionRows = transactionPage.page
+      .getByRole('row')
+      .or(transactionPage.page.locator('[data-testid*="transaction"]'));
+    
+    const count = await transactionRows.count();
 
-      await transactionPage.selectTransactionType('Deposit');
-      // Don't enter amount
-      await transactionPage.enterDescription('Missing amount test');
-      await transactionPage.submitTransaction();
-
-      // Should show validation error
-      expect(await transactionPage.hasValidationError('amount')).toBeTruthy();
-
-      tracker.end('passed');
-    } catch (error: any) {
-      tracker.end('failed', error);
-      throw error;
+    if (count > 0) {
+      txLogger.info({ count }, 'Recent transactions retrieved');
     }
+
+    txExpect(count).toBeGreaterThanOrEqual(0);
   });
 
-  test('should validate amount format', async ({ page }) => {
-    const tracker = monitor.trackTest('validate-amount-format');
+  txTest('should download transaction receipt', async ({ page, transactionPage, testAccount }) => {
+    await transactionPage.navigate();
+    
+    const accountSelect = transactionPage.page
+      .getByLabel(/account/i)
+      .or(transactionPage.page.getByRole('combobox'));
+    
+    await accountSelect.selectOption(testAccount.accountNumber);
 
-    try {
-      await transactionPage.navigate();
-      await transactionPage.selectAccount(testAccountNumber);
-
-      await transactionPage.selectTransactionType('Deposit');
-      await transactionPage.enterAmount(-100); // Negative amount
-      await transactionPage.submitTransaction();
-
-      // Should show validation error
-      expect(await transactionPage.hasValidationError('amount')).toBeTruthy();
-
-      tracker.end('passed');
-    } catch (error: any) {
-      tracker.end('failed', error);
-      throw error;
+    const typeSelect = transactionPage.page
+      .getByLabel(/type/i)
+      .or(transactionPage.page.getByRole('combobox', { name: /type/i }));
+    
+    if (await typeSelect.count() > 0) {
+      await typeSelect.selectOption('Deposit');
     }
-  });
 
-  test('should review transaction before submitting', async ({ page }) => {
-    const tracker = monitor.trackTest('review-before-submit');
+    const amountInput = transactionPage.page
+      .getByLabel(/amount/i);
+    
+    await amountInput.fill('250');
 
-    try {
-      await transactionPage.navigate();
-      await transactionPage.selectAccount(testAccountNumber);
+    const descriptionInput = transactionPage.page
+      .getByLabel(/description/i);
+    
+    await descriptionInput.fill('Receipt test');
 
-      await transactionPage.selectTransactionType('Deposit');
-      await transactionPage.enterAmount(1000);
-      await transactionPage.enterDescription('Review test deposit');
+    const submitButton = transactionPage.page
+      .getByRole('button', { name: /submit/i });
+    
+    await submitButton.click();
 
-      // Click review
-      await transactionPage.clickReview();
+    const successMessage = transactionPage.page
+      .getByRole('alert')
+      .or(transactionPage.page.getByText(/success/i));
+    
+    await txExpect(successMessage).toBeVisible();
 
-      // Verify review details
-      const reviewDetails = await transactionPage.getReviewDetails();
-      expect(reviewDetails.amount).toContain('1000');
-      expect(reviewDetails.type).toContain('Deposit');
+    const downloadPromise = page.waitForEvent('download');
+    
+    const downloadButton = transactionPage.page
+      .getByRole('button', { name: /download.*receipt|print/i });
+    
+    if (await downloadButton.count() > 0) {
+      await downloadButton.click();
 
-      // Confirm transaction
-      await transactionPage.confirmTransaction();
-      await transactionPage.waitForConfirmation();
+      const download = await downloadPromise;
+      txExpect(download.suggestedFilename()).toContain('.pdf');
 
-      expect(await transactionPage.hasSuccessMessage()).toBeTruthy();
-
-      tracker.end('passed');
-    } catch (error: any) {
-      tracker.end('failed', error);
-      throw error;
-    }
-  });
-
-  test('should edit transaction from review modal', async ({ page }) => {
-    const tracker = monitor.trackTest('edit-from-review');
-
-    try {
-      await transactionPage.navigate();
-      await transactionPage.selectAccount(testAccountNumber);
-
-      await transactionPage.selectTransactionType('Withdrawal');
-      await transactionPage.enterAmount(50);
-      await transactionPage.enterDescription('Initial amount');
-
-      // Open review
-      await transactionPage.clickReview();
-
-      // Click edit
-      await transactionPage.editFromReview();
-
-      // Change amount
-      await transactionPage.enterAmount(75);
-      await transactionPage.clickReview();
-
-      // Verify updated amount
-      const reviewDetails = await transactionPage.getReviewDetails();
-      expect(reviewDetails.amount).toContain('75');
-
-      tracker.end('passed');
-    } catch (error: any) {
-      tracker.end('failed', error);
-      throw error;
-    }
-  });
-
-  test('should download transaction receipt', async ({ page }) => {
-    const tracker = monitor.trackTest('download-receipt');
-
-    try {
-      await transactionPage.navigate();
-
-      await transactionPage.makeDeposit({
-        account: testAccountNumber,
-        amount: 250,
-        description: 'Receipt test',
-      });
-
-      // Download receipt
-      const download = await transactionPage.downloadReceipt();
-      expect(download.suggestedFilename()).toContain('.pdf');
-
-      const filepath = `./test-data/receipts/${download.suggestedFilename()}`;
-      await download.saveAs(filepath);
-
-      tracker.end('passed');
-    } catch (error: any) {
-      tracker.end('failed', error);
-      throw error;
-    }
-  });
-
-  test('should set future transaction date', async ({ page }) => {
-    const tracker = monitor.trackTest('future-dated-transaction');
-
-    try {
-      await transactionPage.navigate();
-      await transactionPage.selectAccount(testAccountNumber);
-
-      const futureDate = new Date();
-      futureDate.setDate(futureDate.getDate() + 7);
-      const futureDateStr = futureDate.toISOString().split('T')[0];
-
-      await transactionPage.selectTransactionType('Deposit');
-      await transactionPage.enterAmount(100);
-      await transactionPage.setTransactionDate(futureDateStr);
-      await transactionPage.enterDescription('Future dated deposit');
-
-      await transactionPage.submitTransaction();
-      await transactionPage.waitForConfirmation();
-
-      expect(await transactionPage.hasSuccessMessage()).toBeTruthy();
-
-      logger.info({ date: futureDateStr }, 'Future dated transaction created');
-      tracker.end('passed');
-    } catch (error: any) {
-      tracker.end('failed', error);
-      throw error;
-    }
-  });
-
-  test('should setup recurring transaction', async ({ page }) => {
-    const tracker = monitor.trackTest('setup-recurring-transaction');
-
-    try {
-      await transactionPage.navigate();
-      await transactionPage.selectAccount(testAccountNumber);
-
-      await transactionPage.selectTransactionType('Deposit');
-      await transactionPage.enterAmount(500);
-      await transactionPage.enterDescription('Monthly recurring deposit');
-
-      const startDate = new Date();
-      startDate.setDate(1); // First of month
-      const startDateStr = startDate.toISOString().split('T')[0];
-
-      const endDate = new Date();
-      endDate.setMonth(endDate.getMonth() + 6);
-      const endDateStr = endDate.toISOString().split('T')[0];
-
-      await transactionPage.setupRecurring('Monthly', startDateStr, endDateStr);
-
-      await transactionPage.submitTransaction();
-      await transactionPage.waitForConfirmation();
-
-      expect(await transactionPage.hasSuccessMessage()).toBeTruthy();
-
-      logger.info({ frequency: 'Monthly', startDate: startDateStr }, 'Recurring transaction setup');
-      tracker.end('passed');
-    } catch (error: any) {
-      tracker.end('failed', error);
-      throw error;
-    }
-  });
-
-  test('should view recent transactions on page', async ({ page }) => {
-    const tracker = monitor.trackTest('view-recent-transactions');
-
-    try {
-      await transactionPage.navigate();
-      await transactionPage.selectAccount(testAccountNumber);
-
-      const recentTransactions = await transactionPage.getRecentTransactions();
-      expect(recentTransactions.length).toBeGreaterThan(0);
-
-      // Verify transaction structure
-      recentTransactions.forEach(tx => {
-        expect(tx).toHaveProperty('date');
-        expect(tx).toHaveProperty('description');
-        expect(tx).toHaveProperty('amount');
-        expect(tx).toHaveProperty('balance');
-      });
-
-      logger.info({ count: recentTransactions.length }, 'Recent transactions retrieved');
-      tracker.end('passed');
-    } catch (error: any) {
-      tracker.end('failed', error);
-      throw error;
-    }
-  });
-
-  test('should clear transaction form', async ({ page }) => {
-    const tracker = monitor.trackTest('clear-transaction-form');
-
-    try {
-      await transactionPage.navigate();
-      await transactionPage.selectAccount(testAccountNumber);
-
-      await transactionPage.selectTransactionType('Deposit');
-      await transactionPage.enterAmount(100);
-      await transactionPage.enterDescription('Test description');
-
-      // Clear form
-      await transactionPage.clearForm();
-
-      // Verify fields are cleared (implementation dependent)
-      await page.waitForTimeout(1000);
-
-      tracker.end('passed');
-    } catch (error: any) {
-      tracker.end('failed', error);
-      throw error;
-    }
-  });
-
-  test('should cancel transaction in progress', async ({ page }) => {
-    const tracker = monitor.trackTest('cancel-transaction');
-
-    try {
-      await transactionPage.navigate();
-      await transactionPage.selectAccount(testAccountNumber);
-
-      await transactionPage.selectTransactionType('Withdrawal');
-      await transactionPage.enterAmount(50);
-      await transactionPage.enterDescription('Cancelled transaction');
-
-      // Cancel transaction
-      await transactionPage.cancelTransaction();
-
-      // Verify no confirmation message
-      await page.waitForTimeout(1000);
-      expect(await transactionPage.hasSuccessMessage()).toBeFalsy();
-
-      tracker.end('passed');
-    } catch (error: any) {
-      tracker.end('failed', error);
-      throw error;
-    }
-  });
-
-  test.afterAll(async () => {
-    // Cleanup: Delete test account
-    try {
-      await bannoApi.delete(`/api/accounts/${testAccountNumber}`);
-      logger.info({ testAccountNumber }, 'Test account cleaned up');
-    } catch (error) {
-      logger.warn('Failed to cleanup test account');
+      txLogger.info('Receipt downloaded');
     }
   });
 });

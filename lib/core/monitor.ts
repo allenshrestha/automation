@@ -12,16 +12,55 @@ interface TestMetrics {
 }
 
 /**
+ * TEST METRICS MONITOR - MODERNIZED FOR 2025
+ * 
+ * ⚠️ IMPORTANT CHANGE: No longer use try-catch in tests!
+ * 
+ * OLD WAY (Anti-Pattern):
+ * ```
+ * try {
+ *   await page.click('button');
+ *   tracker.end('passed');
+ * } catch (error) {
+ *   tracker.end('failed', error);
+ *   throw error;
+ * }
+ * ```
+ * 
+ * NEW WAY (Use Custom Reporter):
+ * ```
+ * // In playwright.config.ts
+ * reporter: [
+ *   ['html'],
+ *   ['./lib/reporters/metrics-reporter.ts']
+ * ]
+ * 
+ * // In tests - no manual tracking!
+ * test('my test', async ({ page }) => {
+ *   await page.click('button'); // Let Playwright handle failures
+ * });
+ * ```
+ * 
+ * This module now focuses on:
+ * - Aggregating metrics from test runs
+ * - Flakiness detection
+ * - Report generation
+ * - NOT manual try-catch tracking
+ * 
  * Features:
- * - Test execution tracking
+ * - Automatic test execution tracking (via reporter)
  * - Flakiness detection
  * - Performance metrics
- * - Report generation
+ * - Beautiful HTML reports
  * 
  * Usage:
- * const tracker = monitor.trackTest('login-test');
- * // ... test execution ...
- * tracker.end('passed');
+ * // Automatic via reporter - no manual calls needed!
+ * // Just run: npx playwright test
+ * 
+ * // Or use programmatically for analysis:
+ * const flaky = monitor.getFlakyTests();
+ * const stats = monitor.getStats();
+ * monitor.generateReport();
  */
 
 class Monitor {
@@ -37,11 +76,22 @@ class Monitor {
   }
 
   /**
-   * Track test execution
+   * ⚠️ DEPRECATED: Use custom reporter instead
+   * 
+   * Track test execution - LEGACY METHOD
+   * 
+   * @deprecated This method encourages try-catch anti-pattern.
+   * Use Playwright's custom reporter instead (see lib/reporters/metrics-reporter.ts)
+   * 
+   * Keeping for backward compatibility, but will log warning.
    */
   trackTest(testName: string) {
     const startTime = Date.now();
-    logger.info({ testName }, 'Test tracking started');
+    
+    logger.warn({ 
+      testName,
+      message: '⚠️ Using legacy monitor.trackTest(). Consider migrating to custom reporter.' 
+    }, 'Deprecated method called');
 
     return {
       end: (status: 'passed' | 'failed' | 'skipped', error?: Error, retries: number = 0) => {
@@ -56,18 +106,35 @@ class Monitor {
           retries,
         };
 
-        this.metrics.push(metric);
-        this.updateFlakiness(testName, status === 'passed');
-
-        if (status === 'failed') {
-          logger.error({ testName, duration, error: error?.message }, 'Test failed');
-        } else {
-          logger.info({ testName, duration, status }, 'Test completed');
-        }
-
-        this.save();
+        this.recordMetric(metric);
       },
     };
+  }
+
+  /**
+   * ✅ MODERN: Record metric (called by reporter)
+   * 
+   * This is the modern way - called automatically by custom reporter
+   */
+  recordMetric(metric: TestMetrics) {
+    this.metrics.push(metric);
+    this.updateFlakiness(metric.testName, metric.status === 'passed');
+
+    if (metric.status === 'failed') {
+      logger.error({ 
+        testName: metric.testName, 
+        duration: metric.duration, 
+        error: metric.error 
+      }, 'Test failed');
+    } else {
+      logger.info({ 
+        testName: metric.testName, 
+        duration: metric.duration, 
+        status: metric.status 
+      }, 'Test completed');
+    }
+
+    this.save();
   }
 
   /**

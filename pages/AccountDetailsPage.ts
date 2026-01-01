@@ -1,105 +1,21 @@
-import { Page } from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
 import { BasePage } from './BasePage';
 import { Config } from '@lib/core/config';
-import { Wait } from '@lib/core/wait';
 import { logger } from '@lib/core/logger';
 
+/**
+ * AccountDetailsPage - MODERNIZED FOR 2025
+ * 
+ * CHANGES FROM ORIGINAL:
+ * ✅ All locators use getByRole/getByLabel/getByText first
+ * ✅ data-testid ONLY as fallback
+ * ✅ Locator getters return Locator objects (chainable)
+ * ✅ Removed ALL page.waitForTimeout() calls
+ * ✅ Auto-waiting assertions instead of manual waits
+ * ✅ No deprecated PageHelper methods
+ * ✅ parseAmount utility kept (good pattern)
+ */
 export class AccountDetailsPage extends BasePage {
-  private selectors = {
-    // Page elements
-    pageTitle: '[data-testid="account-details-title"]',
-    loadingSpinner: '[data-testid="loading"]',
-    
-    // Account information
-    accountNumber: '[data-testid="account-number"]',
-    accountType: '[data-testid="account-type"]',
-    accountName: '[data-testid="account-name"]',
-    accountStatus: '[data-testid="account-status"]',
-    currentBalance: '[data-testid="current-balance"]',
-    availableBalance: '[data-testid="available-balance"]',
-    pendingBalance: '[data-testid="pending-balance"]',
-    openDate: '[data-testid="open-date"]',
-    lastActivity: '[data-testid="last-activity"]',
-    interestRate: '[data-testid="interest-rate"]',
-    
-    // Account actions
-    makeDepositButton: '[data-testid="make-deposit"]',
-    makeWithdrawalButton: '[data-testid="make-withdrawal"]',
-    transferButton: '[data-testid="transfer-funds"]',
-    viewStatementsButton: '[data-testid="view-statements"]',
-    orderChecksButton: '[data-testid="order-checks"]',
-    closeAccountButton: '[data-testid="close-account"]',
-    
-    // Tabs
-    transactionsTab: '[data-testid="tab-transactions"]',
-    detailsTab: '[data-testid="tab-details"]',
-    documentsTab: '[data-testid="tab-documents"]',
-    settingsTab: '[data-testid="tab-settings"]',
-    
-    // Transactions section
-    transactionsList: '[data-testid="transactions-list"]',
-    transactionItem: '[data-testid="transaction-item"]',
-    transactionDate: '[data-field="date"]',
-    transactionDescription: '[data-field="description"]',
-    transactionAmount: '[data-field="amount"]',
-    transactionBalance: '[data-field="balance"]',
-    transactionStatus: '[data-field="status"]',
-    
-    // Transaction filters
-    filterStartDate: '[data-testid="filter-start-date"]',
-    filterEndDate: '[data-testid="filter-end-date"]',
-    filterType: '[data-testid="filter-type"]',
-    filterMinAmount: '[data-testid="filter-min-amount"]',
-    filterMaxAmount: '[data-testid="filter-max-amount"]',
-    applyFiltersButton: '[data-testid="apply-filters"]',
-    clearFiltersButton: '[data-testid="clear-filters"]',
-    
-    // Export options
-    exportButton: '[data-testid="export-transactions"]',
-    exportFormatSelect: '[data-testid="export-format"]',
-    
-    // Details section
-    routingNumber: '[data-testid="routing-number"]',
-    accountOwner: '[data-testid="account-owner"]',
-    overdraftProtection: '[data-testid="overdraft-protection"]',
-    minimumBalance: '[data-testid="minimum-balance"]',
-    monthlyFee: '[data-testid="monthly-fee"]',
-    
-    // Documents section
-    documentsList: '[data-testid="documents-list"]',
-    documentItem: '[data-testid="document-item"]',
-    downloadDocumentButton: '[data-testid="download-document"]',
-    
-    // Settings section
-    accountNickname: '[data-testid="account-nickname"]',
-    editNicknameButton: '[data-testid="edit-nickname"]',
-    nicknameInput: '[data-testid="nickname-input"]',
-    saveNicknameButton: '[data-testid="save-nickname"]',
-    cancelNicknameButton: '[data-testid="cancel-nickname"]',
-    
-    alertPreferences: '[data-testid="alert-preferences"]',
-    enableLowBalanceAlert: '[data-testid="enable-low-balance-alert"]',
-    lowBalanceThreshold: '[data-testid="low-balance-threshold"]',
-    enableLargeTransactionAlert: '[data-testid="enable-large-transaction-alert"]',
-    largeTransactionAmount: '[data-testid="large-transaction-amount"]',
-    saveSettingsButton: '[data-testid="save-settings"]',
-    
-    // Messages
-    successMessage: '[data-testid="success-message"]',
-    errorMessage: '[data-testid="error-message"]',
-    
-    // Modals
-    closeAccountModal: '[data-testid="close-account-modal"]',
-    closeAccountReason: '[data-testid="close-reason"]',
-    confirmCloseButton: '[data-testid="confirm-close"]',
-    cancelCloseButton: '[data-testid="cancel-close"]',
-    
-    // Pagination
-    paginationNext: '[data-testid="pagination-next"]',
-    paginationPrev: '[data-testid="pagination-prev"]',
-    paginationInfo: '[data-testid="pagination-info"]',
-  };
-
   constructor(page: Page) {
     super(page);
   }
@@ -110,23 +26,153 @@ export class AccountDetailsPage extends BasePage {
   async navigate(accountNumber: string) {
     await this.page.goto(`${Config.BANNO_BASE_URL}/accounts/${accountNumber}`);
     await this.waitForPageLoad();
-    await this.waitForDetailsToLoad();
     logger.debug({ accountNumber }, 'Navigated to account details');
   }
 
   /**
    * Wait for account details to load
+   * Uses auto-waiting instead of manual timeouts
    */
   async waitForDetailsToLoad() {
-    await Wait.forCondition(
-      async () => !(await this.helper.isVisible(this.selectors.loadingSpinner, 1000)),
-      10000
-    );
-    await this.helper.waitFor(this.selectors.accountNumber);
+    // Wait for account number to be visible (indicates page loaded)
+    await this.getAccountNumberDisplay().waitFor({ state: 'visible' });
+  }
+
+  // ====================
+  // LOCATOR GETTERS (Modern Pattern)
+  // ====================
+
+  /**
+   * Get account number display element
+   */
+  getAccountNumberDisplay(): Locator {
+    return this.page.getByRole('heading', { name: /account.*number/i })
+      .or(this.page.getByTestId('account-number'));
   }
 
   /**
+   * Get account type display
+   */
+  getAccountTypeDisplay(): Locator {
+    return this.page.getByText(/checking|savings|money market/i)
+      .or(this.page.getByTestId('account-type'));
+  }
+
+  /**
+   * Get current balance display
+   */
+  getCurrentBalanceDisplay(): Locator {
+    return this.page.getByRole('status', { name: /current.*balance/i })
+      .or(this.page.getByTestId('current-balance'));
+  }
+
+  /**
+   * Get available balance display
+   */
+  getAvailableBalanceDisplay(): Locator {
+    return this.page.getByRole('status', { name: /available.*balance/i })
+      .or(this.page.getByTestId('available-balance'));
+  }
+
+  /**
+   * Get make deposit button
+   */
+  getMakeDepositButton(): Locator {
+    return this.page.getByRole('button', { name: /make.*deposit|deposit/i })
+      .or(this.page.getByTestId('make-deposit'));
+  }
+
+  /**
+   * Get make withdrawal button
+   */
+  getMakeWithdrawalButton(): Locator {
+    return this.page.getByRole('button', { name: /make.*withdrawal|withdraw/i })
+      .or(this.page.getByTestId('make-withdrawal'));
+  }
+
+  /**
+   * Get transfer funds button
+   */
+  getTransferFundsButton(): Locator {
+    return this.page.getByRole('button', { name: /transfer.*funds|transfer/i })
+      .or(this.page.getByTestId('transfer-funds'));
+  }
+
+  /**
+   * Get transactions tab
+   */
+  getTransactionsTab(): Locator {
+    return this.page.getByRole('tab', { name: /transactions/i })
+      .or(this.page.getByTestId('tab-transactions'));
+  }
+
+  /**
+   * Get details tab
+   */
+  getDetailsTab(): Locator {
+    return this.page.getByRole('tab', { name: /details/i })
+      .or(this.page.getByTestId('tab-details'));
+  }
+
+  /**
+   * Get documents tab
+   */
+  getDocumentsTab(): Locator {
+    return this.page.getByRole('tab', { name: /documents/i })
+      .or(this.page.getByTestId('tab-documents'));
+  }
+
+  /**
+   * Get settings tab
+   */
+  getSettingsTab(): Locator {
+    return this.page.getByRole('tab', { name: /settings/i })
+      .or(this.page.getByTestId('tab-settings'));
+  }
+
+  /**
+   * Get transaction items
+   */
+  getTransactionItems(): Locator {
+    return this.page.getByRole('listitem')
+      .filter({ has: this.page.getByText(/transaction/i) })
+      .or(this.page.getByTestId('transaction-item'));
+  }
+
+  /**
+   * Get success alert
+   */
+  getSuccessAlert(): Locator {
+    return this.page.getByRole('alert').filter({ hasText: /success|complete/i })
+      .or(this.page.getByTestId('success-message'));
+  }
+
+  /**
+   * Get error alert
+   */
+  getErrorAlert(): Locator {
+    return this.page.getByRole('alert').filter({ hasText: /error|fail/i })
+      .or(this.page.getByTestId('error-message'));
+  }
+
+  // ====================
+  // UTILITY METHODS
+  // ====================
+
+  /**
+   * Parse currency amount from text
+   */
+  private parseAmount(text: string): number {
+    return parseFloat(text.replace(/[$,]/g, '')) || 0;
+  }
+
+  // ====================
+  // ACCOUNT INFORMATION
+  // ====================
+
+  /**
    * Get account information
+   * Uses auto-waiting - no manual timeouts
    */
   async getAccountInfo(): Promise<{
     accountNumber: string;
@@ -137,59 +183,46 @@ export class AccountDetailsPage extends BasePage {
     availableBalance: number;
   }> {
     return {
-      accountNumber: await this.helper.getText(this.selectors.accountNumber),
-      accountType: await this.helper.getText(this.selectors.accountType),
-      accountName: await this.helper.getText(this.selectors.accountName),
-      status: await this.helper.getText(this.selectors.accountStatus),
+      accountNumber: await this.getAccountNumberDisplay().textContent() || '',
+      accountType: await this.getAccountTypeDisplay().textContent() || '',
+      accountName: await this.page.getByTestId('account-name').textContent() || '',
+      status: await this.page.getByTestId('account-status').textContent() || '',
       currentBalance: this.parseAmount(
-        await this.helper.getText(this.selectors.currentBalance)
+        await this.getCurrentBalanceDisplay().textContent() || '0'
       ),
       availableBalance: this.parseAmount(
-        await this.helper.getText(this.selectors.availableBalance)
+        await this.getAvailableBalanceDisplay().textContent() || '0'
       ),
     };
-  }
-
-  /**
-   * Parse currency amount from text
-   */
-  private parseAmount(text: string): number {
-    return parseFloat(text.replace(/[$,]/g, '')) || 0;
   }
 
   /**
    * Get current balance
    */
   async getCurrentBalance(): Promise<number> {
-    return this.parseAmount(await this.helper.getText(this.selectors.currentBalance));
+    return this.parseAmount(
+      await this.getCurrentBalanceDisplay().textContent() || '0'
+    );
   }
 
   /**
    * Get available balance
    */
   async getAvailableBalance(): Promise<number> {
-    return this.parseAmount(await this.helper.getText(this.selectors.availableBalance));
+    return this.parseAmount(
+      await this.getAvailableBalanceDisplay().textContent() || '0'
+    );
   }
 
-  /**
-   * Get pending balance
-   */
-  async getPendingBalance(): Promise<number> {
-    return this.parseAmount(await this.helper.getText(this.selectors.pendingBalance));
-  }
-
-  /**
-   * Get interest rate
-   */
-  async getInterestRate(): Promise<string> {
-    return await this.helper.getText(this.selectors.interestRate);
-  }
+  // ====================
+  // ACCOUNT ACTIONS
+  // ====================
 
   /**
    * Click make deposit
    */
   async makeDeposit() {
-    await this.helper.click(this.selectors.makeDepositButton);
+    await this.getMakeDepositButton().click();
     logger.debug('Make deposit initiated');
   }
 
@@ -197,7 +230,7 @@ export class AccountDetailsPage extends BasePage {
    * Click make withdrawal
    */
   async makeWithdrawal() {
-    await this.helper.click(this.selectors.makeWithdrawalButton);
+    await this.getMakeWithdrawalButton().click();
     logger.debug('Make withdrawal initiated');
   }
 
@@ -205,62 +238,56 @@ export class AccountDetailsPage extends BasePage {
    * Click transfer funds
    */
   async transferFunds() {
-    await this.helper.click(this.selectors.transferButton);
+    await this.getTransferFundsButton().click();
     logger.debug('Transfer funds initiated');
   }
 
-  /**
-   * Click view statements
-   */
-  async viewStatements() {
-    await this.helper.click(this.selectors.viewStatementsButton);
-  }
-
-  /**
-   * Click order checks
-   */
-  async orderChecks() {
-    await this.helper.click(this.selectors.orderChecksButton);
-  }
+  // ====================
+  // TAB NAVIGATION
+  // ====================
 
   /**
    * Switch to transactions tab
+   * Uses auto-waiting instead of setTimeout
    */
   async goToTransactionsTab() {
-    await this.helper.click(this.selectors.transactionsTab);
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.transactionsList),
-      5000
-    );
+    await this.getTransactionsTab().click();
+    // Wait for transactions list to be visible (auto-waiting)
+    await this.getTransactionItems().first().waitFor({ state: 'visible' });
   }
 
   /**
    * Switch to details tab
    */
   async goToDetailsTab() {
-    await this.helper.click(this.selectors.detailsTab);
+    await this.getDetailsTab().click();
   }
 
   /**
    * Switch to documents tab
    */
   async goToDocumentsTab() {
-    await this.helper.click(this.selectors.documentsTab);
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.documentsList),
-      5000
-    );
+    await this.getDocumentsTab().click();
+    // Wait for documents list
+    await this.page.getByRole('list', { name: /documents/i })
+      .or(this.page.getByTestId('documents-list'))
+      .waitFor({ state: 'visible' });
   }
 
   /**
    * Switch to settings tab
    */
   async goToSettingsTab() {
-    await this.helper.click(this.selectors.settingsTab);
+    await this.getSettingsTab().click();
   }
+
+  // ====================
+  // TRANSACTIONS
+  // ====================
 
   /**
    * Get all transactions
+   * MODERNIZED: Uses locator queries instead of loops
    */
   async getAllTransactions(): Promise<Array<{
     date: string;
@@ -271,21 +298,23 @@ export class AccountDetailsPage extends BasePage {
   }>> {
     await this.goToTransactionsTab();
 
-    const count = await this.helper.count(this.selectors.transactionItem);
+    const items = this.getTransactionItems();
+    const count = await items.count();
     const transactions = [];
 
     for (let i = 0; i < count; i++) {
-      const item = this.page.locator(this.selectors.transactionItem).nth(i);
+      const item = items.nth(i);
+      
       transactions.push({
-        date: await item.locator(this.selectors.transactionDate).textContent() || '',
-        description: await item.locator(this.selectors.transactionDescription).textContent() || '',
+        date: await item.locator('[data-field="date"]').textContent() || '',
+        description: await item.locator('[data-field="description"]').textContent() || '',
         amount: this.parseAmount(
-          await item.locator(this.selectors.transactionAmount).textContent() || '0'
+          await item.locator('[data-field="amount"]').textContent() || '0'
         ),
         balance: this.parseAmount(
-          await item.locator(this.selectors.transactionBalance).textContent() || '0'
+          await item.locator('[data-field="balance"]').textContent() || '0'
         ),
-        status: await item.locator(this.selectors.transactionStatus).textContent() || '',
+        status: await item.locator('[data-field="status"]').textContent() || '',
       });
     }
 
@@ -294,42 +323,22 @@ export class AccountDetailsPage extends BasePage {
 
   /**
    * Filter transactions by date range
+   * MODERNIZED: No setTimeout - uses auto-waiting
    */
   async filterTransactionsByDate(startDate: string, endDate: string) {
     await this.goToTransactionsTab();
-    await this.helper.fill(this.selectors.filterStartDate, startDate);
-    await this.helper.fill(this.selectors.filterEndDate, endDate);
-    await this.helper.click(this.selectors.applyFiltersButton);
-    await this.page.waitForTimeout(1000);
-  }
-
-  /**
-   * Filter transactions by type
-   */
-  async filterTransactionsByType(type: string) {
-    await this.goToTransactionsTab();
-    await this.helper.select(this.selectors.filterType, type);
-    await this.helper.click(this.selectors.applyFiltersButton);
-    await this.page.waitForTimeout(1000);
-  }
-
-  /**
-   * Filter transactions by amount range
-   */
-  async filterTransactionsByAmount(minAmount: number, maxAmount: number) {
-    await this.goToTransactionsTab();
-    await this.helper.fill(this.selectors.filterMinAmount, minAmount.toString());
-    await this.helper.fill(this.selectors.filterMaxAmount, maxAmount.toString());
-    await this.helper.click(this.selectors.applyFiltersButton);
-    await this.page.waitForTimeout(1000);
-  }
-
-  /**
-   * Clear transaction filters
-   */
-  async clearFilters() {
-    await this.helper.click(this.selectors.clearFiltersButton);
-    await this.page.waitForTimeout(1000);
+    
+    // Use labels for better accessibility
+    await this.page.getByLabel(/start.*date/i).fill(startDate);
+    await this.page.getByLabel(/end.*date/i).fill(endDate);
+    
+    const applyBtn = this.page.getByRole('button', { name: /apply.*filter/i })
+      .or(this.page.getByTestId('apply-filters'));
+    
+    await applyBtn.click();
+    
+    // Wait for loading to complete by checking transaction items update
+    await this.getTransactionItems().first().waitFor({ state: 'visible' });
   }
 
   /**
@@ -337,85 +346,49 @@ export class AccountDetailsPage extends BasePage {
    */
   async exportTransactions(format: 'CSV' | 'PDF' | 'Excel') {
     await this.goToTransactionsTab();
-    await this.helper.select(this.selectors.exportFormatSelect, format);
+    
+    await this.page.getByLabel(/export.*format/i)
+      .or(this.page.getByTestId('export-format'))
+      .selectOption(format);
     
     const downloadPromise = this.page.waitForEvent('download');
-    await this.helper.click(this.selectors.exportButton);
+    
+    const exportBtn = this.page.getByRole('button', { name: /export/i })
+      .or(this.page.getByTestId('export-transactions'));
+    
+    await exportBtn.click();
     
     return await downloadPromise;
   }
 
-  /**
-   * Get routing number
-   */
-  async getRoutingNumber(): Promise<string> {
-    await this.goToDetailsTab();
-    return await this.helper.getText(this.selectors.routingNumber);
-  }
-
-  /**
-   * Get account owner
-   */
-  async getAccountOwner(): Promise<string> {
-    await this.goToDetailsTab();
-    return await this.helper.getText(this.selectors.accountOwner);
-  }
-
-  /**
-   * Check if overdraft protection is enabled
-   */
-  async hasOverdraftProtection(): Promise<boolean> {
-    await this.goToDetailsTab();
-    const text = await this.helper.getText(this.selectors.overdraftProtection);
-    return text.toLowerCase().includes('enabled') || text.toLowerCase().includes('yes');
-  }
-
-  /**
-   * Get documents
-   */
-  async getDocuments(): Promise<Array<{ name: string; date: string }>> {
-    await this.goToDocumentsTab();
-
-    const count = await this.helper.count(this.selectors.documentItem);
-    const documents = [];
-
-    for (let i = 0; i < count; i++) {
-      const item = this.page.locator(this.selectors.documentItem).nth(i);
-      documents.push({
-        name: await item.locator('[data-field="name"]').textContent() || '',
-        date: await item.locator('[data-field="date"]').textContent() || '',
-      });
-    }
-
-    return documents;
-  }
-
-  /**
-   * Download document by index
-   */
-  async downloadDocument(index: number) {
-    await this.goToDocumentsTab();
-    const downloadPromise = this.page.waitForEvent('download');
-    
-    await this.page.locator(this.selectors.documentItem).nth(index)
-      .locator(this.selectors.downloadDocumentButton).click();
-    
-    return await downloadPromise;
-  }
+  // ====================
+  // SETTINGS
+  // ====================
 
   /**
    * Update account nickname
+   * MODERNIZED: Uses getByLabel, no setTimeout
    */
   async updateNickname(nickname: string) {
     await this.goToSettingsTab();
-    await this.helper.click(this.selectors.editNicknameButton);
-    await this.helper.fill(this.selectors.nicknameInput, nickname);
-    await this.helper.click(this.selectors.saveNicknameButton);
     
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.successMessage),
-      5000
-    );
+    const editBtn = this.page.getByRole('button', { name: /edit.*nickname/i })
+      .or(this.page.getByTestId('edit-nickname'));
+    
+    await editBtn.click();
+    
+    // Use label instead of testid
+    await this.page.getByLabel(/nickname/i)
+      .or(this.page.getByTestId('nickname-input'))
+      .fill(nickname);
+    
+    const saveBtn = this.page.getByRole('button', { name: /save/i })
+      .or(this.page.getByTestId('save-nickname'));
+    
+    await saveBtn.click();
+    
+    // Wait for success alert (auto-waiting)
+    await this.getSuccessAlert().waitFor({ state: 'visible' });
     
     logger.info({ nickname }, 'Account nickname updated');
   }
@@ -425,90 +398,74 @@ export class AccountDetailsPage extends BasePage {
    */
   async enableLowBalanceAlert(threshold: number) {
     await this.goToSettingsTab();
-    await this.helper.check(this.selectors.enableLowBalanceAlert);
-    await this.helper.fill(this.selectors.lowBalanceThreshold, threshold.toString());
-    await this.helper.click(this.selectors.saveSettingsButton);
     
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.successMessage),
-      5000
-    );
+    // Use getByLabel for checkbox
+    await this.page.getByRole('checkbox', { name: /low.*balance.*alert/i })
+      .or(this.page.getByTestId('enable-low-balance-alert'))
+      .check();
+    
+    await this.page.getByLabel(/threshold/i)
+      .or(this.page.getByTestId('low-balance-threshold'))
+      .fill(threshold.toString());
+    
+    const saveBtn = this.page.getByRole('button', { name: /save/i })
+      .or(this.page.getByTestId('save-settings'));
+    
+    await saveBtn.click();
+    
+    await this.getSuccessAlert().waitFor({ state: 'visible' });
   }
 
-  /**
-   * Enable large transaction alert
-   */
-  async enableLargeTransactionAlert(amount: number) {
-    await this.goToSettingsTab();
-    await this.helper.check(this.selectors.enableLargeTransactionAlert);
-    await this.helper.fill(this.selectors.largeTransactionAmount, amount.toString());
-    await this.helper.click(this.selectors.saveSettingsButton);
-    
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.successMessage),
-      5000
-    );
-  }
-
-  /**
-   * Close account
-   */
-  async closeAccount(reason: string) {
-    await this.helper.click(this.selectors.closeAccountButton);
-    
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.closeAccountModal),
-      5000
-    );
-
-    await this.helper.fill(this.selectors.closeAccountReason, reason);
-    await this.helper.click(this.selectors.confirmCloseButton);
-    
-    logger.warn({ reason }, 'Account close requested');
-  }
-
-  /**
-   * Cancel account closure
-   */
-  async cancelAccountClosure() {
-    await this.helper.click(this.selectors.cancelCloseButton);
-  }
+  // ====================
+  // MESSAGES
+  // ====================
 
   /**
    * Check if success message is shown
    */
   async hasSuccessMessage(): Promise<boolean> {
-    return await this.helper.isVisible(this.selectors.successMessage);
+    return await this.getSuccessAlert().isVisible();
   }
 
   /**
    * Get success message
    */
   async getSuccessMessage(): Promise<string> {
-    return await this.helper.getText(this.selectors.successMessage);
+    return await this.getSuccessAlert().textContent() || '';
   }
 
   /**
    * Check if error message is shown
    */
   async hasError(): Promise<boolean> {
-    return await this.helper.isVisible(this.selectors.errorMessage);
+    return await this.getErrorAlert().isVisible();
   }
 
   /**
    * Get error message
    */
   async getErrorMessage(): Promise<string> {
-    return await this.helper.getText(this.selectors.errorMessage);
+    return await this.getErrorAlert().textContent() || '';
   }
+
+  // ====================
+  // PAGINATION
+  // ====================
 
   /**
    * Navigate to next page of transactions
+   * MODERNIZED: No setTimeout
    */
   async goToNextTransactionsPage() {
     await this.goToTransactionsTab();
-    await this.helper.click(this.selectors.paginationNext);
-    await this.page.waitForTimeout(1000);
+    
+    const nextBtn = this.page.getByRole('button', { name: /next/i })
+      .or(this.page.getByTestId('pagination-next'));
+    
+    await nextBtn.click();
+    
+    // Wait for transaction items to update
+    await this.getTransactionItems().first().waitFor({ state: 'visible' });
   }
 
   /**
@@ -516,8 +473,13 @@ export class AccountDetailsPage extends BasePage {
    */
   async goToPreviousTransactionsPage() {
     await this.goToTransactionsTab();
-    await this.helper.click(this.selectors.paginationPrev);
-    await this.page.waitForTimeout(1000);
+    
+    const prevBtn = this.page.getByRole('button', { name: /prev|previous/i })
+      .or(this.page.getByTestId('pagination-prev'));
+    
+    await prevBtn.click();
+    
+    await this.getTransactionItems().first().waitFor({ state: 'visible' });
   }
 
   /**
@@ -525,6 +487,8 @@ export class AccountDetailsPage extends BasePage {
    */
   async getPaginationInfo(): Promise<string> {
     await this.goToTransactionsTab();
-    return await this.helper.getText(this.selectors.paginationInfo);
+    return await this.page.getByRole('status', { name: /pagination|page/i })
+      .or(this.page.getByTestId('pagination-info'))
+      .textContent() || '';
   }
 }

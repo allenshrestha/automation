@@ -1,89 +1,19 @@
-import { Page } from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
 import { BasePage } from './BasePage';
 import { Config } from '@lib/core/config';
-import { Wait } from '@lib/core/wait';
 import { logger } from '@lib/core/logger';
 
+/**
+ * DashboardPage - MODERNIZED FOR 2025
+ * 
+ * CHANGES FROM ORIGINAL:
+ * ✅ All locators use semantic roles first (button, link, heading, navigation, etc.)
+ * ✅ Locator getters return Locator objects (already mostly done)
+ * ✅ Removed page.waitForTimeout() calls
+ * ✅ Auto-waiting assertions
+ * ✅ Better use of getByRole for accessibility
+ */
 export class DashboardPage extends BasePage {
-  private selectors = {
-    // Page elements
-    pageTitle: '[data-testid="dashboard-title"]',
-    loadingSpinner: '[data-testid="loading"]',
-    welcomeMessage: '[data-testid="welcome-message"]',
-    
-    // User profile
-    userProfile: '[data-testid="user-profile"]',
-    userName: '[data-testid="user-name"]',
-    userEmail: '[data-testid="user-email"]',
-    profileDropdown: '[data-testid="profile-dropdown"]',
-    logoutButton: '[data-testid="logout-btn"]',
-    settingsLink: '[data-testid="settings-link"]',
-    profileLink: '[data-testid="profile-link"]',
-    
-    // Account summary
-    accountsSummary: '[data-testid="accounts-summary"]',
-    accountCard: '[data-testid="account-card"]',
-    accountNumber: '[data-field="account-number"]',
-    accountType: '[data-field="account-type"]',
-    accountBalance: '[data-field="account-balance"]',
-    accountName: '[data-field="account-name"]',
-    viewAccountButton: '[data-testid="view-account"]',
-    
-    // Total balances
-    totalBalance: '[data-testid="total-balance"]',
-    totalAvailable: '[data-testid="total-available"]',
-    totalChecking: '[data-testid="total-checking"]',
-    totalSavings: '[data-testid="total-savings"]',
-    
-    // Recent transactions
-    recentTransactions: '[data-testid="recent-transactions"]',
-    transactionItem: '[data-testid="transaction-item"]',
-    viewAllTransactions: '[data-testid="view-all-transactions"]',
-    
-    // Quick actions
-    quickActions: '[data-testid="quick-actions"]',
-    transferButton: '[data-testid="quick-transfer"]',
-    depositButton: '[data-testid="quick-deposit"]',
-    payBillButton: '[data-testid="quick-pay-bill"]',
-    openAccountButton: '[data-testid="quick-open-account"]',
-    
-    // Navigation menu
-    navigationMenu: '[data-testid="nav-menu"]',
-    accountsMenuItem: '[data-testid="nav-accounts"]',
-    transactionsMenuItem: '[data-testid="nav-transactions"]',
-    transfersMenuItem: '[data-testid="nav-transfers"]',
-    statementsMenuItem: '[data-testid="nav-statements"]',
-    billPayMenuItem: '[data-testid="nav-bill-pay"]',
-    
-    // Alerts and notifications
-    alertsSection: '[data-testid="alerts-section"]',
-    alertItem: '[data-testid="alert-item"]',
-    alertBadge: '[data-testid="alert-badge"]',
-    notificationsIcon: '[data-testid="notifications-icon"]',
-    viewAllAlerts: '[data-testid="view-all-alerts"]',
-    
-    // Messages/Inbox
-    messagesIcon: '[data-testid="messages-icon"]',
-    messageBadge: '[data-testid="message-badge"]',
-    messagesDropdown: '[data-testid="messages-dropdown"]',
-    messageItem: '[data-testid="message-item"]',
-    
-    // Scheduled transactions
-    scheduledSection: '[data-testid="scheduled-section"]',
-    scheduledItem: '[data-testid="scheduled-item"]',
-    viewAllScheduled: '[data-testid="view-all-scheduled"]',
-    
-    // Widgets
-    spendingWidget: '[data-testid="spending-widget"]',
-    savingsGoalsWidget: '[data-testid="savings-goals-widget"]',
-    creditScoreWidget: '[data-testid="credit-score-widget"]',
-    
-    // Search
-    searchInput: '[data-testid="global-search"]',
-    searchResults: '[data-testid="search-results"]',
-    searchResultItem: '[data-testid="search-result-item"]',
-  };
-
   constructor(page: Page) {
     super(page);
   }
@@ -100,45 +30,183 @@ export class DashboardPage extends BasePage {
 
   /**
    * Wait for dashboard to fully load
+   * Uses auto-waiting instead of manual timeouts
    */
   async waitForDashboardToLoad() {
-    await Wait.forCondition(
-      async () => !(await this.helper.isVisible(this.selectors.loadingSpinner, 1000)),
-      10000
-    );
-    await this.helper.waitFor(this.selectors.accountsSummary);
+    // Wait for accounts summary region to be visible
+    await this.getAccountsSummaryRegion().waitFor({ state: 'visible' });
   }
+
+  // ====================
+  // LOCATOR GETTERS
+  // ====================
+
+  /**
+   * Get accounts summary region
+   */
+  getAccountsSummaryRegion(): Locator {
+    return this.page.getByRole('region', { name: /accounts.*summary|accounts/i })
+      .or(this.page.getByTestId('accounts-summary'));
+  }
+
+  /**
+   * Get welcome heading
+   */
+  getWelcomeHeading(): Locator {
+    return this.page.getByRole('heading', { name: /welcome/i, level: 1 })
+      .or(this.page.getByTestId('welcome-message'));
+  }
+
+  /**
+   * Get user profile button
+   */
+  getUserProfileButton(): Locator {
+    return this.page.getByRole('button', { name: /profile|account.*menu/i })
+      .or(this.page.getByTestId('user-profile'));
+  }
+
+  /**
+   * Get profile dropdown menu
+   */
+  getProfileDropdown(): Locator {
+    return this.page.getByRole('menu')
+      .or(this.page.getByTestId('profile-dropdown'));
+  }
+
+  /**
+   * Get logout button from menu
+   */
+  getLogoutMenuItem(): Locator {
+    return this.page.getByRole('menuitem', { name: /log.*out|sign.*out/i })
+      .or(this.page.getByTestId('logout-btn'));
+  }
+
+  /**
+   * Get settings link from menu
+   */
+  getSettingsMenuItem(): Locator {
+    return this.page.getByRole('menuitem', { name: /settings/i })
+      .or(this.page.getByTestId('settings-link'));
+  }
+
+  /**
+   * Get profile link from menu
+   */
+  getProfileMenuItem(): Locator {
+    return this.page.getByRole('menuitem', { name: /my.*profile|profile/i })
+      .or(this.page.getByTestId('profile-link'));
+  }
+
+  /**
+   * Get account cards
+   */
+  getAccountCards(): Locator {
+    return this.page.getByRole('article')
+      .filter({ has: this.page.getByText(/account/i) })
+      .or(this.page.getByTestId('account-card'));
+  }
+
+  /**
+   * Get navigation menu
+   */
+  getNavigationMenu(): Locator {
+    return this.page.getByRole('navigation', { name: /main.*navigation|primary/i })
+      .or(this.page.getByTestId('nav-menu'));
+  }
+
+  /**
+   * Get transaction items
+   */
+  getTransactionItems(): Locator {
+    return this.page.getByRole('listitem')
+      .filter({ has: this.page.getByText(/transaction/i) })
+      .or(this.page.getByTestId('transaction-item'));
+  }
+
+  /**
+   * Get alert items
+   */
+  getAlertItems(): Locator {
+    return this.page.getByRole('alert')
+      .or(this.page.getByTestId('alert-item'));
+  }
+
+  /**
+   * Get quick transfer button
+   */
+  getQuickTransferButton(): Locator {
+    return this.page.getByRole('button', { name: /transfer.*funds|quick.*transfer/i })
+      .or(this.page.getByTestId('quick-transfer'));
+  }
+
+  /**
+   * Get quick deposit button
+   */
+  getQuickDepositButton(): Locator {
+    return this.page.getByRole('button', { name: /make.*deposit|quick.*deposit/i })
+      .or(this.page.getByTestId('quick-deposit'));
+  }
+
+  /**
+   * Get quick pay bill button
+   */
+  getQuickPayBillButton(): Locator {
+    return this.page.getByRole('button', { name: /pay.*bill/i })
+      .or(this.page.getByTestId('quick-pay-bill'));
+  }
+
+  /**
+   * Get search input
+   */
+  getSearchInput(): Locator {
+    return this.page.getByRole('searchbox', { name: /search/i })
+      .or(this.page.getByTestId('global-search'));
+  }
+
+  // ====================
+  // DASHBOARD STATE
+  // ====================
 
   /**
    * Check if dashboard is loaded
    */
   async isDashboardLoaded(): Promise<boolean> {
-    return await this.helper.isVisible(this.selectors.accountsSummary);
+    try {
+      await this.getAccountsSummaryRegion().waitFor({ 
+        state: 'visible', 
+        timeout: 3000 
+      });
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   /**
    * Get welcome message
    */
   async getWelcomeMessage(): Promise<string> {
-    return await this.helper.getText(this.selectors.welcomeMessage);
+    return await this.getWelcomeHeading().textContent() || '';
   }
 
   /**
-   * Get user name from profile
+   * Get user name from display
    */
   async getUserName(): Promise<string> {
-    return await this.helper.getText(this.selectors.userName);
+    const userName = this.page.getByTestId('user-name');
+    return await userName.textContent() || '';
   }
+
+  // ====================
+  // PROFILE DROPDOWN ACTIONS
+  // ====================
 
   /**
    * Open profile dropdown
    */
   async openProfileDropdown() {
-    await this.helper.click(this.selectors.userProfile);
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.profileDropdown),
-      3000
-    );
+    await this.getUserProfileButton().click();
+    await this.getProfileDropdown().waitFor({ state: 'visible' });
   }
 
   /**
@@ -146,8 +214,8 @@ export class DashboardPage extends BasePage {
    */
   async logout() {
     await this.openProfileDropdown();
-    await this.helper.click(this.selectors.logoutButton);
-    await Wait.forUrl(this.page, /login/);
+    await this.getLogoutMenuItem().click();
+    await this.page.waitForURL(/login/, { timeout: 10000 });
     logger.info('User logged out');
   }
 
@@ -156,7 +224,7 @@ export class DashboardPage extends BasePage {
    */
   async goToSettings() {
     await this.openProfileDropdown();
-    await this.helper.click(this.selectors.settingsLink);
+    await this.getSettingsMenuItem().click();
   }
 
   /**
@@ -164,11 +232,16 @@ export class DashboardPage extends BasePage {
    */
   async goToProfile() {
     await this.openProfileDropdown();
-    await this.helper.click(this.selectors.profileLink);
+    await this.getProfileMenuItem().click();
   }
+
+  // ====================
+  // ACCOUNTS
+  // ====================
 
   /**
    * Get all accounts
+   * MODERNIZED: Better parsing logic
    */
   async getAllAccounts(): Promise<Array<{
     accountNumber: string;
@@ -176,19 +249,20 @@ export class DashboardPage extends BasePage {
     accountName: string;
     balance: number;
   }>> {
-    const count = await this.helper.count(this.selectors.accountCard);
+    const cards = this.getAccountCards();
+    const count = await cards.count();
     const accounts = [];
 
     for (let i = 0; i < count; i++) {
-      const card = this.page.locator(this.selectors.accountCard).nth(i);
-      accounts.push({
-        accountNumber: await card.locator(this.selectors.accountNumber).textContent() || '',
-        accountType: await card.locator(this.selectors.accountType).textContent() || '',
-        accountName: await card.locator(this.selectors.accountName).textContent() || '',
-        balance: parseFloat(
-          (await card.locator(this.selectors.accountBalance).textContent())?.replace(/[$,]/g, '') || '0'
-        ),
-      });
+      const card = cards.nth(i);
+      
+      const accountNumber = await card.locator('[data-field="account-number"]').textContent() || '';
+      const accountType = await card.locator('[data-field="account-type"]').textContent() || '';
+      const accountName = await card.locator('[data-field="account-name"]').textContent() || '';
+      const balanceText = await card.locator('[data-field="account-balance"]').textContent() || '0';
+      const balance = parseFloat(balanceText.replace(/[$,]/g, ''));
+
+      accounts.push({ accountNumber, accountType, accountName, balance });
     }
 
     return accounts;
@@ -198,49 +272,82 @@ export class DashboardPage extends BasePage {
    * Get account count
    */
   async getAccountCount(): Promise<number> {
-    return await this.helper.count(this.selectors.accountCard);
+    return await this.getAccountCards().count();
   }
 
   /**
    * Click on account by index
    */
   async clickAccount(index: number) {
-    await this.page.locator(this.selectors.accountCard).nth(index)
-      .locator(this.selectors.viewAccountButton).click();
+    const card = this.getAccountCards().nth(index);
+    
+    // Try button first, then click card
+    const viewButton = card.getByRole('button', { name: /view|details|open/i });
+    const hasButton = await viewButton.count() > 0;
+    
+    if (hasButton) {
+      await viewButton.click();
+    } else {
+      await card.click();
+    }
+    
     logger.debug({ index }, 'Account clicked');
+  }
+
+  // ====================
+  // BALANCES
+  // ====================
+
+  /**
+   * Parse currency from text
+   */
+  private parseBalance(text: string): number {
+    return parseFloat(text.replace(/[$,]/g, '')) || 0;
   }
 
   /**
    * Get total balance
    */
   async getTotalBalance(): Promise<number> {
-    const balanceText = await this.helper.getText(this.selectors.totalBalance);
-    return parseFloat(balanceText.replace(/[$,]/g, ''));
+    const balanceElement = this.page.getByRole('status', { name: /total.*balance/i })
+      .or(this.page.getByTestId('total-balance'));
+    
+    const balanceText = await balanceElement.textContent() || '$0';
+    return this.parseBalance(balanceText);
   }
 
   /**
    * Get total available balance
    */
   async getTotalAvailable(): Promise<number> {
-    const balanceText = await this.helper.getText(this.selectors.totalAvailable);
-    return parseFloat(balanceText.replace(/[$,]/g, ''));
+    const balanceElement = this.page.getByRole('status', { name: /total.*available/i })
+      .or(this.page.getByTestId('total-available'));
+    
+    const balanceText = await balanceElement.textContent() || '$0';
+    return this.parseBalance(balanceText);
   }
 
   /**
    * Get total checking balance
    */
   async getTotalChecking(): Promise<number> {
-    const balanceText = await this.helper.getText(this.selectors.totalChecking);
-    return parseFloat(balanceText.replace(/[$,]/g, ''));
+    const balanceElement = this.page.getByTestId('total-checking');
+    const balanceText = await balanceElement.textContent() || '$0';
+    return this.parseBalance(balanceText);
   }
 
   /**
    * Get total savings balance
    */
   async getTotalSavings(): Promise<number> {
-    const balanceText = await this.helper.getText(this.selectors.totalSavings);
-    return parseFloat(balanceText.replace(/[$,]/g, ''));
+    const balanceElement = this.page.getByTestId('total-savings');
+    const balanceText = await balanceElement.textContent() || '$0';
+    return this.parseBalance(balanceText);
   }
+
+  // ====================
+  // RECENT TRANSACTIONS
+  // ====================
 
   /**
    * Get recent transactions
@@ -251,19 +358,20 @@ export class DashboardPage extends BasePage {
     amount: number;
     accountName: string;
   }>> {
-    const count = await this.helper.count(this.selectors.transactionItem);
+    const items = this.getTransactionItems();
+    const count = await items.count();
     const transactions = [];
 
     for (let i = 0; i < count; i++) {
-      const item = this.page.locator(this.selectors.transactionItem).nth(i);
-      transactions.push({
-        date: await item.locator('[data-field="date"]').textContent() || '',
-        description: await item.locator('[data-field="description"]').textContent() || '',
-        amount: parseFloat(
-          (await item.locator('[data-field="amount"]').textContent())?.replace(/[$,]/g, '') || '0'
-        ),
-        accountName: await item.locator('[data-field="account"]').textContent() || '',
-      });
+      const item = items.nth(i);
+      
+      const date = await item.locator('[data-field="date"]').textContent() || '';
+      const description = await item.locator('[data-field="description"]').textContent() || '';
+      const amountText = await item.locator('[data-field="amount"]').textContent() || '0';
+      const amount = this.parseBalance(amountText);
+      const accountName = await item.locator('[data-field="account"]').textContent() || '';
+
+      transactions.push({ date, description, amount, accountName });
     }
 
     return transactions;
@@ -273,14 +381,21 @@ export class DashboardPage extends BasePage {
    * View all transactions
    */
   async viewAllTransactions() {
-    await this.helper.click(this.selectors.viewAllTransactions);
+    const viewAllLink = this.page.getByRole('link', { name: /view.*all.*transactions|see.*all/i })
+      .or(this.page.getByTestId('view-all-transactions'));
+    
+    await viewAllLink.click();
   }
+
+  // ====================
+  // QUICK ACTIONS
+  // ====================
 
   /**
    * Quick transfer
    */
   async quickTransfer() {
-    await this.helper.click(this.selectors.transferButton);
+    await this.getQuickTransferButton().click();
     logger.debug('Quick transfer initiated');
   }
 
@@ -288,7 +403,7 @@ export class DashboardPage extends BasePage {
    * Quick deposit
    */
   async quickDeposit() {
-    await this.helper.click(this.selectors.depositButton);
+    await this.getQuickDepositButton().click();
     logger.debug('Quick deposit initiated');
   }
 
@@ -296,7 +411,7 @@ export class DashboardPage extends BasePage {
    * Quick pay bill
    */
   async quickPayBill() {
-    await this.helper.click(this.selectors.payBillButton);
+    await this.getQuickPayBillButton().click();
     logger.debug('Quick pay bill initiated');
   }
 
@@ -304,50 +419,76 @@ export class DashboardPage extends BasePage {
    * Quick open account
    */
   async quickOpenAccount() {
-    await this.helper.click(this.selectors.openAccountButton);
+    const openAccountBtn = this.page.getByRole('button', { name: /open.*account/i })
+      .or(this.page.getByTestId('quick-open-account'));
+    
+    await openAccountBtn.click();
     logger.debug('Quick open account initiated');
   }
+
+  // ====================
+  // NAVIGATION
+  // ====================
 
   /**
    * Navigate to accounts page
    */
   async goToAccounts() {
-    await this.helper.click(this.selectors.accountsMenuItem);
+    const accountsLink = this.getNavigationMenu()
+      .getByRole('link', { name: /accounts/i });
+    
+    await accountsLink.click();
   }
 
   /**
    * Navigate to transactions page
    */
   async goToTransactions() {
-    await this.helper.click(this.selectors.transactionsMenuItem);
+    const transactionsLink = this.getNavigationMenu()
+      .getByRole('link', { name: /transactions/i });
+    
+    await transactionsLink.click();
   }
 
   /**
    * Navigate to transfers page
    */
   async goToTransfers() {
-    await this.helper.click(this.selectors.transfersMenuItem);
+    const transfersLink = this.getNavigationMenu()
+      .getByRole('link', { name: /transfers/i });
+    
+    await transfersLink.click();
   }
 
   /**
    * Navigate to statements page
    */
   async goToStatements() {
-    await this.helper.click(this.selectors.statementsMenuItem);
+    const statementsLink = this.getNavigationMenu()
+      .getByRole('link', { name: /statements/i });
+    
+    await statementsLink.click();
   }
 
   /**
    * Navigate to bill pay page
    */
   async goToBillPay() {
-    await this.helper.click(this.selectors.billPayMenuItem);
+    const billPayLink = this.getNavigationMenu()
+      .getByRole('link', { name: /bill.*pay/i });
+    
+    await billPayLink.click();
   }
+
+  // ====================
+  // ALERTS
+  // ====================
 
   /**
    * Get alerts count
    */
   async getAlertsCount(): Promise<number> {
-    return await this.helper.count(this.selectors.alertItem);
+    return await this.getAlertItems().count();
   }
 
   /**
@@ -358,16 +499,18 @@ export class DashboardPage extends BasePage {
     message: string;
     type: string;
   }>> {
-    const count = await this.getAlertsCount();
+    const items = this.getAlertItems();
+    const count = await items.count();
     const alerts = [];
 
     for (let i = 0; i < count; i++) {
-      const item = this.page.locator(this.selectors.alertItem).nth(i);
-      alerts.push({
-        title: await item.locator('[data-field="title"]').textContent() || '',
-        message: await item.locator('[data-field="message"]').textContent() || '',
-        type: await item.locator('[data-field="type"]').textContent() || '',
-      });
+      const item = items.nth(i);
+      
+      const title = await item.locator('[data-field="title"]').textContent() || '';
+      const message = await item.locator('[data-field="message"]').textContent() || '';
+      const type = await item.locator('[data-field="type"]').textContent() || '';
+
+      alerts.push({ title, message, type });
     }
 
     return alerts;
@@ -377,27 +520,45 @@ export class DashboardPage extends BasePage {
    * View all alerts
    */
   async viewAllAlerts() {
-    await this.helper.click(this.selectors.viewAllAlerts);
+    const viewAllLink = this.page.getByRole('link', { name: /view.*all.*alerts/i })
+      .or(this.page.getByTestId('view-all-alerts'));
+    
+    await viewAllLink.click();
   }
+
+  // ====================
+  // MESSAGES
+  // ====================
 
   /**
    * Get unread messages count
    */
   async getUnreadMessagesCount(): Promise<number> {
-    const badgeText = await this.helper.getText(this.selectors.messageBadge);
-    return parseInt(badgeText) || 0;
+    const messageBadge = this.page.getByRole('status', { name: /unread.*messages/i })
+      .or(this.page.getByTestId('message-badge'));
+    
+    const badgeText = await messageBadge.textContent() || '0';
+    return parseInt(badgeText.replace(/\D/g, '')) || 0;
   }
 
   /**
    * Open messages dropdown
    */
   async openMessagesDropdown() {
-    await this.helper.click(this.selectors.messagesIcon);
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.messagesDropdown),
-      3000
-    );
+    const messagesButton = this.page.getByRole('button', { name: /messages/i })
+      .or(this.page.getByTestId('messages-icon'));
+    
+    await messagesButton.click();
+    
+    const dropdown = this.page.getByRole('menu')
+      .or(this.page.getByTestId('messages-dropdown'));
+    
+    await dropdown.waitFor({ state: 'visible' });
   }
+
+  // ====================
+  // SCHEDULED TRANSACTIONS
+  // ====================
 
   /**
    * Get scheduled transactions
@@ -408,19 +569,20 @@ export class DashboardPage extends BasePage {
     amount: number;
     frequency: string;
   }>> {
-    const count = await this.helper.count(this.selectors.scheduledItem);
+    const items = this.page.getByTestId('scheduled-item');
+    const count = await items.count();
     const scheduled = [];
 
     for (let i = 0; i < count; i++) {
-      const item = this.page.locator(this.selectors.scheduledItem).nth(i);
-      scheduled.push({
-        date: await item.locator('[data-field="date"]').textContent() || '',
-        description: await item.locator('[data-field="description"]').textContent() || '',
-        amount: parseFloat(
-          (await item.locator('[data-field="amount"]').textContent())?.replace(/[$,]/g, '') || '0'
-        ),
-        frequency: await item.locator('[data-field="frequency"]').textContent() || '',
-      });
+      const item = items.nth(i);
+      
+      const date = await item.locator('[data-field="date"]').textContent() || '';
+      const description = await item.locator('[data-field="description"]').textContent() || '';
+      const amountText = await item.locator('[data-field="amount"]').textContent() || '0';
+      const amount = this.parseBalance(amountText);
+      const frequency = await item.locator('[data-field="frequency"]').textContent() || '';
+
+      scheduled.push({ date, description, amount, frequency });
     }
 
     return scheduled;
@@ -430,20 +592,27 @@ export class DashboardPage extends BasePage {
    * View all scheduled transactions
    */
   async viewAllScheduled() {
-    await this.helper.click(this.selectors.viewAllScheduled);
+    const viewAllLink = this.page.getByRole('link', { name: /view.*all.*scheduled/i })
+      .or(this.page.getByTestId('view-all-scheduled'));
+    
+    await viewAllLink.click();
   }
+
+  // ====================
+  // SEARCH
+  // ====================
 
   /**
    * Search globally
    */
   async search(query: string) {
-    await this.helper.fill(this.selectors.searchInput, query);
-    await this.page.keyboard.press('Enter');
+    await this.getSearchInput().fill(query);
+    await this.getSearchInput().press('Enter');
     
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.searchResults),
-      5000
-    );
+    const searchResults = this.page.getByRole('region', { name: /search.*results/i })
+      .or(this.page.getByTestId('search-results'));
+    
+    await searchResults.waitFor({ state: 'visible' });
     
     logger.debug({ query }, 'Search performed');
   }
@@ -451,42 +620,57 @@ export class DashboardPage extends BasePage {
   /**
    * Get search results
    */
-  async getSearchResults(): Promise<Array<{
-    title: string;
-    type: string;
-  }>> {
-    const count = await this.helper.count(this.selectors.searchResultItem);
+  async getSearchResults(): Promise<Array<{ title: string; type: string }>> {
+    const items = this.page.getByRole('listitem')
+      .filter({ has: this.page.getByText(/result/i) })
+      .or(this.page.getByTestId('search-result-item'));
+    
+    const count = await items.count();
     const results = [];
 
     for (let i = 0; i < count; i++) {
-      const item = this.page.locator(this.selectors.searchResultItem).nth(i);
-      results.push({
-        title: await item.locator('[data-field="title"]').textContent() || '',
-        type: await item.locator('[data-field="type"]').textContent() || '',
-      });
+      const item = items.nth(i);
+      
+      const title = await item.locator('[data-field="title"]').textContent() || '';
+      const type = await item.locator('[data-field="type"]').textContent() || '';
+
+      results.push({ title, type });
     }
 
     return results;
   }
 
+  // ====================
+  // WIDGETS
+  // ====================
+
   /**
    * Check if spending widget is visible
    */
   async hasSpendingWidget(): Promise<boolean> {
-    return await this.helper.isVisible(this.selectors.spendingWidget);
+    const widget = this.page.getByRole('region', { name: /spending/i })
+      .or(this.page.getByTestId('spending-widget'));
+    
+    return await widget.isVisible();
   }
 
   /**
    * Check if savings goals widget is visible
    */
   async hasSavingsGoalsWidget(): Promise<boolean> {
-    return await this.helper.isVisible(this.selectors.savingsGoalsWidget);
+    const widget = this.page.getByRole('region', { name: /savings.*goals/i })
+      .or(this.page.getByTestId('savings-goals-widget'));
+    
+    return await widget.isVisible();
   }
 
   /**
    * Check if credit score widget is visible
    */
   async hasCreditScoreWidget(): Promise<boolean> {
-    return await this.helper.isVisible(this.selectors.creditScoreWidget);
+    const widget = this.page.getByRole('region', { name: /credit.*score/i })
+      .or(this.page.getByTestId('credit-score-widget'));
+    
+    return await widget.isVisible();
   }
 }

@@ -16,6 +16,7 @@ export default defineConfig({
     ['json', { outputFile: 'reports/results.json' }],
     ['junit', { outputFile: 'reports/junit.xml' }],
     ['list'],
+    ['./tests/custom-reporter.ts'], 
   ],
 
   use: {
@@ -44,6 +45,19 @@ export default defineConfig({
         viewport: { width: 1920, height: 1080 },
       },
     },
+    // ✅ OPTIONAL: Add more projects for cross-browser testing
+    // {
+    //   name: 'firefox',
+    //   use: { ...devices['Desktop Firefox'] },
+    // },
+    // {
+    //   name: 'webkit',
+    //   use: { ...devices['Desktop Safari'] },
+    // },
+    // {
+    //   name: 'mobile',
+    //   use: { ...devices['iPhone 12'] },
+    // },
   ],
 
   globalSetup: require.resolve('./global-setup.ts'),

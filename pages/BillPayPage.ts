@@ -1,126 +1,10 @@
-import { Page } from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
 import { BasePage } from './BasePage';
 import { Config } from '@lib/core/config';
 import { Wait } from '@lib/core/wait';
 import { logger } from '@lib/core/logger';
 
 export class BillPayPage extends BasePage {
-  private selectors = {
-    // Page elements
-    pageTitle: '[data-testid="bill-pay-title"]',
-    loadingSpinner: '[data-testid="loading"]',
-    
-    // Payee management
-    addPayeeButton: '[data-testid="add-payee"]',
-    payeesList: '[data-testid="payees-list"]',
-    payeeItem: '[data-testid="payee-item"]',
-    payeeName: '[data-field="payee-name"]',
-    payeeAccount: '[data-field="payee-account"]',
-    payeeStatus: '[data-field="payee-status"]',
-    editPayeeButton: '[data-testid="edit-payee"]',
-    deletePayeeButton: '[data-testid="delete-payee"]',
-    
-    // Add/Edit Payee Modal
-    payeeModal: '[data-testid="payee-modal"]',
-    payeeNameInput: '[data-testid="payee-name-input"]',
-    payeeNicknameInput: '[data-testid="payee-nickname-input"]',
-    payeeAccountInput: '[data-testid="payee-account-input"]',
-    payeeAddressInput: '[data-testid="payee-address-input"]',
-    payeeCityInput: '[data-testid="payee-city-input"]',
-    payeeStateSelect: '[data-testid="payee-state-select"]',
-    payeeZipInput: '[data-testid="payee-zip-input"]',
-    payeePhoneInput: '[data-testid="payee-phone-input"]',
-    payeeCategorySelect: '[data-testid="payee-category-select"]',
-    savePayeeButton: '[data-testid="save-payee"]',
-    cancelPayeeButton: '[data-testid="cancel-payee"]',
-    
-    // Payment form
-    makePaymentButton: '[data-testid="make-payment"]',
-    paymentModal: '[data-testid="payment-modal"]',
-    selectPayeeDropdown: '[data-testid="select-payee"]',
-    payFromAccountSelect: '[data-testid="pay-from-account"]',
-    paymentAmountInput: '[data-testid="payment-amount"]',
-    paymentDateInput: '[data-testid="payment-date"]',
-    paymentMemoInput: '[data-testid="payment-memo"]',
-    deliveryMethodSelect: '[data-testid="delivery-method"]',
-    
-    // Recurring payment
-    recurringCheckbox: '[data-testid="recurring-payment"]',
-    frequencySelect: '[data-testid="payment-frequency"]',
-    startDateInput: '[data-testid="recurring-start-date"]',
-    endDateInput: '[data-testid="recurring-end-date"]',
-    numberOfPaymentsInput: '[data-testid="number-of-payments"]',
-    
-    // Payment review
-    reviewModal: '[data-testid="review-payment-modal"]',
-    reviewPayee: '[data-testid="review-payee"]',
-    reviewAmount: '[data-testid="review-amount"]',
-    reviewDate: '[data-testid="review-date"]',
-    reviewAccount: '[data-testid="review-account"]',
-    confirmPaymentButton: '[data-testid="confirm-payment"]',
-    editPaymentButton: '[data-testid="edit-payment"]',
-    
-    // Payment confirmation
-    confirmationModal: '[data-testid="confirmation-modal"]',
-    confirmationNumber: '[data-testid="confirmation-number"]',
-    confirmationMessage: '[data-testid="confirmation-message"]',
-    printReceiptButton: '[data-testid="print-receipt"]',
-    emailReceiptButton: '[data-testid="email-receipt"]',
-    closeConfirmationButton: '[data-testid="close-confirmation"]',
-    
-    // Payment history
-    paymentHistoryTab: '[data-testid="payment-history-tab"]',
-    scheduledPaymentsTab: '[data-testid="scheduled-payments-tab"]',
-    recurringPaymentsTab: '[data-testid="recurring-payments-tab"]',
-    
-    paymentHistoryList: '[data-testid="payment-history-list"]',
-    paymentHistoryItem: '[data-testid="payment-history-item"]',
-    scheduledPaymentsList: '[data-testid="scheduled-payments-list"]',
-    scheduledPaymentItem: '[data-testid="scheduled-payment-item"]',
-    recurringPaymentsList: '[data-testid="recurring-payments-list"]',
-    recurringPaymentItem: '[data-testid="recurring-payment-item"]',
-    
-    // Payment actions
-    cancelPaymentButton: '[data-testid="cancel-payment"]',
-    editScheduledButton: '[data-testid="edit-scheduled"]',
-    pauseRecurringButton: '[data-testid="pause-recurring"]',
-    resumeRecurringButton: '[data-testid="resume-recurring"]',
-    stopRecurringButton: '[data-testid="stop-recurring"]',
-    
-    // Filters
-    filterStartDate: '[data-testid="filter-start-date"]',
-    filterEndDate: '[data-testid="filter-end-date"]',
-    filterPayee: '[data-testid="filter-payee"]',
-    filterStatus: '[data-testid="filter-status"]',
-    filterMinAmount: '[data-testid="filter-min-amount"]',
-    filterMaxAmount: '[data-testid="filter-max-amount"]',
-    applyFiltersButton: '[data-testid="apply-filters"]',
-    clearFiltersButton: '[data-testid="clear-filters"]',
-    
-    // Search
-    searchPayeeInput: '[data-testid="search-payee"]',
-    searchButton: '[data-testid="search-button"]',
-    
-    // Export
-    exportButton: '[data-testid="export-payments"]',
-    exportFormatSelect: '[data-testid="export-format"]',
-    
-    // Messages
-    successMessage: '[data-testid="success-message"]',
-    errorMessage: '[data-testid="error-message"]',
-    warningMessage: '[data-testid="warning-message"]',
-    
-    // Delete confirmation
-    deleteModal: '[data-testid="delete-modal"]',
-    confirmDeleteButton: '[data-testid="confirm-delete"]',
-    cancelDeleteButton: '[data-testid="cancel-delete"]',
-    
-    // Pagination
-    paginationNext: '[data-testid="pagination-next"]',
-    paginationPrev: '[data-testid="pagination-prev"]',
-    paginationInfo: '[data-testid="pagination-info"]',
-  };
-
   constructor(page: Page) {
     super(page);
   }
@@ -134,15 +18,21 @@ export class BillPayPage extends BasePage {
     logger.debug('Navigated to bill pay page');
   }
 
+  // ====================
+  // PAYEE MANAGEMENT
+  // ====================
+
   /**
    * Click add payee button
    */
   async clickAddPayee() {
-    await this.helper.click(this.selectors.addPayeeButton);
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.payeeModal),
-      5000
-    );
+    const addBtn = this.page.getByRole('button', { name: /add.*payee/i })
+      .or(this.page.getByTestId('add-payee'));
+    await addBtn.click();
+    
+    const modal = this.page.getByRole('dialog')
+      .or(this.page.getByTestId('payee-modal'));
+    await modal.waitFor({ state: 'visible', timeout: 5000 });
   }
 
   /**
@@ -161,32 +51,33 @@ export class BillPayPage extends BasePage {
   }) {
     await this.clickAddPayee();
 
-    await this.helper.fill(this.selectors.payeeNameInput, payeeData.name);
+    await this.page.getByTestId('payee-name-input').fill(payeeData.name);
     
     if (payeeData.nickname) {
-      await this.helper.fill(this.selectors.payeeNicknameInput, payeeData.nickname);
+      await this.page.getByTestId('payee-nickname-input').fill(payeeData.nickname);
     }
 
-    await this.helper.fill(this.selectors.payeeAccountInput, payeeData.accountNumber);
-    await this.helper.fill(this.selectors.payeeAddressInput, payeeData.address);
-    await this.helper.fill(this.selectors.payeeCityInput, payeeData.city);
-    await this.helper.select(this.selectors.payeeStateSelect, payeeData.state);
-    await this.helper.fill(this.selectors.payeeZipInput, payeeData.zip);
+    await this.page.getByTestId('payee-account-input').fill(payeeData.accountNumber);
+    await this.page.getByTestId('payee-address-input').fill(payeeData.address);
+    await this.page.getByTestId('payee-city-input').fill(payeeData.city);
+    await this.page.getByTestId('payee-state-select').selectOption(payeeData.state);
+    await this.page.getByTestId('payee-zip-input').fill(payeeData.zip);
 
     if (payeeData.phone) {
-      await this.helper.fill(this.selectors.payeePhoneInput, payeeData.phone);
+      await this.page.getByTestId('payee-phone-input').fill(payeeData.phone);
     }
 
     if (payeeData.category) {
-      await this.helper.select(this.selectors.payeeCategorySelect, payeeData.category);
+      await this.page.getByTestId('payee-category-select').selectOption(payeeData.category);
     }
 
-    await this.helper.click(this.selectors.savePayeeButton);
+    const saveBtn = this.page.getByRole('button', { name: /save/i })
+      .or(this.page.getByTestId('save-payee'));
+    await saveBtn.click();
 
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.successMessage),
-      5000
-    );
+    const successMsg = this.page.getByRole('alert')
+      .or(this.page.getByTestId('success-message'));
+    await successMsg.waitFor({ state: 'visible', timeout: 5000 });
 
     logger.info({ payeeName: payeeData.name }, 'Payee added successfully');
   }
@@ -199,15 +90,17 @@ export class BillPayPage extends BasePage {
     account: string;
     status: string;
   }>> {
-    const count = await this.helper.count(this.selectors.payeeItem);
+    const items = this.page.getByTestId('payee-item');
+    const count = await items.count();
     const payees = [];
 
     for (let i = 0; i < count; i++) {
-      const item = this.page.locator(this.selectors.payeeItem).nth(i);
+      const item = items.nth(i);
+      
       payees.push({
-        name: await item.locator(this.selectors.payeeName).textContent() || '',
-        account: await item.locator(this.selectors.payeeAccount).textContent() || '',
-        status: await item.locator(this.selectors.payeeStatus).textContent() || '',
+        name: await item.locator('[data-field="payee-name"]').textContent() || '',
+        account: await item.locator('[data-field="payee-account"]').textContent() || '',
+        status: await item.locator('[data-field="payee-status"]').textContent() || '',
       });
     }
 
@@ -218,8 +111,14 @@ export class BillPayPage extends BasePage {
    * Search for payee
    */
   async searchPayee(payeeName: string) {
-    await this.helper.fill(this.selectors.searchPayeeInput, payeeName);
-    await this.helper.click(this.selectors.searchButton);
+    const searchInput = this.page.getByRole('searchbox')
+      .or(this.page.getByTestId('search-payee'));
+    await searchInput.fill(payeeName);
+    
+    const searchBtn = this.page.getByRole('button', { name: /search/i })
+      .or(this.page.getByTestId('search-button'));
+    await searchBtn.click();
+    
     await this.page.waitForTimeout(1000);
   }
 
@@ -232,33 +131,35 @@ export class BillPayPage extends BasePage {
     accountNumber: string;
     phone: string;
   }>) {
-    await this.page.locator(this.selectors.payeeItem).nth(index)
-      .locator(this.selectors.editPayeeButton).click();
+    const editBtn = this.page.getByTestId('payee-item').nth(index)
+      .getByRole('button', { name: /edit/i })
+      .or(this.page.getByTestId('edit-payee'));
+    await editBtn.click();
 
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.payeeModal),
-      5000
-    );
+    const modal = this.page.getByRole('dialog')
+      .or(this.page.getByTestId('payee-modal'));
+    await modal.waitFor({ state: 'visible', timeout: 5000 });
 
     if (updates.name) {
-      await this.helper.fill(this.selectors.payeeNameInput, updates.name);
+      await this.page.getByTestId('payee-name-input').fill(updates.name);
     }
     if (updates.nickname) {
-      await this.helper.fill(this.selectors.payeeNicknameInput, updates.nickname);
+      await this.page.getByTestId('payee-nickname-input').fill(updates.nickname);
     }
     if (updates.accountNumber) {
-      await this.helper.fill(this.selectors.payeeAccountInput, updates.accountNumber);
+      await this.page.getByTestId('payee-account-input').fill(updates.accountNumber);
     }
     if (updates.phone) {
-      await this.helper.fill(this.selectors.payeePhoneInput, updates.phone);
+      await this.page.getByTestId('payee-phone-input').fill(updates.phone);
     }
 
-    await this.helper.click(this.selectors.savePayeeButton);
+    const saveBtn = this.page.getByRole('button', { name: /save/i })
+      .or(this.page.getByTestId('save-payee'));
+    await saveBtn.click();
 
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.successMessage),
-      5000
-    );
+    const successMsg = this.page.getByRole('alert')
+      .or(this.page.getByTestId('success-message'));
+    await successMsg.waitFor({ state: 'visible', timeout: 5000 });
 
     logger.info({ index }, 'Payee updated');
   }
@@ -267,23 +168,29 @@ export class BillPayPage extends BasePage {
    * Delete payee by index
    */
   async deletePayee(index: number) {
-    await this.page.locator(this.selectors.payeeItem).nth(index)
-      .locator(this.selectors.deletePayeeButton).click();
+    const deleteBtn = this.page.getByTestId('payee-item').nth(index)
+      .getByRole('button', { name: /delete/i })
+      .or(this.page.getByTestId('delete-payee'));
+    await deleteBtn.click();
 
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.deleteModal),
-      5000
-    );
+    const modal = this.page.getByRole('dialog')
+      .or(this.page.getByTestId('delete-modal'));
+    await modal.waitFor({ state: 'visible', timeout: 5000 });
 
-    await this.helper.click(this.selectors.confirmDeleteButton);
+    const confirmBtn = this.page.getByRole('button', { name: /confirm/i })
+      .or(this.page.getByTestId('confirm-delete'));
+    await confirmBtn.click();
 
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.successMessage),
-      5000
-    );
+    const successMsg = this.page.getByRole('alert')
+      .or(this.page.getByTestId('success-message'));
+    await successMsg.waitFor({ state: 'visible', timeout: 5000 });
 
     logger.info({ index }, 'Payee deleted');
   }
+
+  // ====================
+  // MAKE PAYMENT
+  // ====================
 
   /**
    * Make a one-time payment
@@ -296,41 +203,46 @@ export class BillPayPage extends BasePage {
     memo?: string;
     deliveryMethod?: string;
   }) {
-    await this.helper.click(this.selectors.makePaymentButton);
+    const makePaymentBtn = this.page.getByRole('button', { name: /make.*payment/i })
+      .or(this.page.getByTestId('make-payment'));
+    await makePaymentBtn.click();
 
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.paymentModal),
-      5000
-    );
+    const modal = this.page.getByRole('dialog')
+      .or(this.page.getByTestId('payment-modal'));
+    await modal.waitFor({ state: 'visible', timeout: 5000 });
 
-    await this.helper.select(this.selectors.selectPayeeDropdown, paymentData.payee);
-    await this.helper.select(this.selectors.payFromAccountSelect, paymentData.fromAccount);
-    await this.helper.fill(this.selectors.paymentAmountInput, paymentData.amount.toString());
-    await this.helper.fill(this.selectors.paymentDateInput, paymentData.date);
+    await this.page.getByTestId('select-payee').selectOption(paymentData.payee);
+    await this.page.getByTestId('pay-from-account').selectOption(paymentData.fromAccount);
+    
+    const amountInput = this.page.getByLabel(/amount/i)
+      .or(this.page.getByTestId('payment-amount'));
+    await amountInput.fill(paymentData.amount.toString());
+    
+    await this.page.getByTestId('payment-date').fill(paymentData.date);
 
     if (paymentData.memo) {
-      await this.helper.fill(this.selectors.paymentMemoInput, paymentData.memo);
+      await this.page.getByTestId('payment-memo').fill(paymentData.memo);
     }
 
     if (paymentData.deliveryMethod) {
-      await this.helper.select(this.selectors.deliveryMethodSelect, paymentData.deliveryMethod);
+      await this.page.getByTestId('delivery-method').selectOption(paymentData.deliveryMethod);
     }
 
     // Review payment
-    await this.page.click('button:has-text("Review")'); // Adjust selector as needed
+    const reviewBtn = this.page.getByRole('button', { name: /review/i });
+    await reviewBtn.click();
 
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.reviewModal),
-      5000
-    );
+    const reviewModal = this.page.getByRole('dialog')
+      .or(this.page.getByTestId('review-modal'));
+    await reviewModal.waitFor({ state: 'visible', timeout: 5000 });
 
     // Confirm payment
-    await this.helper.click(this.selectors.confirmPaymentButton);
+    const confirmBtn = this.page.getByRole('button', { name: /confirm/i })
+      .or(this.page.getByTestId('confirm-payment'));
+    await confirmBtn.click();
 
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.confirmationModal),
-      10000
-    );
+    const confirmationModal = this.page.getByTestId('confirmation-modal');
+    await confirmationModal.waitFor({ state: 'visible', timeout: 10000 });
 
     logger.info({ payee: paymentData.payee, amount: paymentData.amount }, 'Payment completed');
   }
@@ -348,103 +260,126 @@ export class BillPayPage extends BasePage {
     numberOfPayments?: number;
     memo?: string;
   }) {
-    await this.helper.click(this.selectors.makePaymentButton);
+    const makePaymentBtn = this.page.getByRole('button', { name: /make.*payment/i })
+      .or(this.page.getByTestId('make-payment'));
+    await makePaymentBtn.click();
 
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.paymentModal),
-      5000
-    );
+    const modal = this.page.getByRole('dialog')
+      .or(this.page.getByTestId('payment-modal'));
+    await modal.waitFor({ state: 'visible', timeout: 5000 });
 
-    await this.helper.select(this.selectors.selectPayeeDropdown, paymentData.payee);
-    await this.helper.select(this.selectors.payFromAccountSelect, paymentData.fromAccount);
-    await this.helper.fill(this.selectors.paymentAmountInput, paymentData.amount.toString());
+    await this.page.getByTestId('select-payee').selectOption(paymentData.payee);
+    await this.page.getByTestId('pay-from-account').selectOption(paymentData.fromAccount);
+    
+    const amountInput = this.page.getByLabel(/amount/i)
+      .or(this.page.getByTestId('payment-amount'));
+    await amountInput.fill(paymentData.amount.toString());
 
     // Enable recurring
-    await this.helper.check(this.selectors.recurringCheckbox);
+    const recurringCheckbox = this.page.getByRole('checkbox', { name: /recurring/i })
+      .or(this.page.getByTestId('recurring-payment'));
+    await recurringCheckbox.check();
 
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.frequencySelect),
-      3000
-    );
-
-    await this.helper.select(this.selectors.frequencySelect, paymentData.frequency);
-    await this.helper.fill(this.selectors.startDateInput, paymentData.startDate);
+    const frequencySelect = this.page.getByLabel(/frequency/i)
+      .or(this.page.getByTestId('payment-frequency'));
+    await frequencySelect.waitFor({ state: 'visible', timeout: 3000 });
+    await frequencySelect.selectOption(paymentData.frequency);
+    
+    await this.page.getByTestId('recurring-start-date').fill(paymentData.startDate);
 
     if (paymentData.endDate) {
-      await this.helper.fill(this.selectors.endDateInput, paymentData.endDate);
+      await this.page.getByTestId('recurring-end-date').fill(paymentData.endDate);
     }
 
     if (paymentData.numberOfPayments) {
-      await this.helper.fill(this.selectors.numberOfPaymentsInput, paymentData.numberOfPayments.toString());
+      await this.page.getByTestId('number-of-payments').fill(paymentData.numberOfPayments.toString());
     }
 
     if (paymentData.memo) {
-      await this.helper.fill(this.selectors.paymentMemoInput, paymentData.memo);
+      await this.page.getByTestId('payment-memo').fill(paymentData.memo);
     }
 
     // Review and confirm
-    await this.page.click('button:has-text("Review")');
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.reviewModal),
-      5000
-    );
+    const reviewBtn = this.page.getByRole('button', { name: /review/i });
+    await reviewBtn.click();
+    
+    const reviewModal = this.page.getByRole('dialog')
+      .or(this.page.getByTestId('review-modal'));
+    await reviewModal.waitFor({ state: 'visible', timeout: 5000 });
 
-    await this.helper.click(this.selectors.confirmPaymentButton);
+    const confirmBtn = this.page.getByRole('button', { name: /confirm/i })
+      .or(this.page.getByTestId('confirm-payment'));
+    await confirmBtn.click();
 
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.confirmationModal),
-      10000
-    );
+    const confirmationModal = this.page.getByTestId('confirmation-modal');
+    await confirmationModal.waitFor({ state: 'visible', timeout: 10000 });
 
     logger.info({ payee: paymentData.payee, frequency: paymentData.frequency }, 'Recurring payment scheduled');
   }
+
+  // ====================
+  // CONFIRMATION
+  // ====================
 
   /**
    * Get confirmation number
    */
   async getConfirmationNumber(): Promise<string> {
-    return await this.helper.getText(this.selectors.confirmationNumber);
+    return await this.page.getByTestId('confirmation-number').textContent() || '';
   }
 
   /**
    * Close confirmation modal
    */
   async closeConfirmation() {
-    await this.helper.click(this.selectors.closeConfirmationButton);
+    const closeBtn = this.page.getByRole('button', { name: /close/i })
+      .or(this.page.getByTestId('close-confirmation'));
+    await closeBtn.click();
   }
+
+  // ====================
+  // PAYMENT HISTORY TABS
+  // ====================
 
   /**
    * Go to payment history tab
    */
   async goToPaymentHistory() {
-    await this.helper.click(this.selectors.paymentHistoryTab);
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.paymentHistoryList),
-      5000
-    );
+    const tab = this.page.getByRole('tab', { name: /payment.*history/i })
+      .or(this.page.getByTestId('payment-history-tab'));
+    await tab.click();
+    
+    const list = this.page.getByTestId('payment-history-list');
+    await list.waitFor({ state: 'visible', timeout: 5000 });
   }
 
   /**
    * Go to scheduled payments tab
    */
   async goToScheduledPayments() {
-    await this.helper.click(this.selectors.scheduledPaymentsTab);
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.scheduledPaymentsList),
-      5000
-    );
+    const tab = this.page.getByRole('tab', { name: /scheduled/i })
+      .or(this.page.getByTestId('scheduled-payments-tab'));
+    await tab.click();
+    
+    const list = this.page.getByTestId('scheduled-payments-list');
+    await list.waitFor({ state: 'visible', timeout: 5000 });
   }
 
   /**
    * Go to recurring payments tab
    */
   async goToRecurringPayments() {
-    await this.helper.click(this.selectors.recurringPaymentsTab);
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.recurringPaymentsList),
-      5000
-    );
+    const tab = this.page.getByRole('tab', { name: /recurring/i })
+      .or(this.page.getByTestId('recurring-payments-tab'));
+    await tab.click();
+    
+    const list = this.page.getByTestId('recurring-payments-list');
+    await list.waitFor({ state: 'visible', timeout: 5000 });
   }
+
+  // ====================
+  // GET PAYMENTS
+  // ====================
 
   /**
    * Get payment history
@@ -457,11 +392,13 @@ export class BillPayPage extends BasePage {
   }>> {
     await this.goToPaymentHistory();
 
-    const count = await this.helper.count(this.selectors.paymentHistoryItem);
+    const items = this.page.getByTestId('payment-history-item');
+    const count = await items.count();
     const payments = [];
 
     for (let i = 0; i < count; i++) {
-      const item = this.page.locator(this.selectors.paymentHistoryItem).nth(i);
+      const item = items.nth(i);
+      
       payments.push({
         payee: await item.locator('[data-field="payee"]').textContent() || '',
         amount: parseFloat(
@@ -486,11 +423,13 @@ export class BillPayPage extends BasePage {
   }>> {
     await this.goToScheduledPayments();
 
-    const count = await this.helper.count(this.selectors.scheduledPaymentItem);
+    const items = this.page.getByTestId('scheduled-payment-item');
+    const count = await items.count();
     const payments = [];
 
     for (let i = 0; i < count; i++) {
-      const item = this.page.locator(this.selectors.scheduledPaymentItem).nth(i);
+      const item = items.nth(i);
+      
       payments.push({
         payee: await item.locator('[data-field="payee"]').textContent() || '',
         amount: parseFloat(
@@ -504,21 +443,28 @@ export class BillPayPage extends BasePage {
     return payments;
   }
 
+  // ====================
+  // PAYMENT ACTIONS
+  // ====================
+
   /**
    * Cancel scheduled payment by index
    */
   async cancelScheduledPayment(index: number) {
     await this.goToScheduledPayments();
 
-    await this.page.locator(this.selectors.scheduledPaymentItem).nth(index)
-      .locator(this.selectors.cancelPaymentButton).click();
+    const cancelBtn = this.page.getByTestId('scheduled-payment-item').nth(index)
+      .getByRole('button', { name: /cancel/i })
+      .or(this.page.getByTestId('cancel-payment'));
+    await cancelBtn.click();
 
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.deleteModal),
-      5000
-    );
+    const modal = this.page.getByRole('dialog')
+      .or(this.page.getByTestId('delete-modal'));
+    await modal.waitFor({ state: 'visible', timeout: 5000 });
 
-    await this.helper.click(this.selectors.confirmDeleteButton);
+    const confirmBtn = this.page.getByRole('button', { name: /confirm/i })
+      .or(this.page.getByTestId('confirm-delete'));
+    await confirmBtn.click();
 
     logger.info({ index }, 'Scheduled payment cancelled');
   }
@@ -529,8 +475,10 @@ export class BillPayPage extends BasePage {
   async pauseRecurringPayment(index: number) {
     await this.goToRecurringPayments();
 
-    await this.page.locator(this.selectors.recurringPaymentItem).nth(index)
-      .locator(this.selectors.pauseRecurringButton).click();
+    const pauseBtn = this.page.getByTestId('recurring-payment-item').nth(index)
+      .getByRole('button', { name: /pause/i })
+      .or(this.page.getByTestId('pause-recurring'));
+    await pauseBtn.click();
 
     await this.page.waitForTimeout(1000);
 
@@ -543,8 +491,10 @@ export class BillPayPage extends BasePage {
   async resumeRecurringPayment(index: number) {
     await this.goToRecurringPayments();
 
-    await this.page.locator(this.selectors.recurringPaymentItem).nth(index)
-      .locator(this.selectors.resumeRecurringButton).click();
+    const resumeBtn = this.page.getByTestId('recurring-payment-item').nth(index)
+      .getByRole('button', { name: /resume/i })
+      .or(this.page.getByTestId('resume-recurring'));
+    await resumeBtn.click();
 
     await this.page.waitForTimeout(1000);
 
@@ -557,66 +507,96 @@ export class BillPayPage extends BasePage {
   async stopRecurringPayment(index: number) {
     await this.goToRecurringPayments();
 
-    await this.page.locator(this.selectors.recurringPaymentItem).nth(index)
-      .locator(this.selectors.stopRecurringButton).click();
+    const stopBtn = this.page.getByTestId('recurring-payment-item').nth(index)
+      .getByRole('button', { name: /stop/i })
+      .or(this.page.getByTestId('stop-recurring'));
+    await stopBtn.click();
 
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.deleteModal),
-      5000
-    );
+    const modal = this.page.getByRole('dialog')
+      .or(this.page.getByTestId('delete-modal'));
+    await modal.waitFor({ state: 'visible', timeout: 5000 });
 
-    await this.helper.click(this.selectors.confirmDeleteButton);
+    const confirmBtn = this.page.getByRole('button', { name: /confirm/i })
+      .or(this.page.getByTestId('confirm-delete'));
+    await confirmBtn.click();
 
     logger.info({ index }, 'Recurring payment stopped');
   }
+
+  // ====================
+  // FILTERS
+  // ====================
 
   /**
    * Filter payments by date range
    */
   async filterByDateRange(startDate: string, endDate: string) {
-    await this.helper.fill(this.selectors.filterStartDate, startDate);
-    await this.helper.fill(this.selectors.filterEndDate, endDate);
-    await this.helper.click(this.selectors.applyFiltersButton);
+    await this.page.getByTestId('filter-start-date').fill(startDate);
+    await this.page.getByTestId('filter-end-date').fill(endDate);
+    
+    const applyBtn = this.page.getByRole('button', { name: /apply/i })
+      .or(this.page.getByTestId('apply-filters'));
+    await applyBtn.click();
+    
     await this.page.waitForTimeout(1000);
   }
+
+  // ====================
+  // EXPORT
+  // ====================
 
   /**
    * Export payments
    */
   async exportPayments(format: 'CSV' | 'PDF' | 'Excel') {
-    await this.helper.select(this.selectors.exportFormatSelect, format);
+    await this.page.getByTestId('export-format').selectOption(format);
     
     const downloadPromise = this.page.waitForEvent('download');
-    await this.helper.click(this.selectors.exportButton);
+    
+    const exportBtn = this.page.getByRole('button', { name: /export/i })
+      .or(this.page.getByTestId('export-payments'));
+    await exportBtn.click();
     
     return await downloadPromise;
   }
+
+  // ====================
+  // MESSAGES
+  // ====================
 
   /**
    * Check if success message is shown
    */
   async hasSuccessMessage(): Promise<boolean> {
-    return await this.helper.isVisible(this.selectors.successMessage);
+    const successMsg = this.page.getByRole('alert')
+      .or(this.page.getByTestId('success-message'));
+    return await successMsg.isVisible();
   }
 
   /**
    * Get success message
    */
   async getSuccessMessage(): Promise<string> {
-    return await this.helper.getText(this.selectors.successMessage);
+    const successMsg = this.page.getByRole('alert')
+      .or(this.page.getByTestId('success-message'));
+    return await successMsg.textContent() || '';
   }
 
   /**
    * Check if error message is shown
    */
   async hasError(): Promise<boolean> {
-    return await this.helper.isVisible(this.selectors.errorMessage);
+    const errorMsg = this.page.getByRole('alert')
+      .or(this.page.getByTestId('error-message'));
+    return await errorMsg.isVisible();
   }
 
   /**
    * Get error message
    */
   async getErrorMessage(): Promise<string> {
-    return await this.helper.getText(this.selectors.errorMessage);
+    const errorMsg = this.page.getByRole('alert')
+      .or(this.page.getByTestId('error-message'));
+    return await errorMsg.textContent() || '';
   }
 }

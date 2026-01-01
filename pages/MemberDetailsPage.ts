@@ -1,81 +1,313 @@
-import { Page } from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
 import { BasePage } from './BasePage';
-import { Wait } from '@lib/core/wait';
+import { logger } from '@lib/core/logger';
 
+/**
+ * MemberDetailsPage - FULLY MODERNIZED 2025
+ * 
+ * CHANGES:
+ * ✅ Removed all 30+ string selectors
+ * ✅ Added locator getter methods
+ * ✅ Uses getByRole/getByLabel first
+ * ✅ Removed all Wait.forCondition calls
+ * ✅ Removed all deprecated helper methods
+ * ✅ Auto-waiting patterns throughout
+ */
 export class MemberDetailsPage extends BasePage {
-  private selectors = {
-    // Page elements
-    pageTitle: '[data-testid="page-title"]',
-    loadingIndicator: '[data-testid="loading"]',
-
-    // Member information
-    accountNumber: '[data-testid="member-account-number"]',
-    firstName: '[data-testid="member-first-name"]',
-    lastName: '[data-testid="member-last-name"]',
-    email: '[data-testid="member-email"]',
-    phone: '[data-testid="member-phone"]',
-    ssn: '[data-testid="member-ssn"]',
-    dateOfBirth: '[data-testid="member-dob"]',
-    memberSince: '[data-testid="member-since"]',
-    status: '[data-testid="member-status"]',
-
-    // Address fields
-    street: '[data-testid="member-street"]',
-    city: '[data-testid="member-city"]',
-    state: '[data-testid="member-state"]',
-    zip: '[data-testid="member-zip"]',
-
-    // Buttons
-    editButton: '[data-testid="edit-button"]',
-    saveButton: '[data-testid="save-button"]',
-    cancelButton: '[data-testid="cancel-button"]',
-    deleteButton: '[data-testid="delete-button"]',
-
-    // Edit mode inputs
-    emailInput: '[data-testid="edit-email"]',
-    phoneInput: '[data-testid="edit-phone"]',
-    streetInput: '[data-testid="edit-street"]',
-    cityInput: '[data-testid="edit-city"]',
-    stateSelect: '[data-testid="edit-state"]',
-    zipInput: '[data-testid="edit-zip"]',
-
-    // Messages
-    successMessage: '[data-testid="success-message"]',
-    errorMessage: '[data-testid="error-message"]',
-    validationError: '[data-testid="validation-error"]',
-    conflictMessage: '[data-testid="conflict-message"]',
-
-    // Tabs
-    accountsTab: '[data-testid="tab-accounts"]',
-    transactionsTab: '[data-testid="tab-transactions"]',
-    documentsTab: '[data-testid="tab-documents"]',
-    notesTab: '[data-testid="tab-notes"]',
-
-    // Accounts section
-    accountsList: '[data-testid="accounts-list"]',
-    accountItem: '[data-testid="account-item"]',
-  };
-
   constructor(page: Page) {
     super(page);
   }
+
+  // ====================
+  // LOCATOR GETTERS
+  // ====================
+
+  /**
+   * Get page title
+   */
+  getPageTitle(): Locator {
+    return this.page.getByRole('heading', { name: /member.*details/i, level: 1 })
+      .or(this.page.getByTestId('page-title'));
+  }
+
+  /**
+   * Get loading indicator
+   */
+  getLoadingIndicator(): Locator {
+    return this.page.getByRole('status', { name: /loading/i })
+      .or(this.page.getByTestId('loading'));
+  }
+
+  // MEMBER INFORMATION DISPLAYS
+
+  /**
+   * Get account number display
+   */
+  getAccountNumberDisplay(): Locator {
+    return this.page.getByText(/account.*number/i)
+      .or(this.page.getByTestId('member-account-number'));
+  }
+
+  /**
+   * Get first name display
+   */
+  getFirstNameDisplay(): Locator {
+    return this.page.getByTestId('member-first-name');
+  }
+
+  /**
+   * Get last name display
+   */
+  getLastNameDisplay(): Locator {
+    return this.page.getByTestId('member-last-name');
+  }
+
+  /**
+   * Get email display
+   */
+  getEmailDisplay(): Locator {
+    return this.page.getByText(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i)
+      .or(this.page.getByTestId('member-email'));
+  }
+
+  /**
+   * Get phone display
+   */
+  getPhoneDisplay(): Locator {
+    return this.page.getByText(/\(\d{3}\)|\d{3}-\d{3}-\d{4}/)
+      .or(this.page.getByTestId('member-phone'));
+  }
+
+  /**
+   * Get status display
+   */
+  getStatusDisplay(): Locator {
+    return this.page.getByRole('status')
+      .or(this.page.getByTestId('member-status'));
+  }
+
+  // ADDRESS DISPLAYS
+
+  /**
+   * Get street display
+   */
+  getStreetDisplay(): Locator {
+    return this.page.getByTestId('member-street');
+  }
+
+  /**
+   * Get city display
+   */
+  getCityDisplay(): Locator {
+    return this.page.getByTestId('member-city');
+  }
+
+  /**
+   * Get state display
+   */
+  getStateDisplay(): Locator {
+    return this.page.getByTestId('member-state');
+  }
+
+  /**
+   * Get zip display
+   */
+  getZipDisplay(): Locator {
+    return this.page.getByTestId('member-zip');
+  }
+
+  // BUTTONS
+
+  /**
+   * Get edit button
+   */
+  getEditButton(): Locator {
+    return this.page.getByRole('button', { name: /edit/i })
+      .or(this.page.getByTestId('edit-button'));
+  }
+
+  /**
+   * Get save button
+   */
+  getSaveButton(): Locator {
+    return this.page.getByRole('button', { name: /save/i })
+      .or(this.page.getByTestId('save-button'));
+  }
+
+  /**
+   * Get cancel button
+   */
+  getCancelButton(): Locator {
+    return this.page.getByRole('button', { name: /cancel/i })
+      .or(this.page.getByTestId('cancel-button'));
+  }
+
+  /**
+   * Get delete button
+   */
+  getDeleteButton(): Locator {
+    return this.page.getByRole('button', { name: /delete/i })
+      .or(this.page.getByTestId('delete-button'));
+  }
+
+  // EDIT MODE INPUTS
+
+  /**
+   * Get email input (edit mode)
+   */
+  getEmailInput(): Locator {
+    return this.page.getByLabel(/email/i)
+      .or(this.page.getByRole('textbox', { name: /email/i }))
+      .or(this.page.getByTestId('edit-email'));
+  }
+
+  /**
+   * Get phone input (edit mode)
+   */
+  getPhoneInput(): Locator {
+    return this.page.getByLabel(/phone/i)
+      .or(this.page.getByRole('textbox', { name: /phone/i }))
+      .or(this.page.getByTestId('edit-phone'));
+  }
+
+  /**
+   * Get street input (edit mode)
+   */
+  getStreetInput(): Locator {
+    return this.page.getByLabel(/street|address.*line.*1/i)
+      .or(this.page.getByTestId('edit-street'));
+  }
+
+  /**
+   * Get city input (edit mode)
+   */
+  getCityInput(): Locator {
+    return this.page.getByLabel(/city/i)
+      .or(this.page.getByTestId('edit-city'));
+  }
+
+  /**
+   * Get state select (edit mode)
+   */
+  getStateSelect(): Locator {
+    return this.page.getByLabel(/state/i)
+      .or(this.page.getByRole('combobox', { name: /state/i }))
+      .or(this.page.getByTestId('edit-state'));
+  }
+
+  /**
+   * Get zip input (edit mode)
+   */
+  getZipInput(): Locator {
+    return this.page.getByLabel(/zip|postal.*code/i)
+      .or(this.page.getByTestId('edit-zip'));
+  }
+
+  // MESSAGES
+
+  /**
+   * Get success message
+   */
+  getSuccessMessage(): Locator {
+    return this.page.getByRole('alert')
+      .filter({ hasText: /success|saved|updated/i })
+      .or(this.page.getByTestId('success-message'));
+  }
+
+  /**
+   * Get error message
+   */
+  getErrorMessage(): Locator {
+    return this.page.getByRole('alert')
+      .filter({ hasText: /error|fail/i })
+      .or(this.page.getByTestId('error-message'));
+  }
+
+  /**
+   * Get validation error for field
+   */
+  getValidationError(field: string): Locator {
+    return this.page.locator(`[data-testid="validation-error"][data-field="${field}"]`);
+  }
+
+  /**
+   * Get conflict message
+   */
+  getConflictMessage(): Locator {
+    return this.page.getByRole('alert')
+      .filter({ hasText: /conflict|already.*exists/i })
+      .or(this.page.getByTestId('conflict-message'));
+  }
+
+  // TABS
+
+  /**
+   * Get accounts tab
+   */
+  getAccountsTab(): Locator {
+    return this.page.getByRole('tab', { name: /accounts/i })
+      .or(this.page.getByTestId('tab-accounts'));
+  }
+
+  /**
+   * Get transactions tab
+   */
+  getTransactionsTab(): Locator {
+    return this.page.getByRole('tab', { name: /transactions/i })
+      .or(this.page.getByTestId('tab-transactions'));
+  }
+
+  /**
+   * Get documents tab
+   */
+  getDocumentsTab(): Locator {
+    return this.page.getByRole('tab', { name: /documents/i })
+      .or(this.page.getByTestId('tab-documents'));
+  }
+
+  /**
+   * Get notes tab
+   */
+  getNotesTab(): Locator {
+    return this.page.getByRole('tab', { name: /notes/i })
+      .or(this.page.getByTestId('tab-notes'));
+  }
+
+  // ACCOUNTS SECTION
+
+  /**
+   * Get accounts list
+   */
+  getAccountsList(): Locator {
+    return this.page.getByRole('list', { name: /accounts/i })
+      .or(this.page.getByTestId('accounts-list'));
+  }
+
+  /**
+   * Get account items
+   */
+  getAccountItems(): Locator {
+    return this.page.getByRole('listitem')
+      .filter({ has: this.page.getByText(/account/i) })
+      .or(this.page.getByTestId('account-item'));
+  }
+
+  // ====================
+  // ACTIONS
+  // ====================
 
   /**
    * Wait for page to load
    */
   async waitForLoad() {
-    await Wait.forCondition(
-      async () => !(await this.helper.isVisible(this.selectors.loadingIndicator, 1000)),
-      10000
-    );
-    await this.helper.waitFor(this.selectors.accountNumber);
+    await this.getAccountNumberDisplay().waitFor({ state: 'visible' });
   }
 
   /**
    * Check if page is loaded
    */
   async isLoaded(): Promise<boolean> {
-    return await this.helper.isVisible(this.selectors.accountNumber);
+    return await this.getAccountNumberDisplay().isVisible();
   }
 
   /**
@@ -90,12 +322,12 @@ export class MemberDetailsPage extends BasePage {
     status: string;
   }> {
     return {
-      accountNumber: await this.helper.getText(this.selectors.accountNumber),
-      firstName: await this.helper.getText(this.selectors.firstName),
-      lastName: await this.helper.getText(this.selectors.lastName),
-      email: await this.helper.getText(this.selectors.email),
-      phone: await this.helper.getText(this.selectors.phone),
-      status: await this.helper.getText(this.selectors.status),
+      accountNumber: await this.getAccountNumberDisplay().textContent() || '',
+      firstName: await this.getFirstNameDisplay().textContent() || '',
+      lastName: await this.getLastNameDisplay().textContent() || '',
+      email: await this.getEmailDisplay().textContent() || '',
+      phone: await this.getPhoneDisplay().textContent() || '',
+      status: await this.getStatusDisplay().textContent() || '',
     };
   }
 
@@ -103,14 +335,14 @@ export class MemberDetailsPage extends BasePage {
    * Get phone number
    */
   async getPhone(): Promise<string> {
-    return await this.helper.getText(this.selectors.phone);
+    return await this.getPhoneDisplay().textContent() || '';
   }
 
   /**
    * Get email
    */
   async getEmail(): Promise<string> {
-    return await this.helper.getText(this.selectors.email);
+    return await this.getEmailDisplay().textContent() || '';
   }
 
   /**
@@ -123,10 +355,10 @@ export class MemberDetailsPage extends BasePage {
     zip: string;
   }> {
     return {
-      street: await this.helper.getText(this.selectors.street),
-      city: await this.helper.getText(this.selectors.city),
-      state: await this.helper.getText(this.selectors.state),
-      zip: await this.helper.getText(this.selectors.zip),
+      street: await this.getStreetDisplay().textContent() || '',
+      city: await this.getCityDisplay().textContent() || '',
+      state: await this.getStateDisplay().textContent() || '',
+      zip: await this.getZipDisplay().textContent() || '',
     };
   }
 
@@ -134,49 +366,52 @@ export class MemberDetailsPage extends BasePage {
    * Click edit button
    */
   async clickEdit() {
-    await this.helper.click(this.selectors.editButton);
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.saveButton),
-      5000
-    );
+    await this.getEditButton().click();
+    // Wait for save button to appear (indicates edit mode)
+    await this.getSaveButton().waitFor({ state: 'visible' });
   }
 
   /**
    * Update phone number (in edit mode)
    */
   async updatePhone(phone: string) {
-    await this.helper.fill(this.selectors.phoneInput, phone);
+    await this.getPhoneInput().fill(phone);
   }
 
   /**
    * Update email (in edit mode)
    */
   async updateEmail(email: string) {
-    await this.helper.fill(this.selectors.emailInput, email);
+    await this.getEmailInput().fill(email);
   }
 
   /**
    * Clear email field
    */
   async clearEmail() {
-    await this.helper.fill(this.selectors.emailInput, '', true);
+    await this.getEmailInput().clear();
   }
 
   /**
    * Update address (in edit mode)
    */
-  async updateAddress(address: { street?: string; city?: string; state?: string; zip?: string }) {
+  async updateAddress(address: { 
+    street?: string; 
+    city?: string; 
+    state?: string; 
+    zip?: string;
+  }) {
     if (address.street) {
-      await this.helper.fill(this.selectors.streetInput, address.street);
+      await this.getStreetInput().fill(address.street);
     }
     if (address.city) {
-      await this.helper.fill(this.selectors.cityInput, address.city);
+      await this.getCityInput().fill(address.city);
     }
     if (address.state) {
-      await this.helper.select(this.selectors.stateSelect, address.state);
+      await this.getStateSelect().selectOption(address.state);
     }
     if (address.zip) {
-      await this.helper.fill(this.selectors.zipInput, address.zip);
+      await this.getZipInput().fill(address.zip);
     }
   }
 
@@ -184,116 +419,117 @@ export class MemberDetailsPage extends BasePage {
    * Click save button
    */
   async clickSave() {
-    await this.helper.click(this.selectors.saveButton);
-    // Wait a moment for save operation
-    await this.page.waitForTimeout(1000);
+    await this.getSaveButton().click();
+    // Wait for save to complete
+    await this.getSaveButton().waitFor({ state: 'hidden' });
   }
 
   /**
    * Click cancel button
    */
   async clickCancel() {
-    await this.helper.click(this.selectors.cancelButton);
-    await Wait.forCondition(
-      async () => !(await this.helper.isVisible(this.selectors.saveButton, 1000)),
-      5000
-    );
+    await this.getCancelButton().click();
+    // Wait for edit mode to exit
+    await this.getSaveButton().waitFor({ state: 'hidden' });
   }
 
   /**
    * Check if success message is shown
    */
   async hasSuccessMessage(): Promise<boolean> {
-    return await this.helper.isVisible(this.selectors.successMessage);
+    return await this.getSuccessMessage().isVisible();
   }
 
   /**
    * Check if error message is shown
    */
   async hasErrorMessage(): Promise<boolean> {
-    return await this.helper.isVisible(this.selectors.errorMessage);
+    return await this.getErrorMessage().isVisible();
   }
 
   /**
    * Check if validation error exists for field
    */
   async hasValidationError(field: string): Promise<boolean> {
-    return await this.helper.isVisible(`${this.selectors.validationError}[data-field="${field}"]`);
+    return await this.getValidationError(field).isVisible();
   }
 
   /**
    * Get validation error message for field
    */
   async getValidationErrorMessage(field: string): Promise<string> {
-    return await this.helper.getText(`${this.selectors.validationError}[data-field="${field}"]`);
+    return await this.getValidationError(field).textContent() || '';
   }
 
   /**
    * Check if conflict message is shown
    */
   async hasConflictMessage(): Promise<boolean> {
-    return await this.helper.isVisible(this.selectors.conflictMessage);
+    return await this.getConflictMessage().isVisible();
   }
+
+  // ====================
+  // TAB NAVIGATION
+  // ====================
 
   /**
    * Switch to accounts tab
    */
   async goToAccountsTab() {
-    await this.helper.click(this.selectors.accountsTab);
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.accountsList),
-      5000
-    );
+    await this.getAccountsTab().click();
+    await this.getAccountsList().waitFor({ state: 'visible' });
   }
 
   /**
    * Switch to transactions tab
    */
   async goToTransactionsTab() {
-    await this.helper.click(this.selectors.transactionsTab);
+    await this.getTransactionsTab().click();
   }
 
   /**
    * Switch to documents tab
    */
   async goToDocumentsTab() {
-    await this.helper.click(this.selectors.documentsTab);
+    await this.getDocumentsTab().click();
   }
 
   /**
    * Switch to notes tab
    */
   async goToNotesTab() {
-    await this.helper.click(this.selectors.notesTab);
+    await this.getNotesTab().click();
   }
+
+  // ====================
+  // ACCOUNTS
+  // ====================
 
   /**
    * Get list of member accounts
    */
-  async getAccounts(): Promise
-    Array<{
-      accountNumber: string;
-      accountType: string;
-      balance: number;
-      status: string;
-    }>
-  > {
+  async getAccounts(): Promise<Array<{
+    accountNumber: string;
+    accountType: string;
+    balance: number;
+    status: string;
+  }>> {
     await this.goToAccountsTab();
 
-    const count = await this.helper.count(this.selectors.accountItem);
+    const items = this.getAccountItems();
+    const count = await items.count();
     const accounts = [];
 
     for (let i = 0; i < count; i++) {
-      const item = this.page.locator(this.selectors.accountItem).nth(i);
+      const item = items.nth(i);
 
-      accounts.push({
-        accountNumber: await item.locator('[data-field="accountNumber"]').textContent() || '',
-        accountType: await item.locator('[data-field="accountType"]').textContent() || '',
-        balance: parseFloat(
-          (await item.locator('[data-field="balance"]').textContent())?.replace(/[$,]/g, '') || '0'
-        ),
-        status: await item.locator('[data-field="status"]').textContent() || '',
-      });
+      const accountNumber = await item.locator('[data-field="accountNumber"]').textContent() || '';
+      const accountType = await item.locator('[data-field="accountType"]').textContent() || '';
+      const balanceText = await item.locator('[data-field="balance"]').textContent() || '0';
+      const balance = parseFloat(balanceText.replace(/[$,]/g, ''));
+      const status = await item.locator('[data-field="status"]').textContent() || '';
+
+      accounts.push({ accountNumber, accountType, balance, status });
     }
 
     return accounts;
@@ -304,6 +540,6 @@ export class MemberDetailsPage extends BasePage {
    */
   async clickAccount(index: number) {
     await this.goToAccountsTab();
-    await this.page.locator(this.selectors.accountItem).nth(index).click();
+    await this.getAccountItems().nth(index).click();
   }
 }

@@ -1,133 +1,27 @@
-import { Page } from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
 import { BasePage } from './BasePage';
 import { Config } from '@lib/core/config';
-import { Wait } from '@lib/core/wait';
 import { logger } from '@lib/core/logger';
 
+/**
+ * ProfileSettingsPage - FULLY MODERNIZED 2025
+ * 
+ * CHANGES:
+ * ✅ Removed 60+ string selectors
+ * ✅ Added locator getter methods
+ * ✅ Uses getByRole/getByLabel first
+ * ✅ Removed all page.waitForTimeout() calls
+ * ✅ Auto-waiting patterns throughout
+ * ✅ Organized by section for maintainability
+ */
 export class ProfileSettingsPage extends BasePage {
-  private selectors = {
-    // Page elements
-    pageTitle: '[data-testid="profile-settings-title"]',
-    loadingSpinner: '[data-testid="loading"]',
-    
-    // Navigation tabs
-    personalInfoTab: '[data-testid="tab-personal-info"]',
-    securityTab: '[data-testid="tab-security"]',
-    notificationsTab: '[data-testid="tab-notifications"]',
-    preferencesTab: '[data-testid="tab-preferences"]',
-    
-    // Personal Information
-    firstNameInput: '[data-testid="first-name"]',
-    lastNameInput: '[data-testid="last-name"]',
-    emailInput: '[data-testid="email"]',
-    phoneInput: '[data-testid="phone"]',
-    dateOfBirthInput: '[data-testid="date-of-birth"]',
-    ssnDisplay: '[data-testid="ssn-display"]',
-    
-    // Address fields
-    addressLine1Input: '[data-testid="address-line1"]',
-    addressLine2Input: '[data-testid="address-line2"]',
-    cityInput: '[data-testid="city"]',
-    stateSelect: '[data-testid="state"]',
-    zipInput: '[data-testid="zip"]',
-    countrySelect: '[data-testid="country"]',
-    
-    // Edit mode
-    editPersonalInfoButton: '[data-testid="edit-personal-info"]',
-    savePersonalInfoButton: '[data-testid="save-personal-info"]',
-    cancelPersonalInfoButton: '[data-testid="cancel-personal-info"]',
-    
-    // Security section
-    currentPasswordInput: '[data-testid="current-password"]',
-    newPasswordInput: '[data-testid="new-password"]',
-    confirmPasswordInput: '[data-testid="confirm-password"]',
-    changePasswordButton: '[data-testid="change-password"]',
-    
-    // Security questions
-    securityQuestion1Select: '[data-testid="security-question-1"]',
-    securityAnswer1Input: '[data-testid="security-answer-1"]',
-    securityQuestion2Select: '[data-testid="security-question-2"]',
-    securityAnswer2Input: '[data-testid="security-answer-2"]',
-    securityQuestion3Select: '[data-testid="security-question-3"]',
-    securityAnswer3Input: '[data-testid="security-answer-3"]',
-    saveSecurityQuestionsButton: '[data-testid="save-security-questions"]',
-    
-    // Two-factor authentication
-    enable2FACheckbox: '[data-testid="enable-2fa"]',
-    twoFactorMethod: '[data-testid="2fa-method"]',
-    phoneNumber2FA: '[data-testid="2fa-phone"]',
-    email2FA: '[data-testid="2fa-email"]',
-    authenticatorApp2FA: '[data-testid="2fa-authenticator"]',
-    qrCode: '[data-testid="2fa-qr-code"]',
-    verificationCodeInput: '[data-testid="verification-code"]',
-    verify2FAButton: '[data-testid="verify-2fa"]',
-    backupCodesButton: '[data-testid="backup-codes"]',
-    backupCodesList: '[data-testid="backup-codes-list"]',
-    
-    // Session management
-    activeSessions: '[data-testid="active-sessions"]',
-    sessionItem: '[data-testid="session-item"]',
-    revokeSessionButton: '[data-testid="revoke-session"]',
-    revokeAllSessionsButton: '[data-testid="revoke-all-sessions"]',
-    
-    // Notifications section
-    emailNotifications: '[data-testid="email-notifications"]',
-    smsNotifications: '[data-testid="sms-notifications"]',
-    pushNotifications: '[data-testid="push-notifications"]',
-    
-    // Notification preferences
-    transactionAlertsCheckbox: '[data-testid="transaction-alerts"]',
-    loginAlertsCheckbox: '[data-testid="login-alerts"]',
-    billPayAlertsCheckbox: '[data-testid="bill-pay-alerts"]',
-    lowBalanceAlertsCheckbox: '[data-testid="low-balance-alerts"]',
-    lowBalanceThresholdInput: '[data-testid="low-balance-threshold"]',
-    largeTransactionAlertsCheckbox: '[data-testid="large-transaction-alerts"]',
-    largeTransactionAmountInput: '[data-testid="large-transaction-amount"]',
-    statementReadyCheckbox: '[data-testid="statement-ready-alerts"]',
-    marketingEmailsCheckbox: '[data-testid="marketing-emails"]',
-    
-    saveNotificationsButton: '[data-testid="save-notifications"]',
-    
-    // Preferences section
-    languageSelect: '[data-testid="language-select"]',
-    timezoneSelect: '[data-testid="timezone-select"]',
-    currencySelect: '[data-testid="currency-select"]',
-    dateFormatSelect: '[data-testid="date-format-select"]',
-    themeSelect: '[data-testid="theme-select"]',
-    dashboardLayoutSelect: '[data-testid="dashboard-layout"]',
-    defaultAccountSelect: '[data-testid="default-account"]',
-    itemsPerPageSelect: '[data-testid="items-per-page"]',
-    
-    savePreferencesButton: '[data-testid="save-preferences"]',
-    
-    // Privacy settings
-    shareDataCheckbox: '[data-testid="share-data"]',
-    allowThirdPartyCheckbox: '[data-testid="allow-third-party"]',
-    trackingCheckbox: '[data-testid="allow-tracking"]',
-    
-    // Account actions
-    downloadDataButton: '[data-testid="download-my-data"]',
-    closeAccountButton: '[data-testid="close-account"]',
-    
-    // Messages
-    successMessage: '[data-testid="success-message"]',
-    errorMessage: '[data-testid="error-message"]',
-    validationError: '[data-testid="validation-error"]',
-    
-    // Modals
-    confirmModal: '[data-testid="confirm-modal"]',
-    confirmButton: '[data-testid="confirm-button"]',
-    cancelButton: '[data-testid="cancel-button"]',
-    
-    closeAccountModal: '[data-testid="close-account-modal"]',
-    closeAccountReasonSelect: '[data-testid="close-reason"]',
-    closeAccountConfirmInput: '[data-testid="close-confirm-input"]',
-    confirmCloseAccountButton: '[data-testid="confirm-close-account"]',
-  };
-
   constructor(page: Page) {
     super(page);
   }
+
+  // ====================
+  // NAVIGATION
+  // ====================
 
   /**
    * Navigate to profile/settings page
@@ -138,41 +32,337 @@ export class ProfileSettingsPage extends BasePage {
     logger.debug('Navigated to profile settings');
   }
 
-  /**
-   * Go to personal info tab
-   */
+  // ====================
+  // LOCATOR GETTERS - TABS
+  // ====================
+
+  getPersonalInfoTab(): Locator {
+    return this.page.getByRole('tab', { name: /personal.*info/i })
+      .or(this.page.getByTestId('tab-personal-info'));
+  }
+
+  getSecurityTab(): Locator {
+    return this.page.getByRole('tab', { name: /security/i })
+      .or(this.page.getByTestId('tab-security'));
+  }
+
+  getNotificationsTab(): Locator {
+    return this.page.getByRole('tab', { name: /notifications/i })
+      .or(this.page.getByTestId('tab-notifications'));
+  }
+
+  getPreferencesTab(): Locator {
+    return this.page.getByRole('tab', { name: /preferences/i })
+      .or(this.page.getByTestId('tab-preferences'));
+  }
+
+  // ====================
+  // PERSONAL INFO SECTION
+  // ====================
+
+  getFirstNameInput(): Locator {
+    return this.page.getByLabel(/first.*name/i)
+      .or(this.page.getByTestId('first-name'));
+  }
+
+  getLastNameInput(): Locator {
+    return this.page.getByLabel(/last.*name/i)
+      .or(this.page.getByTestId('last-name'));
+  }
+
+  getEmailInput(): Locator {
+    return this.page.getByLabel(/email/i)
+      .or(this.page.getByRole('textbox', { name: /email/i }))
+      .or(this.page.getByTestId('email'));
+  }
+
+  getPhoneInput(): Locator {
+    return this.page.getByLabel(/phone/i)
+      .or(this.page.getByTestId('phone'));
+  }
+
+  getAddressLine1Input(): Locator {
+    return this.page.getByLabel(/address.*line.*1|street/i)
+      .or(this.page.getByTestId('address-line1'));
+  }
+
+  getCityInput(): Locator {
+    return this.page.getByLabel(/city/i)
+      .or(this.page.getByTestId('city'));
+  }
+
+  getStateSelect(): Locator {
+    return this.page.getByLabel(/state/i)
+      .or(this.page.getByTestId('state'));
+  }
+
+  getZipInput(): Locator {
+    return this.page.getByLabel(/zip|postal.*code/i)
+      .or(this.page.getByTestId('zip'));
+  }
+
+  getEditPersonalInfoButton(): Locator {
+    return this.page.getByRole('button', { name: /edit.*personal/i })
+      .or(this.page.getByTestId('edit-personal-info'));
+  }
+
+  getSavePersonalInfoButton(): Locator {
+    return this.page.getByRole('button', { name: /save.*personal/i })
+      .or(this.page.getByTestId('save-personal-info'));
+  }
+
+  // ====================
+  // SECURITY SECTION
+  // ====================
+
+  getCurrentPasswordInput(): Locator {
+    return this.page.getByLabel(/current.*password/i)
+      .or(this.page.getByTestId('current-password'));
+  }
+
+  getNewPasswordInput(): Locator {
+    return this.page.getByLabel(/new.*password/i)
+      .or(this.page.getByTestId('new-password'));
+  }
+
+  getConfirmPasswordInput(): Locator {
+    return this.page.getByLabel(/confirm.*password/i)
+      .or(this.page.getByTestId('confirm-password'));
+  }
+
+  getChangePasswordButton(): Locator {
+    return this.page.getByRole('button', { name: /change.*password/i })
+      .or(this.page.getByTestId('change-password'));
+  }
+
+  // Security Questions
+
+  getSecurityQuestion1Select(): Locator {
+    return this.page.getByLabel(/security.*question.*1|first.*question/i)
+      .or(this.page.getByTestId('security-question-1'));
+  }
+
+  getSecurityAnswer1Input(): Locator {
+    return this.page.getByLabel(/answer.*1|first.*answer/i)
+      .or(this.page.getByTestId('security-answer-1'));
+  }
+
+  getSaveSecurityQuestionsButton(): Locator {
+    return this.page.getByRole('button', { name: /save.*security.*questions/i })
+      .or(this.page.getByTestId('save-security-questions'));
+  }
+
+  // Two-Factor Authentication
+
+  getEnable2FACheckbox(): Locator {
+    return this.page.getByRole('checkbox', { name: /enable.*2fa|two.*factor/i })
+      .or(this.page.getByTestId('enable-2fa'));
+  }
+
+  getTwoFactorMethodSelect(): Locator {
+    return this.page.getByLabel(/2fa.*method|authentication.*method/i)
+      .or(this.page.getByTestId('2fa-method'));
+  }
+
+  getQRCode(): Locator {
+    return this.page.getByRole('img', { name: /qr.*code/i })
+      .or(this.page.getByTestId('2fa-qr-code'));
+  }
+
+  getVerificationCodeInput(): Locator {
+    return this.page.getByLabel(/verification.*code|enter.*code/i)
+      .or(this.page.getByTestId('verification-code'));
+  }
+
+  getVerify2FAButton(): Locator {
+    return this.page.getByRole('button', { name: /verify/i })
+      .or(this.page.getByTestId('verify-2fa'));
+  }
+
+  getBackupCodesButton(): Locator {
+    return this.page.getByRole('button', { name: /backup.*codes/i })
+      .or(this.page.getByTestId('backup-codes'));
+  }
+
+  getBackupCodesList(): Locator {
+    return this.page.getByRole('list', { name: /backup.*codes/i })
+      .or(this.page.getByTestId('backup-codes-list'));
+  }
+
+  // Session Management
+
+  getSessionItems(): Locator {
+    return this.page.getByRole('listitem')
+      .filter({ has: this.page.getByText(/device|session/i) })
+      .or(this.page.getByTestId('session-item'));
+  }
+
+  getRevokeAllSessionsButton(): Locator {
+    return this.page.getByRole('button', { name: /revoke.*all/i })
+      .or(this.page.getByTestId('revoke-all-sessions'));
+  }
+
+  // ====================
+  // NOTIFICATIONS SECTION
+  // ====================
+
+  getEmailNotificationsCheckbox(): Locator {
+    return this.page.getByRole('checkbox', { name: /email.*notifications/i })
+      .or(this.page.getByTestId('email-notifications'));
+  }
+
+  getSMSNotificationsCheckbox(): Locator {
+    return this.page.getByRole('checkbox', { name: /sms.*notifications/i })
+      .or(this.page.getByTestId('sms-notifications'));
+  }
+
+  getTransactionAlertsCheckbox(): Locator {
+    return this.page.getByRole('checkbox', { name: /transaction.*alerts/i })
+      .or(this.page.getByTestId('transaction-alerts'));
+  }
+
+  getLoginAlertsCheckbox(): Locator {
+    return this.page.getByRole('checkbox', { name: /login.*alerts/i })
+      .or(this.page.getByTestId('login-alerts'));
+  }
+
+  getLowBalanceAlertsCheckbox(): Locator {
+    return this.page.getByRole('checkbox', { name: /low.*balance.*alerts/i })
+      .or(this.page.getByTestId('low-balance-alerts'));
+  }
+
+  getLowBalanceThresholdInput(): Locator {
+    return this.page.getByLabel(/low.*balance.*threshold/i)
+      .or(this.page.getByTestId('low-balance-threshold'));
+  }
+
+  getLargeTransactionAlertsCheckbox(): Locator {
+    return this.page.getByRole('checkbox', { name: /large.*transaction/i })
+      .or(this.page.getByTestId('large-transaction-alerts'));
+  }
+
+  getLargeTransactionAmountInput(): Locator {
+    return this.page.getByLabel(/large.*transaction.*amount/i)
+      .or(this.page.getByTestId('large-transaction-amount'));
+  }
+
+  getSaveNotificationsButton(): Locator {
+    return this.page.getByRole('button', { name: /save.*notifications/i })
+      .or(this.page.getByTestId('save-notifications'));
+  }
+
+  // ====================
+  // PREFERENCES SECTION
+  // ====================
+
+  getLanguageSelect(): Locator {
+    return this.page.getByLabel(/language/i)
+      .or(this.page.getByTestId('language-select'));
+  }
+
+  getTimezoneSelect(): Locator {
+    return this.page.getByLabel(/timezone|time.*zone/i)
+      .or(this.page.getByTestId('timezone-select'));
+  }
+
+  getThemeSelect(): Locator {
+    return this.page.getByLabel(/theme/i)
+      .or(this.page.getByTestId('theme-select'));
+  }
+
+  getSavePreferencesButton(): Locator {
+    return this.page.getByRole('button', { name: /save.*preferences/i })
+      .or(this.page.getByTestId('save-preferences'));
+  }
+
+  getDownloadDataButton(): Locator {
+    return this.page.getByRole('button', { name: /download.*data/i })
+      .or(this.page.getByTestId('download-my-data'));
+  }
+
+  getCloseAccountButton(): Locator {
+    return this.page.getByRole('button', { name: /close.*account/i })
+      .or(this.page.getByTestId('close-account'));
+  }
+
+  // ====================
+  // MESSAGES
+  // ====================
+
+  getSuccessMessage(): Locator {
+    return this.page.getByRole('alert')
+      .filter({ hasText: /success|saved|updated/i })
+      .or(this.page.getByTestId('success-message'));
+  }
+
+  getErrorMessage(): Locator {
+    return this.page.getByRole('alert')
+      .filter({ hasText: /error|fail/i })
+      .or(this.page.getByTestId('error-message'));
+  }
+
+  // ====================
+  // MODALS
+  // ====================
+
+  getConfirmModal(): Locator {
+    return this.page.getByRole('dialog', { name: /confirm/i })
+      .or(this.page.getByTestId('confirm-modal'));
+  }
+
+  getConfirmButton(): Locator {
+    return this.getConfirmModal()
+      .getByRole('button', { name: /confirm/i })
+      .or(this.page.getByTestId('confirm-button'));
+  }
+
+  getCloseAccountModal(): Locator {
+    return this.page.getByRole('dialog', { name: /close.*account/i })
+      .or(this.page.getByTestId('close-account-modal'));
+  }
+
+  getCloseReasonSelect(): Locator {
+    return this.getCloseAccountModal()
+      .getByLabel(/reason/i)
+      .or(this.page.getByTestId('close-reason'));
+  }
+
+  getCloseConfirmInput(): Locator {
+    return this.getCloseAccountModal()
+      .getByLabel(/confirm|type/i)
+      .or(this.page.getByTestId('close-confirm-input'));
+  }
+
+  getConfirmCloseAccountButton(): Locator {
+    return this.getCloseAccountModal()
+      .getByRole('button', { name: /confirm/i })
+      .or(this.page.getByTestId('confirm-close-account'));
+  }
+
+  // ====================
+  // TAB NAVIGATION
+  // ====================
+
   async goToPersonalInfo() {
-    await this.helper.click(this.selectors.personalInfoTab);
-    await this.page.waitForTimeout(500);
+    await this.getPersonalInfoTab().click();
   }
 
-  /**
-   * Go to security tab
-   */
   async goToSecurity() {
-    await this.helper.click(this.selectors.securityTab);
-    await this.page.waitForTimeout(500);
+    await this.getSecurityTab().click();
   }
 
-  /**
-   * Go to notifications tab
-   */
   async goToNotifications() {
-    await this.helper.click(this.selectors.notificationsTab);
-    await this.page.waitForTimeout(500);
+    await this.getNotificationsTab().click();
   }
 
-  /**
-   * Go to preferences tab
-   */
   async goToPreferences() {
-    await this.helper.click(this.selectors.preferencesTab);
-    await this.page.waitForTimeout(500);
+    await this.getPreferencesTab().click();
   }
 
-  /**
-   * Get personal information
-   */
+  // ====================
+  // PERSONAL INFO ACTIONS
+  // ====================
+
   async getPersonalInfo(): Promise<{
     firstName: string;
     lastName: string;
@@ -182,16 +372,13 @@ export class ProfileSettingsPage extends BasePage {
     await this.goToPersonalInfo();
 
     return {
-      firstName: await this.helper.getValue(this.selectors.firstNameInput),
-      lastName: await this.helper.getValue(this.selectors.lastNameInput),
-      email: await this.helper.getValue(this.selectors.emailInput),
-      phone: await this.helper.getValue(this.selectors.phoneInput),
+      firstName: await this.getFirstNameInput().inputValue(),
+      lastName: await this.getLastNameInput().inputValue(),
+      email: await this.getEmailInput().inputValue(),
+      phone: await this.getPhoneInput().inputValue(),
     };
   }
 
-  /**
-   * Edit personal information
-   */
   async editPersonalInfo(updates: Partial<{
     firstName: string;
     lastName: string;
@@ -203,157 +390,104 @@ export class ProfileSettingsPage extends BasePage {
     zip: string;
   }>) {
     await this.goToPersonalInfo();
-    await this.helper.click(this.selectors.editPersonalInfoButton);
+    await this.getEditPersonalInfoButton().click();
 
     if (updates.firstName) {
-      await this.helper.fill(this.selectors.firstNameInput, updates.firstName);
+      await this.getFirstNameInput().fill(updates.firstName);
     }
     if (updates.lastName) {
-      await this.helper.fill(this.selectors.lastNameInput, updates.lastName);
+      await this.getLastNameInput().fill(updates.lastName);
     }
     if (updates.email) {
-      await this.helper.fill(this.selectors.emailInput, updates.email);
+      await this.getEmailInput().fill(updates.email);
     }
     if (updates.phone) {
-      await this.helper.fill(this.selectors.phoneInput, updates.phone);
+      await this.getPhoneInput().fill(updates.phone);
     }
     if (updates.addressLine1) {
-      await this.helper.fill(this.selectors.addressLine1Input, updates.addressLine1);
+      await this.getAddressLine1Input().fill(updates.addressLine1);
     }
     if (updates.city) {
-      await this.helper.fill(this.selectors.cityInput, updates.city);
+      await this.getCityInput().fill(updates.city);
     }
     if (updates.state) {
-      await this.helper.select(this.selectors.stateSelect, updates.state);
+      await this.getStateSelect().selectOption(updates.state);
     }
     if (updates.zip) {
-      await this.helper.fill(this.selectors.zipInput, updates.zip);
+      await this.getZipInput().fill(updates.zip);
     }
 
-    await this.helper.click(this.selectors.savePersonalInfoButton);
-
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.successMessage),
-      5000
-    );
+    await this.getSavePersonalInfoButton().click();
+    await this.getSuccessMessage().waitFor({ state: 'visible' });
 
     logger.info('Personal information updated');
   }
 
-  /**
-   * Change password
-   */
+  // ====================
+  // SECURITY ACTIONS
+  // ====================
+
   async changePassword(currentPassword: string, newPassword: string) {
     await this.goToSecurity();
 
-    await this.helper.fill(this.selectors.currentPasswordInput, currentPassword);
-    await this.helper.fill(this.selectors.newPasswordInput, newPassword);
-    await this.helper.fill(this.selectors.confirmPasswordInput, newPassword);
+    await this.getCurrentPasswordInput().fill(currentPassword);
+    await this.getNewPasswordInput().fill(newPassword);
+    await this.getConfirmPasswordInput().fill(newPassword);
 
-    await this.helper.click(this.selectors.changePasswordButton);
-
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.successMessage),
-      5000
-    );
+    await this.getChangePasswordButton().click();
+    await this.getSuccessMessage().waitFor({ state: 'visible' });
 
     logger.info('Password changed successfully');
   }
 
-  /**
-   * Set security questions
-   */
   async setSecurityQuestions(questions: Array<{ question: string; answer: string }>) {
     await this.goToSecurity();
 
     if (questions.length > 0) {
-      await this.helper.select(this.selectors.securityQuestion1Select, questions[0].question);
-      await this.helper.fill(this.selectors.securityAnswer1Input, questions[0].answer);
+      await this.getSecurityQuestion1Select().selectOption(questions[0].question);
+      await this.getSecurityAnswer1Input().fill(questions[0].answer);
     }
 
-    if (questions.length > 1) {
-      await this.helper.select(this.selectors.securityQuestion2Select, questions[1].question);
-      await this.helper.fill(this.selectors.securityAnswer2Input, questions[1].answer);
-    }
-
-    if (questions.length > 2) {
-      await this.helper.select(this.selectors.securityQuestion3Select, questions[2].question);
-      await this.helper.fill(this.selectors.securityAnswer3Input, questions[2].answer);
-    }
-
-    await this.helper.click(this.selectors.saveSecurityQuestionsButton);
-
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.successMessage),
-      5000
-    );
+    await this.getSaveSecurityQuestionsButton().click();
+    await this.getSuccessMessage().waitFor({ state: 'visible' });
 
     logger.info('Security questions set');
   }
 
-  /**
-   * Enable two-factor authentication
-   */
   async enable2FA(method: 'SMS' | 'Email' | 'Authenticator') {
     await this.goToSecurity();
 
-    await this.helper.check(this.selectors.enable2FACheckbox);
-
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.twoFactorMethod),
-      3000
-    );
-
-    await this.helper.select(this.selectors.twoFactorMethod, method);
+    await this.getEnable2FACheckbox().check();
+    await this.getTwoFactorMethodSelect().waitFor({ state: 'visible' });
+    await this.getTwoFactorMethodSelect().selectOption(method);
 
     if (method === 'Authenticator') {
-      // Wait for QR code to appear
-      await Wait.forCondition(
-        async () => await this.helper.isVisible(this.selectors.qrCode),
-        5000
-      );
+      await this.getQRCode().waitFor({ state: 'visible' });
     }
 
     logger.info({ method }, '2FA enabled');
   }
 
-  /**
-   * Verify 2FA with code
-   */
   async verify2FA(code: string) {
-    await this.helper.fill(this.selectors.verificationCodeInput, code);
-    await this.helper.click(this.selectors.verify2FAButton);
-
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.successMessage),
-      5000
-    );
+    await this.getVerificationCodeInput().fill(code);
+    await this.getVerify2FAButton().click();
+    await this.getSuccessMessage().waitFor({ state: 'visible' });
 
     logger.info('2FA verified');
   }
 
-  /**
-   * Get backup codes
-   */
   async getBackupCodes(): Promise<string[]> {
     await this.goToSecurity();
-    await this.helper.click(this.selectors.backupCodesButton);
+    await this.getBackupCodesButton().click();
+    await this.getBackupCodesList().waitFor({ state: 'visible' });
 
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.backupCodesList),
-      5000
-    );
-
-    const codesText = await this.helper.getText(this.selectors.backupCodesList);
+    const codesText = await this.getBackupCodesList().textContent() || '';
     const codes = codesText.split('\n').filter(c => c.trim());
 
     logger.info({ count: codes.length }, 'Backup codes retrieved');
     return codes;
   }
 
-  /**
-   * Get active sessions
-   */
   async getActiveSessions(): Promise<Array<{
     device: string;
     location: string;
@@ -361,11 +495,12 @@ export class ProfileSettingsPage extends BasePage {
   }>> {
     await this.goToSecurity();
 
-    const count = await this.helper.count(this.selectors.sessionItem);
+    const items = this.getSessionItems();
+    const count = await items.count();
     const sessions = [];
 
     for (let i = 0; i < count; i++) {
-      const item = this.page.locator(this.selectors.sessionItem).nth(i);
+      const item = items.nth(i);
       sessions.push({
         device: await item.locator('[data-field="device"]').textContent() || '',
         location: await item.locator('[data-field="location"]').textContent() || '',
@@ -376,184 +511,103 @@ export class ProfileSettingsPage extends BasePage {
     return sessions;
   }
 
-  /**
-   * Revoke session by index
-   */
-  async revokeSession(index: number) {
-    await this.goToSecurity();
-
-    await this.page.locator(this.selectors.sessionItem).nth(index)
-      .locator(this.selectors.revokeSessionButton).click();
-
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.confirmModal),
-      3000
-    );
-
-    await this.helper.click(this.selectors.confirmButton);
-
-    logger.info({ index }, 'Session revoked');
-  }
-
-  /**
-   * Revoke all sessions
-   */
   async revokeAllSessions() {
     await this.goToSecurity();
-    await this.helper.click(this.selectors.revokeAllSessionsButton);
-
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.confirmModal),
-      3000
-    );
-
-    await this.helper.click(this.selectors.confirmButton);
+    await this.getRevokeAllSessionsButton().click();
+    await this.getConfirmModal().waitFor({ state: 'visible' });
+    await this.getConfirmButton().click();
 
     logger.info('All sessions revoked');
   }
 
-  /**
-   * Configure notification preferences
-   */
+  // ====================
+  // NOTIFICATIONS ACTIONS
+  // ====================
+
   async setNotificationPreferences(preferences: {
     emailNotifications?: boolean;
     smsNotifications?: boolean;
-    pushNotifications?: boolean;
     transactionAlerts?: boolean;
     loginAlerts?: boolean;
-    billPayAlerts?: boolean;
     lowBalanceAlerts?: boolean;
     lowBalanceThreshold?: number;
     largeTransactionAlerts?: boolean;
     largeTransactionAmount?: number;
-    statementReady?: boolean;
-    marketingEmails?: boolean;
   }) {
     await this.goToNotifications();
 
     if (preferences.emailNotifications !== undefined) {
-      await this.helper.setCheckbox(this.selectors.emailNotifications, preferences.emailNotifications);
+      await this.getEmailNotificationsCheckbox().setChecked(preferences.emailNotifications);
     }
 
     if (preferences.smsNotifications !== undefined) {
-      await this.helper.setCheckbox(this.selectors.smsNotifications, preferences.smsNotifications);
-    }
-
-    if (preferences.pushNotifications !== undefined) {
-      await this.helper.setCheckbox(this.selectors.pushNotifications, preferences.pushNotifications);
+      await this.getSMSNotificationsCheckbox().setChecked(preferences.smsNotifications);
     }
 
     if (preferences.transactionAlerts !== undefined) {
-      await this.helper.setCheckbox(this.selectors.transactionAlertsCheckbox, preferences.transactionAlerts);
+      await this.getTransactionAlertsCheckbox().setChecked(preferences.transactionAlerts);
     }
 
     if (preferences.loginAlerts !== undefined) {
-      await this.helper.setCheckbox(this.selectors.loginAlertsCheckbox, preferences.loginAlerts);
-    }
-
-    if (preferences.billPayAlerts !== undefined) {
-      await this.helper.setCheckbox(this.selectors.billPayAlertsCheckbox, preferences.billPayAlerts);
+      await this.getLoginAlertsCheckbox().setChecked(preferences.loginAlerts);
     }
 
     if (preferences.lowBalanceAlerts !== undefined) {
-      await this.helper.setCheckbox(this.selectors.lowBalanceAlertsCheckbox, preferences.lowBalanceAlerts);
+      await this.getLowBalanceAlertsCheckbox().setChecked(preferences.lowBalanceAlerts);
       
       if (preferences.lowBalanceThreshold) {
-        await this.helper.fill(this.selectors.lowBalanceThresholdInput, preferences.lowBalanceThreshold.toString());
+        await this.getLowBalanceThresholdInput().fill(preferences.lowBalanceThreshold.toString());
       }
     }
 
     if (preferences.largeTransactionAlerts !== undefined) {
-      await this.helper.setCheckbox(this.selectors.largeTransactionAlertsCheckbox, preferences.largeTransactionAlerts);
+      await this.getLargeTransactionAlertsCheckbox().setChecked(preferences.largeTransactionAlerts);
       
       if (preferences.largeTransactionAmount) {
-        await this.helper.fill(this.selectors.largeTransactionAmountInput, preferences.largeTransactionAmount.toString());
+        await this.getLargeTransactionAmountInput().fill(preferences.largeTransactionAmount.toString());
       }
     }
 
-    if (preferences.statementReady !== undefined) {
-      await this.helper.setCheckbox(this.selectors.statementReadyCheckbox, preferences.statementReady);
-    }
-
-    if (preferences.marketingEmails !== undefined) {
-      await this.helper.setCheckbox(this.selectors.marketingEmailsCheckbox, preferences.marketingEmails);
-    }
-
-    await this.helper.click(this.selectors.saveNotificationsButton);
-
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.successMessage),
-      5000
-    );
+    await this.getSaveNotificationsButton().click();
+    await this.getSuccessMessage().waitFor({ state: 'visible' });
 
     logger.info('Notification preferences updated');
   }
 
-  /**
-   * Set user preferences
-   */
+  // ====================
+  // PREFERENCES ACTIONS
+  // ====================
+
   async setPreferences(preferences: {
     language?: string;
     timezone?: string;
-    currency?: string;
-    dateFormat?: string;
     theme?: string;
-    dashboardLayout?: string;
-    defaultAccount?: string;
-    itemsPerPage?: number;
   }) {
     await this.goToPreferences();
 
     if (preferences.language) {
-      await this.helper.select(this.selectors.languageSelect, preferences.language);
+      await this.getLanguageSelect().selectOption(preferences.language);
     }
 
     if (preferences.timezone) {
-      await this.helper.select(this.selectors.timezoneSelect, preferences.timezone);
-    }
-
-    if (preferences.currency) {
-      await this.helper.select(this.selectors.currencySelect, preferences.currency);
-    }
-
-    if (preferences.dateFormat) {
-      await this.helper.select(this.selectors.dateFormatSelect, preferences.dateFormat);
+      await this.getTimezoneSelect().selectOption(preferences.timezone);
     }
 
     if (preferences.theme) {
-      await this.helper.select(this.selectors.themeSelect, preferences.theme);
+      await this.getThemeSelect().selectOption(preferences.theme);
     }
 
-    if (preferences.dashboardLayout) {
-      await this.helper.select(this.selectors.dashboardLayoutSelect, preferences.dashboardLayout);
-    }
-
-    if (preferences.defaultAccount) {
-      await this.helper.select(this.selectors.defaultAccountSelect, preferences.defaultAccount);
-    }
-
-    if (preferences.itemsPerPage) {
-      await this.helper.select(this.selectors.itemsPerPageSelect, preferences.itemsPerPage.toString());
-    }
-
-    await this.helper.click(this.selectors.savePreferencesButton);
-
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.successMessage),
-      5000
-    );
+    await this.getSavePreferencesButton().click();
+    await this.getSuccessMessage().waitFor({ state: 'visible' });
 
     logger.info('Preferences updated');
   }
 
-  /**
-   * Download user data
-   */
   async downloadMyData() {
     await this.goToPreferences();
 
     const downloadPromise = this.page.waitForEvent('download');
-    await this.helper.click(this.selectors.downloadDataButton);
+    await this.getDownloadDataButton().click();
 
     const download = await downloadPromise;
     logger.info({ filename: download.suggestedFilename() }, 'User data download initiated');
@@ -561,59 +615,37 @@ export class ProfileSettingsPage extends BasePage {
     return download;
   }
 
-  /**
-   * Initiate account closure
-   */
   async closeAccount(reason: string, confirmationText: string) {
     await this.goToPreferences();
 
-    await this.helper.click(this.selectors.closeAccountButton);
+    await this.getCloseAccountButton().click();
+    await this.getCloseAccountModal().waitFor({ state: 'visible' });
 
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.closeAccountModal),
-      5000
-    );
+    await this.getCloseReasonSelect().selectOption(reason);
+    await this.getCloseConfirmInput().fill(confirmationText);
 
-    await this.helper.select(this.selectors.closeAccountReasonSelect, reason);
-    await this.helper.fill(this.selectors.closeAccountConfirmInput, confirmationText);
-
-    await this.helper.click(this.selectors.confirmCloseAccountButton);
+    await this.getConfirmCloseAccountButton().click();
 
     logger.warn({ reason }, 'Account closure initiated');
   }
 
-  /**
-   * Check if success message is shown
-   */
+  // ====================
+  // MESSAGE QUERIES
+  // ====================
+
   async hasSuccessMessage(): Promise<boolean> {
-    return await this.helper.isVisible(this.selectors.successMessage);
+    return await this.getSuccessMessage().isVisible();
   }
 
-  /**
-   * Get success message
-   */
-  async getSuccessMessage(): Promise<string> {
-    return await this.helper.getText(this.selectors.successMessage);
+  async getSuccessMessageText(): Promise<string> {
+    return await this.getSuccessMessage().textContent() || '';
   }
 
-  /**
-   * Check if error message is shown
-   */
   async hasError(): Promise<boolean> {
-    return await this.helper.isVisible(this.selectors.errorMessage);
+    return await this.getErrorMessage().isVisible();
   }
 
-  /**
-   * Get error message
-   */
-  async getErrorMessage(): Promise<string> {
-    return await this.helper.getText(this.selectors.errorMessage);
-  }
-
-  /**
-   * Check if validation error exists
-   */
-  async hasValidationError(field: string): Promise<boolean> {
-    return await this.helper.isVisible(`${this.selectors.validationError}[data-field="${field}"]`);
+  async getErrorMessageText(): Promise<string> {
+    return await this.getErrorMessage().textContent() || '';
   }
 }

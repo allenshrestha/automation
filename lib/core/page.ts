@@ -2,27 +2,40 @@ import { Page, Locator } from '@playwright/test';
 import { logger } from './logger';
 
 /**
- * PAGE HELPER
+ * PAGE HELPER - MODERNIZED FOR 2025
+ * 
+ * ⚠️ IMPORTANT: This helper now encourages modern Playwright locator strategies
+ * 
+ * PREFERRED APPROACH (in your Page Objects):
+ * - Use page.getByRole(), getByLabel(), getByText() directly
+ * - Only use this helper for complex scenarios or backward compatibility
  * 
  * Features:
  * - Simplified page interactions
- * - Automatic waiting
- * - Error handling
- * - Logging
+ * - Automatic waiting (built into Playwright)
+ * - Modern locator support
+ * - Comprehensive logging
  * 
- * Usage:
- * const helper = new PageHelper(page);
- * await helper.fill('#email', 'test@example.com');
- * await helper.click('button[type="submit"]');
+ * Migration Guide:
+ * OLD:  await helper.fill('#email', 'test@example.com');
+ * NEW:  await page.getByLabel('Email').fill('test@example.com');
+ * 
+ * OLD:  await helper.click('button[type="submit"]');
+ * NEW:  await page.getByRole('button', { name: 'Submit' }).click();
  */
 
 export class PageHelper {
   constructor(private page: Page) {}
 
   /**
+   * 🔴 DEPRECATED: Use page.getByLabel().fill() instead
+   * 
    * Fill input field
+   * @deprecated Use modern locators: page.getByLabel('Email').fill(value)
    */
   async fill(selector: string, value: string, clearFirst: boolean = true) {
+    logger.warn({ selector }, '⚠️ Using legacy selector-based fill. Consider migrating to getByLabel() or getByRole()');
+    
     const locator = this.page.locator(selector);
     await locator.waitFor({ state: 'visible' });
     if (clearFirst) await locator.clear();
@@ -31,37 +44,83 @@ export class PageHelper {
   }
 
   /**
+   * 🔴 DEPRECATED: Use page.getByRole().click() instead
+   * 
    * Click element
+   * @deprecated Use modern locators: page.getByRole('button', { name: 'Submit' }).click()
    */
   async click(selector: string, options?: { force?: boolean; timeout?: number }) {
+    logger.warn({ selector }, '⚠️ Using legacy selector-based click. Consider migrating to getByRole()');
+    
     const locator = this.page.locator(selector);
     await locator.waitFor({ state: 'visible', timeout: options?.timeout });
     await locator.click({ force: options?.force });
     logger.debug({ selector }, 'Clicked element');
   }
+
   /**
-   * Get Value
+   * 🔴 DEPRECATED: Use page.getByLabel().inputValue() instead
+   * 
+   * Get input value
+   * @deprecated Use modern locators: await page.getByLabel('Email').inputValue()
    */
   async getValue(selector: string): Promise<string> {
+    logger.warn({ selector }, '⚠️ Using legacy selector-based getValue. Consider migrating to getByLabel()');
+    
     const locator = this.page.locator(selector);
     await locator.waitFor({ state: 'visible' });
     return (await locator.inputValue()) || '';
   }
+
   /**
+   * 🔴 DEPRECATED: Use page.getByText().textContent() instead
+   * 
    * Get text content
+   * @deprecated Use modern locators: await page.getByText('Balance').textContent()
    */
   async getText(selector: string): Promise<string> {
+    logger.warn({ selector }, '⚠️ Using legacy selector-based getText. Consider migrating to getByText()');
+    
     const locator = this.page.locator(selector);
     await locator.waitFor({ state: 'visible' });
     return (await locator.textContent()) || '';
   }
 
   /**
-   * Check if element is visible
+   * ✅ MODERN: Works with any locator (including getByRole)
+   * 
+   * Fill a locator (works with modern locators)
+   * This is the preferred method for complex scenarios
    */
-  async isVisible(selector: string, timeout: number = 5000): Promise<boolean> {
+  async fillLocator(locator: Locator, value: string, clearFirst: boolean = true) {
+    await locator.waitFor({ state: 'visible' });
+    if (clearFirst) await locator.clear();
+    await locator.fill(value);
+    logger.debug({ value: '***' }, 'Filled locator');
+  }
+
+  /**
+   * ✅ MODERN: Works with any locator
+   * 
+   * Click a locator (works with modern locators)
+   */
+  async clickLocator(locator: Locator, options?: { force?: boolean; timeout?: number }) {
+    await locator.waitFor({ state: 'visible', timeout: options?.timeout });
+    await locator.click({ force: options?.force });
+    logger.debug('Clicked locator');
+  }
+
+  /**
+   * Check if element is visible
+   * Works with both selectors and locators
+   */
+  async isVisible(selectorOrLocator: string | Locator, timeout: number = 5000): Promise<boolean> {
     try {
-      await this.page.waitForSelector(selector, { timeout, state: 'visible' });
+      if (typeof selectorOrLocator === 'string') {
+        await this.page.waitForSelector(selectorOrLocator, { timeout, state: 'visible' });
+      } else {
+        await selectorOrLocator.waitFor({ state: 'visible', timeout });
+      }
       return true;
     } catch {
       return false;
@@ -69,61 +128,80 @@ export class PageHelper {
   }
 
   /**
-   * Wait for element
+   * Wait for element (supports both selectors and locators)
    */
-  async waitFor(selector: string, state: 'visible' | 'hidden' = 'visible', timeout?: number) {
-    await this.page.waitForSelector(selector, { state, timeout });
+  async waitFor(
+    selectorOrLocator: string | Locator, 
+    state: 'visible' | 'hidden' | 'attached' | 'detached' = 'visible', 
+    timeout?: number
+  ) {
+    if (typeof selectorOrLocator === 'string') {
+      await this.page.waitForSelector(selectorOrLocator, { state, timeout });
+    } else {
+      await selectorOrLocator.waitFor({ state, timeout });
+    }
   }
 
   /**
+   * 🔴 DEPRECATED: Use page.getByLabel().selectOption() instead
+   * 
    * Select dropdown option
+   * @deprecated Use modern locators: page.getByLabel('Account Type').selectOption('Checking')
    */
   async select(selector: string, value: string) {
+    logger.warn({ selector }, '⚠️ Using legacy selector-based select. Consider migrating to getByLabel()');
+    
     await this.page.locator(selector).selectOption(value);
     logger.debug({ selector, value }, 'Selected option');
   }
 
   /**
-   * Upload file
+   * ✅ MODERN: Upload file (locator-compatible)
+   * 
+   * Upload file - works with modern locators
    */
-  async uploadFile(selector: string, filePath: string) {
-    await this.page.locator(selector).setInputFiles(filePath);
-    logger.debug({ selector, filePath }, 'File uploaded');
+  async uploadFile(locator: Locator | string, filePath: string) {
+    const element = typeof locator === 'string' ? this.page.locator(locator) : locator;
+    await element.setInputFiles(filePath);
+    logger.debug({ filePath }, 'File uploaded');
   }
 
   /**
-   * Check checkbox
+   * ✅ MODERN: Check checkbox (locator-compatible)
    */
-  async check(selector: string) {
-    await this.page.locator(selector).check();
-    logger.debug({ selector }, 'Checkbox checked');
+  async check(locator: Locator | string) {
+    const element = typeof locator === 'string' ? this.page.locator(locator) : locator;
+    await element.check();
+    logger.debug('Checkbox checked');
   }
 
   /**
-   * Uncheck checkbox
+   * ✅ MODERN: Uncheck checkbox (locator-compatible)
    */
-  async uncheck(selector: string) {
-    await this.page.locator(selector).uncheck();
-    logger.debug({ selector }, 'Checkbox unchecked');
+  async uncheck(locator: Locator | string) {
+    const element = typeof locator === 'string' ? this.page.locator(locator) : locator;
+    await element.uncheck();
+    logger.debug('Checkbox unchecked');
   }
 
   /**
-   * Set checkbox
+   * ✅ MODERN: Set checkbox state
    */
-  async setCheckbox(selector: string, checked: boolean) {
+  async setCheckbox(locator: Locator | string, checked: boolean) {
     if (checked) {
-      await this.check(selector);
+      await this.check(locator);
     } else {
-      await this.uncheck(selector);
+      await this.uncheck(locator);
     }
   }
 
   /**
-   * Scroll to element
+   * ✅ MODERN: Scroll to element (locator-compatible)
    */
-  async scrollTo(selector: string) {
-    await this.page.locator(selector).scrollIntoViewIfNeeded();
-    logger.debug({ selector }, 'Scrolled to element');
+  async scrollTo(locator: Locator | string) {
+    const element = typeof locator === 'string' ? this.page.locator(locator) : locator;
+    await element.scrollIntoViewIfNeeded();
+    logger.debug('Scrolled to element');
   }
 
   /**
@@ -135,7 +213,7 @@ export class PageHelper {
   }
 
   /**
-   * Wait for Url
+   * Wait for URL
    */
   async waitForUrl(urlPattern: string | RegExp, timeout: number = 30000) {
     await this.page.waitForURL(urlPattern, { timeout });
@@ -155,7 +233,7 @@ export class PageHelper {
   }
 
   /**
-   * Wait for Condition
+   * Wait for custom condition
    */
   async waitForCondition(
     condition: () => Promise<boolean>,
@@ -176,7 +254,10 @@ export class PageHelper {
   }
 
   /**
+   * 🔴 DEPRECATED: Use page.locator().count() directly
+   * 
    * Get element count
+   * @deprecated Use directly: await page.locator(selector).count()
    */
   async count(selector: string): Promise<number> {
     return await this.page.locator(selector).count();
@@ -191,15 +272,16 @@ export class PageHelper {
   }
 
   /**
-   * Hover over element
+   * ✅ MODERN: Hover (locator-compatible)
    */
-  async hover(selector: string) {
-    await this.page.locator(selector).hover();
-    logger.debug({ selector }, 'Hovered element');
+  async hover(locator: Locator | string) {
+    const element = typeof locator === 'string' ? this.page.locator(locator) : locator;
+    await element.hover();
+    logger.debug('Hovered element');
   }
 
   /**
-   * Wait for URL (for backward compatibility with existing page objects)
+   * Static helper for backward compatibility
    */
   static async forUrl(page: Page, urlPattern: string | RegExp, timeout: number = 30000) {
     await page.waitForURL(urlPattern, { timeout });
@@ -207,10 +289,79 @@ export class PageHelper {
   }
 
   /**
-   * Wait for Element to Disappear (for backward compatibility with existing page objects)
+   * Static helper for backward compatibility
    */
   static async forElementToDisappear(locator: Locator, timeout: number = 30000) {
     await locator.waitFor({ state: 'hidden', timeout });
     logger.debug('Element disappeared');
   }
+
+  /**
+   * ✅ NEW: Get by role (convenience wrapper)
+   * 
+   * Modern locator helper - encourages best practices
+   */
+  getByRole(role: 'button' | 'link' | 'textbox' | 'heading' | 'checkbox' | 'radio' | 'combobox', options?: {
+    name?: string | RegExp;
+    exact?: boolean;
+  }): Locator {
+    return this.page.getByRole(role as any, options);
+  }
+
+  /**
+   * ✅ NEW: Get by label (convenience wrapper)
+   */
+  getByLabel(text: string | RegExp, options?: { exact?: boolean }): Locator {
+    return this.page.getByLabel(text, options);
+  }
+
+  /**
+   * ✅ NEW: Get by text (convenience wrapper)
+   */
+  getByText(text: string | RegExp, options?: { exact?: boolean }): Locator {
+    return this.page.getByText(text, options);
+  }
+
+  /**
+   * ✅ NEW: Get by test id (fallback for complex scenarios)
+   * 
+   * Use only when getByRole/getByLabel won't work
+   */
+  getByTestId(testId: string): Locator {
+    return this.page.getByTestId(testId);
+  }
 }
+
+/**
+ * MIGRATION CHEAT SHEET
+ * ====================
+ * 
+ * Login Form Example:
+ * 
+ * ❌ OLD WAY (2023):
+ * await helper.fill('#username', 'admin');
+ * await helper.fill('#password', 'secret');
+ * await helper.click('button[type="submit"]');
+ * 
+ * ✅ NEW WAY (2025):
+ * await page.getByLabel('Username').fill('admin');
+ * await page.getByLabel('Password').fill('secret');
+ * await page.getByRole('button', { name: 'Sign In' }).click();
+ * 
+ * Account Selection Example:
+ * 
+ * ❌ OLD WAY:
+ * await helper.click('[data-testid="account-selector"]');
+ * await helper.select('[data-testid="account-dropdown"]', 'checking');
+ * 
+ * ✅ NEW WAY:
+ * await page.getByLabel('Account Type').selectOption('checking');
+ * 
+ * Button Click Example:
+ * 
+ * ❌ OLD WAY:
+ * await helper.click('[data-testid="make-deposit"]');
+ * 
+ * ✅ NEW WAY:
+ * await page.getByRole('button', { name: 'Make Deposit' }).click();
+ */

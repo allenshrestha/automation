@@ -1,82 +1,10 @@
-import { Page } from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
 import { BasePage } from './BasePage';
 import { Config } from '@lib/core/config';
 import { Wait } from '@lib/core/wait';
 import { logger } from '@lib/core/logger';
 
 export class TransactionPage extends BasePage {
-  private selectors = {
-    // Page elements
-    pageTitle: '[data-testid="transaction-page-title"]',
-    loadingSpinner: '[data-testid="loading"]',
-    
-    // Account selection
-    accountSelect: '[data-testid="account-select"]',
-    accountBalance: '[data-testid="account-balance"]',
-    availableBalance: '[data-testid="available-balance"]',
-    
-    // Transaction type
-    transactionTypeSelect: '[data-testid="transaction-type"]',
-    depositOption: '[data-testid="type-deposit"]',
-    withdrawalOption: '[data-testid="type-withdrawal"]',
-    transferOption: '[data-testid="type-transfer"]',
-    
-    // Transaction details
-    amountInput: '[data-testid="amount-input"]',
-    descriptionInput: '[data-testid="description-input"]',
-    referenceInput: '[data-testid="reference-input"]',
-    dateInput: '[data-testid="transaction-date"]',
-    
-    // Transfer specific
-    transferFromAccount: '[data-testid="transfer-from"]',
-    transferToAccount: '[data-testid="transfer-to"]',
-    transferTypeSelect: '[data-testid="transfer-type"]',
-    
-    // Deposit specific
-    depositTypeSelect: '[data-testid="deposit-type"]',
-    checkNumberInput: '[data-testid="check-number"]',
-    
-    // Withdrawal specific
-    withdrawalMethodSelect: '[data-testid="withdrawal-method"]',
-    
-    // Recurring transaction
-    recurringCheckbox: '[data-testid="recurring-checkbox"]',
-    frequencySelect: '[data-testid="frequency-select"]',
-    startDateInput: '[data-testid="start-date"]',
-    endDateInput: '[data-testid="end-date"]',
-    
-    // Buttons
-    submitButton: '[data-testid="submit-transaction"]',
-    cancelButton: '[data-testid="cancel-button"]',
-    clearButton: '[data-testid="clear-button"]',
-    reviewButton: '[data-testid="review-button"]',
-    
-    // Review modal
-    reviewModal: '[data-testid="review-modal"]',
-    reviewAmount: '[data-testid="review-amount"]',
-    reviewAccount: '[data-testid="review-account"]',
-    reviewType: '[data-testid="review-type"]',
-    confirmButton: '[data-testid="confirm-button"]',
-    editButton: '[data-testid="edit-button"]',
-    
-    // Confirmation
-    confirmationMessage: '[data-testid="confirmation-message"]',
-    successMessage: '[data-testid="success-message"]',
-    transactionIdDisplay: '[data-testid="transaction-id"]',
-    confirmationNumber: '[data-testid="confirmation-number"]',
-    receiptDownload: '[data-testid="download-receipt"]',
-    
-    // Error messages
-    errorMessage: '[data-testid="error-message"]',
-    validationError: '[data-testid="validation-error"]',
-    insufficientFundsError: '[data-testid="insufficient-funds"]',
-    
-    // Transaction history (on same page)
-    recentTransactions: '[data-testid="recent-transactions"]',
-    transactionItem: '[data-testid="transaction-item"]',
-    viewAllLink: '[data-testid="view-all-transactions"]',
-  };
-
   constructor(page: Page) {
     super(page);
   }
@@ -90,12 +18,18 @@ export class TransactionPage extends BasePage {
     logger.debug('Navigated to transaction page');
   }
 
+  // ====================
+  // ACCOUNT SELECTION
+  // ====================
+
   /**
    * Select account
    */
   async selectAccount(accountNumber: string) {
-    await this.helper.select(this.selectors.accountSelect, accountNumber);
-    await this.page.waitForTimeout(500); // Wait for balance to load
+    const select = this.page.getByLabel(/account/i)
+      .or(this.page.getByTestId('account-select'));
+    await select.selectOption(accountNumber);
+    await this.page.waitForTimeout(500);
     logger.debug({ accountNumber }, 'Account selected');
   }
 
@@ -103,7 +37,7 @@ export class TransactionPage extends BasePage {
    * Get account balance
    */
   async getAccountBalance(): Promise<number> {
-    const balanceText = await this.helper.getText(this.selectors.accountBalance);
+    const balanceText = await this.page.getByTestId('account-balance').textContent() || '$0';
     return parseFloat(balanceText.replace(/[$,]/g, ''));
   }
 
@@ -111,24 +45,36 @@ export class TransactionPage extends BasePage {
    * Get available balance
    */
   async getAvailableBalance(): Promise<number> {
-    const balanceText = await this.helper.getText(this.selectors.availableBalance);
+    const balanceText = await this.page.getByTestId('available-balance').textContent() || '$0';
     return parseFloat(balanceText.replace(/[$,]/g, ''));
   }
+
+  // ====================
+  // TRANSACTION TYPE
+  // ====================
 
   /**
    * Select transaction type
    */
   async selectTransactionType(type: 'Deposit' | 'Withdrawal' | 'Transfer') {
-    await this.helper.select(this.selectors.transactionTypeSelect, type);
-    await this.page.waitForTimeout(500); // Wait for type-specific fields
+    const select = this.page.getByLabel(/transaction.*type/i)
+      .or(this.page.getByTestId('transaction-type'));
+    await select.selectOption(type);
+    await this.page.waitForTimeout(500);
     logger.debug({ type }, 'Transaction type selected');
   }
+
+  // ====================
+  // TRANSACTION DETAILS
+  // ====================
 
   /**
    * Enter amount
    */
   async enterAmount(amount: number) {
-    await this.helper.fill(this.selectors.amountInput, amount.toString());
+    const amountInput = this.page.getByLabel(/amount/i)
+      .or(this.page.getByTestId('amount-input'));
+    await amountInput.fill(amount.toString());
     logger.debug({ amount }, 'Amount entered');
   }
 
@@ -136,52 +82,78 @@ export class TransactionPage extends BasePage {
    * Enter description
    */
   async enterDescription(description: string) {
-    await this.helper.fill(this.selectors.descriptionInput, description);
+    const descInput = this.page.getByLabel(/description/i)
+      .or(this.page.getByTestId('description-input'));
+    await descInput.fill(description);
   }
 
   /**
    * Enter reference number
    */
   async enterReference(reference: string) {
-    await this.helper.fill(this.selectors.referenceInput, reference);
+    const refInput = this.page.getByLabel(/reference/i)
+      .or(this.page.getByTestId('reference-input'));
+    await refInput.fill(reference);
   }
 
   /**
    * Set transaction date
    */
   async setTransactionDate(date: string) {
-    await this.helper.fill(this.selectors.dateInput, date);
+    const dateInput = this.page.getByLabel(/date/i)
+      .or(this.page.getByTestId('transaction-date'));
+    await dateInput.fill(date);
   }
+
+  // ====================
+  // DEPOSIT SPECIFIC
+  // ====================
 
   /**
    * Select deposit type
    */
   async selectDepositType(type: string) {
-    await this.helper.select(this.selectors.depositTypeSelect, type);
+    const select = this.page.getByLabel(/deposit.*type/i)
+      .or(this.page.getByTestId('deposit-type'));
+    await select.selectOption(type);
   }
 
   /**
    * Enter check number (for check deposits)
    */
   async enterCheckNumber(checkNumber: string) {
-    await this.helper.fill(this.selectors.checkNumberInput, checkNumber);
+    const checkInput = this.page.getByLabel(/check.*number/i)
+      .or(this.page.getByTestId('check-number'));
+    await checkInput.fill(checkNumber);
   }
+
+  // ====================
+  // WITHDRAWAL SPECIFIC
+  // ====================
 
   /**
    * Select withdrawal method
    */
   async selectWithdrawalMethod(method: string) {
-    await this.helper.select(this.selectors.withdrawalMethodSelect, method);
+    const select = this.page.getByLabel(/withdrawal.*method/i)
+      .or(this.page.getByTestId('withdrawal-method'));
+    await select.selectOption(method);
   }
+
+  // ====================
+  // TRANSFER SPECIFIC
+  // ====================
 
   /**
    * Setup transfer
    */
   async setupTransfer(fromAccount: string, toAccount: string, amount: number) {
     await this.selectTransactionType('Transfer');
-    await this.helper.select(this.selectors.transferFromAccount, fromAccount);
-    await this.helper.select(this.selectors.transferToAccount, toAccount);
+    
+    await this.page.getByTestId('transfer-from').selectOption(fromAccount);
+    await this.page.getByTestId('transfer-to').selectOption(toAccount);
     await this.enterAmount(amount);
+    
     logger.debug({ fromAccount, toAccount, amount }, 'Transfer configured');
   }
 
@@ -189,18 +161,26 @@ export class TransactionPage extends BasePage {
    * Select transfer type
    */
   async selectTransferType(type: string) {
-    await this.helper.select(this.selectors.transferTypeSelect, type);
+    const select = this.page.getByLabel(/transfer.*type/i)
+      .or(this.page.getByTestId('transfer-type'));
+    await select.selectOption(type);
   }
+
+  // ====================
+  // RECURRING TRANSACTION
+  // ====================
 
   /**
    * Enable recurring transaction
    */
   async enableRecurring() {
-    await this.helper.check(this.selectors.recurringCheckbox);
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.frequencySelect),
-      3000
-    );
+    const checkbox = this.page.getByRole('checkbox', { name: /recurring/i })
+      .or(this.page.getByTestId('recurring-checkbox'));
+    await checkbox.check();
+    
+    const frequencySelect = this.page.getByLabel(/frequency/i)
+      .or(this.page.getByTestId('frequency-select'));
+    await frequencySelect.waitFor({ state: 'visible', timeout: 3000 });
   }
 
   /**
@@ -208,23 +188,35 @@ export class TransactionPage extends BasePage {
    */
   async setupRecurring(frequency: string, startDate: string, endDate?: string) {
     await this.enableRecurring();
-    await this.helper.select(this.selectors.frequencySelect, frequency);
-    await this.helper.fill(this.selectors.startDateInput, startDate);
+    
+    const frequencySelect = this.page.getByLabel(/frequency/i)
+      .or(this.page.getByTestId('frequency-select'));
+    await frequencySelect.selectOption(frequency);
+    
+    await this.page.getByTestId('start-date').fill(startDate);
+    
     if (endDate) {
-      await this.helper.fill(this.selectors.endDateInput, endDate);
+      await this.page.getByTestId('end-date').fill(endDate);
     }
+    
     logger.debug({ frequency, startDate, endDate }, 'Recurring transaction configured');
   }
+
+  // ====================
+  // REVIEW & SUBMIT
+  // ====================
 
   /**
    * Click review button
    */
   async clickReview() {
-    await this.helper.click(this.selectors.reviewButton);
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.reviewModal),
-      5000
-    );
+    const reviewBtn = this.page.getByRole('button', { name: /review/i })
+      .or(this.page.getByTestId('review-button'));
+    await reviewBtn.click();
+    
+    const reviewModal = this.page.getByRole('dialog')
+      .or(this.page.getByTestId('review-modal'));
+    await reviewModal.waitFor({ state: 'visible', timeout: 5000 });
   }
 
   /**
@@ -236,9 +228,9 @@ export class TransactionPage extends BasePage {
     type: string;
   }> {
     return {
-      amount: await this.helper.getText(this.selectors.reviewAmount),
-      account: await this.helper.getText(this.selectors.reviewAccount),
-      type: await this.helper.getText(this.selectors.reviewType),
+      amount: await this.page.getByTestId('review-amount').textContent() || '',
+      account: await this.page.getByTestId('review-account').textContent() || '',
+      type: await this.page.getByTestId('review-type').textContent() || '',
     };
   }
 
@@ -246,7 +238,9 @@ export class TransactionPage extends BasePage {
    * Confirm transaction from review modal
    */
   async confirmTransaction() {
-    await this.helper.click(this.selectors.confirmButton);
+    const confirmBtn = this.page.getByRole('button', { name: /confirm/i })
+      .or(this.page.getByTestId('confirm-button'));
+    await confirmBtn.click();
     logger.info('Transaction confirmed');
   }
 
@@ -254,14 +248,18 @@ export class TransactionPage extends BasePage {
    * Edit transaction from review modal
    */
   async editFromReview() {
-    await this.helper.click(this.selectors.editButton);
+    const editBtn = this.page.getByRole('button', { name: /edit/i })
+      .or(this.page.getByTestId('edit-button'));
+    await editBtn.click();
   }
 
   /**
    * Submit transaction
    */
   async submitTransaction() {
-    await this.helper.click(this.selectors.submitButton);
+    const submitBtn = this.page.getByRole('button', { name: /submit/i })
+      .or(this.page.getByTestId('submit-transaction'));
+    await submitBtn.click();
     logger.info('Transaction submitted');
   }
 
@@ -269,24 +267,31 @@ export class TransactionPage extends BasePage {
    * Cancel transaction
    */
   async cancelTransaction() {
-    await this.helper.click(this.selectors.cancelButton);
+    const cancelBtn = this.page.getByRole('button', { name: /cancel/i })
+      .or(this.page.getByTestId('cancel-button'));
+    await cancelBtn.click();
   }
 
   /**
    * Clear form
    */
   async clearForm() {
-    await this.helper.click(this.selectors.clearButton);
+    const clearBtn = this.page.getByRole('button', { name: /clear/i })
+      .or(this.page.getByTestId('clear-button'));
+    await clearBtn.click();
   }
+
+  // ====================
+  // CONFIRMATION
+  // ====================
 
   /**
    * Wait for confirmation
    */
   async waitForConfirmation() {
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.confirmationMessage),
-      10000
-    );
+    const confirmationMsg = this.page.getByRole('alert')
+      .or(this.page.getByTestId('confirmation-message'));
+    await confirmationMsg.waitFor({ state: 'visible', timeout: 10000 });
     logger.info('Transaction confirmation received');
   }
 
@@ -294,21 +299,25 @@ export class TransactionPage extends BasePage {
    * Check if success message is shown
    */
   async hasSuccessMessage(): Promise<boolean> {
-    return await this.helper.isVisible(this.selectors.successMessage);
+    const successMsg = this.page.getByRole('alert')
+      .or(this.page.getByTestId('success-message'));
+    return await successMsg.isVisible();
   }
 
   /**
    * Get success message
    */
   async getSuccessMessage(): Promise<string> {
-    return await this.helper.getText(this.selectors.successMessage);
+    const successMsg = this.page.getByRole('alert')
+      .or(this.page.getByTestId('success-message'));
+    return await successMsg.textContent() || '';
   }
 
   /**
    * Get transaction ID
    */
   async getTransactionId(): Promise<string> {
-    const text = await this.helper.getText(this.selectors.transactionIdDisplay);
+    const text = await this.page.getByTestId('transaction-id').textContent() || '';
     const match = text.match(/\d+/);
     return match ? match[0] : text;
   }
@@ -317,7 +326,7 @@ export class TransactionPage extends BasePage {
    * Get confirmation number
    */
   async getConfirmationNumber(): Promise<string> {
-    return await this.helper.getText(this.selectors.confirmationNumber);
+    return await this.page.getByTestId('confirmation-number').textContent() || '';
   }
 
   /**
@@ -325,37 +334,53 @@ export class TransactionPage extends BasePage {
    */
   async downloadReceipt() {
     const downloadPromise = this.page.waitForEvent('download');
-    await this.helper.click(this.selectors.receiptDownload);
+    
+    const downloadBtn = this.page.getByRole('button', { name: /download.*receipt/i })
+      .or(this.page.getByTestId('receipt-download'));
+    await downloadBtn.click();
+    
     return await downloadPromise;
   }
+
+  // ====================
+  // ERROR HANDLING
+  // ====================
 
   /**
    * Check if error message is displayed
    */
   async hasError(): Promise<boolean> {
-    return await this.helper.isVisible(this.selectors.errorMessage);
+    const errorMsg = this.page.getByRole('alert')
+      .or(this.page.getByTestId('error-message'));
+    return await errorMsg.isVisible();
   }
 
   /**
    * Get error message
    */
   async getErrorMessage(): Promise<string> {
-    return await this.helper.getText(this.selectors.errorMessage);
+    const errorMsg = this.page.getByRole('alert')
+      .or(this.page.getByTestId('error-message'));
+    return await errorMsg.textContent() || '';
   }
 
   /**
    * Check for insufficient funds error
    */
   async hasInsufficientFundsError(): Promise<boolean> {
-    return await this.helper.isVisible(this.selectors.insufficientFundsError);
+    return await this.page.getByTestId('insufficient-funds').isVisible();
   }
 
   /**
    * Check if validation error exists
    */
   async hasValidationError(field: string): Promise<boolean> {
-    return await this.helper.isVisible(`${this.selectors.validationError}[data-field="${field}"]`);
+    return await this.page.locator(`[data-testid="validation-error"][data-field="${field}"]`).isVisible();
   }
+
+  // ====================
+  // RECENT TRANSACTIONS
+  // ====================
 
   /**
    * Get recent transactions
@@ -366,11 +391,13 @@ export class TransactionPage extends BasePage {
     amount: number;
     balance: number;
   }>> {
-    const count = await this.helper.count(this.selectors.transactionItem);
+    const items = this.page.getByTestId('transaction-item');
+    const count = await items.count();
     const transactions = [];
 
     for (let i = 0; i < count; i++) {
-      const item = this.page.locator(this.selectors.transactionItem).nth(i);
+      const item = items.nth(i);
+      
       transactions.push({
         date: await item.locator('[data-field="date"]').textContent() || '',
         description: await item.locator('[data-field="description"]').textContent() || '',
@@ -390,8 +417,14 @@ export class TransactionPage extends BasePage {
    * Click view all transactions
    */
   async viewAllTransactions() {
-    await this.helper.click(this.selectors.viewAllLink);
+    const viewAllLink = this.page.getByRole('link', { name: /view all/i })
+      .or(this.page.getByTestId('view-all'));
+    await viewAllLink.click();
   }
+
+  // ====================
+  // COMPLETE WORKFLOWS
+  // ====================
 
   /**
    * Complete deposit workflow

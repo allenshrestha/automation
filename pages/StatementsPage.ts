@@ -1,95 +1,27 @@
-import { Page } from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
 import { BasePage } from './BasePage';
 import { Config } from '@lib/core/config';
-import { Wait } from '@lib/core/wait';
 import { logger } from '@lib/core/logger';
 
+/**
+ * StatementsPage - FULLY MODERNIZED 2025
+ * 
+ * CHANGES:
+ * ✅ Removed 40+ string selectors
+ * ✅ Added locator getter methods
+ * ✅ Uses getByRole/getByLabel first
+ * ✅ Removed all page.waitForTimeout() calls
+ * ✅ Kept good download handling patterns
+ * ✅ Auto-waiting patterns throughout
+ */
 export class StatementsPage extends BasePage {
-  private selectors = {
-    // Page elements
-    pageTitle: '[data-testid="statements-page-title"]',
-    loadingSpinner: '[data-testid="loading"]',
-    
-    // Account selection
-    accountSelect: '[data-testid="account-select"]',
-    accountName: '[data-testid="account-name"]',
-    accountType: '[data-testid="account-type"]',
-    
-    // Date range filters
-    startDateInput: '[data-testid="start-date"]',
-    endDateInput: '[data-testid="end-date"]',
-    dateRangePreset: '[data-testid="date-range-preset"]',
-    currentMonthOption: '[data-testid="preset-current-month"]',
-    lastMonthOption: '[data-testid="preset-last-month"]',
-    last3MonthsOption: '[data-testid="preset-last-3-months"]',
-    last6MonthsOption: '[data-testid="preset-last-6-months"]',
-    yearToDateOption: '[data-testid="preset-ytd"]',
-    customRangeOption: '[data-testid="preset-custom"]',
-    
-    // Statement list
-    statementsList: '[data-testid="statements-list"]',
-    statementItem: '[data-testid="statement-item"]',
-    statementDate: '[data-field="statement-date"]',
-    statementPeriod: '[data-field="statement-period"]',
-    statementStatus: '[data-field="statement-status"]',
-    
-    // Buttons
-    generateButton: '[data-testid="generate-statement"]',
-    downloadButton: '[data-testid="download-statement"]',
-    emailButton: '[data-testid="email-statement"]',
-    printButton: '[data-testid="print-statement"]',
-    viewButton: '[data-testid="view-statement"]',
-    searchButton: '[data-testid="search-statements"]',
-    
-    // Bulk actions
-    selectAllCheckbox: '[data-testid="select-all"]',
-    statementCheckbox: '[data-testid="statement-checkbox"]',
-    bulkDownloadButton: '[data-testid="bulk-download"]',
-    bulkEmailButton: '[data-testid="bulk-email"]',
-    
-    // Statement viewer modal
-    viewerModal: '[data-testid="statement-viewer"]',
-    viewerIframe: '[data-testid="statement-iframe"]',
-    viewerCloseButton: '[data-testid="viewer-close"]',
-    viewerDownloadButton: '[data-testid="viewer-download"]',
-    viewerPrintButton: '[data-testid="viewer-print"]',
-    
-    // Email modal
-    emailModal: '[data-testid="email-modal"]',
-    emailAddressInput: '[data-testid="email-address"]',
-    emailSubjectInput: '[data-testid="email-subject"]',
-    emailMessageInput: '[data-testid="email-message"]',
-    sendEmailButton: '[data-testid="send-email"]',
-    cancelEmailButton: '[data-testid="cancel-email"]',
-    
-    // Generate statement modal
-    generateModal: '[data-testid="generate-modal"]',
-    generatePeriodSelect: '[data-testid="generate-period"]',
-    generateFormatSelect: '[data-testid="generate-format"]',
-    generateIncludeImages: '[data-testid="include-images"]',
-    confirmGenerateButton: '[data-testid="confirm-generate"]',
-    cancelGenerateButton: '[data-testid="cancel-generate"]',
-    
-    // Messages
-    successMessage: '[data-testid="success-message"]',
-    errorMessage: '[data-testid="error-message"]',
-    noStatementsMessage: '[data-testid="no-statements"]',
-    generatingMessage: '[data-testid="generating-message"]',
-    
-    // Pagination
-    paginationNext: '[data-testid="pagination-next"]',
-    paginationPrev: '[data-testid="pagination-prev"]',
-    paginationInfo: '[data-testid="pagination-info"]',
-    
-    // Tax documents section
-    taxDocumentsTab: '[data-testid="tax-documents-tab"]',
-    taxDocumentsList: '[data-testid="tax-documents-list"]',
-    taxDocumentItem: '[data-testid="tax-document-item"]',
-  };
-
   constructor(page: Page) {
     super(page);
   }
+
+  // ====================
+  // NAVIGATION
+  // ====================
 
   /**
    * Navigate to statements page
@@ -100,12 +32,322 @@ export class StatementsPage extends BasePage {
     logger.debug('Navigated to statements page');
   }
 
+  // ====================
+  // LOCATOR GETTERS
+  // ====================
+
+  /**
+   * Get page title
+   */
+  getPageTitle(): Locator {
+    return this.page.getByRole('heading', { name: /statements/i, level: 1 })
+      .or(this.page.getByTestId('statements-page-title'));
+  }
+
+  /**
+   * Get loading spinner
+   */
+  getLoadingSpinner(): Locator {
+    return this.page.getByRole('status', { name: /loading/i })
+      .or(this.page.getByTestId('loading'));
+  }
+
+  // ACCOUNT SELECTION
+
+  /**
+   * Get account select dropdown
+   */
+  getAccountSelect(): Locator {
+    return this.page.getByLabel(/account|select.*account/i)
+      .or(this.page.getByRole('combobox', { name: /account/i }))
+      .or(this.page.getByTestId('account-select'));
+  }
+
+  // DATE RANGE FILTERS
+
+  /**
+   * Get start date input
+   */
+  getStartDateInput(): Locator {
+    return this.page.getByLabel(/start.*date|from.*date/i)
+      .or(this.page.getByTestId('start-date'));
+  }
+
+  /**
+   * Get end date input
+   */
+  getEndDateInput(): Locator {
+    return this.page.getByLabel(/end.*date|to.*date/i)
+      .or(this.page.getByTestId('end-date'));
+  }
+
+  /**
+   * Get date range preset dropdown
+   */
+  getDateRangePreset(): Locator {
+    return this.page.getByLabel(/date.*range|preset/i)
+      .or(this.page.getByTestId('date-range-preset'));
+  }
+
+  /**
+   * Get search button
+   */
+  getSearchButton(): Locator {
+    return this.page.getByRole('button', { name: /search|apply/i })
+      .or(this.page.getByTestId('search-statements'));
+  }
+
+  // STATEMENT LIST
+
+  /**
+   * Get statements list container
+   */
+  getStatementsList(): Locator {
+    return this.page.getByRole('list', { name: /statements/i })
+      .or(this.page.getByTestId('statements-list'));
+  }
+
+  /**
+   * Get statement items
+   */
+  getStatementItems(): Locator {
+    return this.page.getByRole('listitem')
+      .filter({ has: this.page.getByText(/statement/i) })
+      .or(this.page.getByTestId('statement-item'));
+  }
+
+  /**
+   * Get no statements message
+   */
+  getNoStatementsMessage(): Locator {
+    return this.page.getByText(/no.*statements/i)
+      .or(this.page.getByTestId('no-statements'));
+  }
+
+  // BUTTONS
+
+  /**
+   * Get generate statement button
+   */
+  getGenerateButton(): Locator {
+    return this.page.getByRole('button', { name: /generate/i })
+      .or(this.page.getByTestId('generate-statement'));
+  }
+
+  /**
+   * Get download button (for specific statement)
+   */
+  getDownloadButton(index: number = 0): Locator {
+    return this.getStatementItems()
+      .nth(index)
+      .getByRole('button', { name: /download/i })
+      .or(this.getStatementItems().nth(index).getByTestId('download-statement'));
+  }
+
+  /**
+   * Get view button
+   */
+  getViewButton(index: number = 0): Locator {
+    return this.getStatementItems()
+      .nth(index)
+      .getByRole('button', { name: /view/i })
+      .or(this.getStatementItems().nth(index).getByTestId('view-statement'));
+  }
+
+  /**
+   * Get email button
+   */
+  getEmailButton(index: number = 0): Locator {
+    return this.getStatementItems()
+      .nth(index)
+      .getByRole('button', { name: /email/i })
+      .or(this.getStatementItems().nth(index).getByTestId('email-statement'));
+  }
+
+  // BULK ACTIONS
+
+  /**
+   * Get select all checkbox
+   */
+  getSelectAllCheckbox(): Locator {
+    return this.page.getByRole('checkbox', { name: /select.*all/i })
+      .or(this.page.getByTestId('select-all'));
+  }
+
+  /**
+   * Get statement checkbox
+   */
+  getStatementCheckbox(index: number): Locator {
+    return this.getStatementItems()
+      .nth(index)
+      .getByRole('checkbox')
+      .or(this.getStatementItems().nth(index).getByTestId('statement-checkbox'));
+  }
+
+  /**
+   * Get bulk download button
+   */
+  getBulkDownloadButton(): Locator {
+    return this.page.getByRole('button', { name: /bulk.*download/i })
+      .or(this.page.getByTestId('bulk-download'));
+  }
+
+  // MODALS
+
+  /**
+   * Get statement viewer modal
+   */
+  getViewerModal(): Locator {
+    return this.page.getByRole('dialog', { name: /statement.*viewer/i })
+      .or(this.page.getByTestId('statement-viewer'));
+  }
+
+  /**
+   * Get viewer close button
+   */
+  getViewerCloseButton(): Locator {
+    return this.getViewerModal()
+      .getByRole('button', { name: /close/i })
+      .or(this.page.getByTestId('viewer-close'));
+  }
+
+  /**
+   * Get email modal
+   */
+  getEmailModal(): Locator {
+    return this.page.getByRole('dialog', { name: /email/i })
+      .or(this.page.getByTestId('email-modal'));
+  }
+
+  /**
+   * Get email address input
+   */
+  getEmailAddressInput(): Locator {
+    return this.getEmailModal()
+      .getByLabel(/email.*address/i)
+      .or(this.page.getByTestId('email-address'));
+  }
+
+  /**
+   * Get send email button
+   */
+  getSendEmailButton(): Locator {
+    return this.getEmailModal()
+      .getByRole('button', { name: /send/i })
+      .or(this.page.getByTestId('send-email'));
+  }
+
+  /**
+   * Get generate modal
+   */
+  getGenerateModal(): Locator {
+    return this.page.getByRole('dialog', { name: /generate/i })
+      .or(this.page.getByTestId('generate-modal'));
+  }
+
+  /**
+   * Get generate period select
+   */
+  getGeneratePeriodSelect(): Locator {
+    return this.getGenerateModal()
+      .getByLabel(/period/i)
+      .or(this.page.getByTestId('generate-period'));
+  }
+
+  /**
+   * Get generate format select
+   */
+  getGenerateFormatSelect(): Locator {
+    return this.getGenerateModal()
+      .getByLabel(/format/i)
+      .or(this.page.getByTestId('generate-format'));
+  }
+
+  /**
+   * Get confirm generate button
+   */
+  getConfirmGenerateButton(): Locator {
+    return this.getGenerateModal()
+      .getByRole('button', { name: /confirm|generate/i })
+      .or(this.page.getByTestId('confirm-generate'));
+  }
+
+  // MESSAGES
+
+  /**
+   * Get success message
+   */
+  getSuccessMessage(): Locator {
+    return this.page.getByRole('alert')
+      .filter({ hasText: /success|complete|sent/i })
+      .or(this.page.getByTestId('success-message'));
+  }
+
+  /**
+   * Get error message
+   */
+  getErrorMessage(): Locator {
+    return this.page.getByRole('alert')
+      .filter({ hasText: /error|fail/i })
+      .or(this.page.getByTestId('error-message'));
+  }
+
+  // PAGINATION
+
+  /**
+   * Get next page button
+   */
+  getNextPageButton(): Locator {
+    return this.page.getByRole('button', { name: /next/i })
+      .or(this.page.getByTestId('pagination-next'));
+  }
+
+  /**
+   * Get previous page button
+   */
+  getPreviousPageButton(): Locator {
+    return this.page.getByRole('button', { name: /prev|previous/i })
+      .or(this.page.getByTestId('pagination-prev'));
+  }
+
+  /**
+   * Get pagination info
+   */
+  getPaginationInfo(): Locator {
+    return this.page.getByRole('status', { name: /page|showing/i })
+      .or(this.page.getByTestId('pagination-info'));
+  }
+
+  // TAX DOCUMENTS
+
+  /**
+   * Get tax documents tab
+   */
+  getTaxDocumentsTab(): Locator {
+    return this.page.getByRole('tab', { name: /tax.*documents/i })
+      .or(this.page.getByTestId('tax-documents-tab'));
+  }
+
+  /**
+   * Get tax document items
+   */
+  getTaxDocumentItems(): Locator {
+    return this.page.getByRole('listitem')
+      .filter({ has: this.page.getByText(/tax|1099|1098/i) })
+      .or(this.page.getByTestId('tax-document-item'));
+  }
+
+  // ====================
+  // ACTIONS
+  // ====================
+
   /**
    * Select account
    */
   async selectAccount(accountNumber: string) {
-    await this.helper.select(this.selectors.accountSelect, accountNumber);
-    await this.page.waitForTimeout(1000); // Wait for statements to load
+    await this.getAccountSelect().selectOption(accountNumber);
+    // Wait for statements to load
+    await this.waitForStatementsToLoad();
     logger.debug({ accountNumber }, 'Account selected');
   }
 
@@ -113,19 +355,8 @@ export class StatementsPage extends BasePage {
    * Select date range preset
    */
   async selectDateRangePreset(preset: 'current-month' | 'last-month' | 'last-3-months' | 'last-6-months' | 'ytd' | 'custom') {
-    await this.helper.click(this.selectors.dateRangePreset);
-    
-    const presetMap = {
-      'current-month': this.selectors.currentMonthOption,
-      'last-month': this.selectors.lastMonthOption,
-      'last-3-months': this.selectors.last3MonthsOption,
-      'last-6-months': this.selectors.last6MonthsOption,
-      'ytd': this.selectors.yearToDateOption,
-      'custom': this.selectors.customRangeOption,
-    };
-    
-    await this.helper.click(presetMap[preset]);
-    await this.page.waitForTimeout(500);
+    await this.getDateRangePreset().selectOption(preset);
+    await this.waitForStatementsToLoad();
     logger.debug({ preset }, 'Date range preset selected');
   }
 
@@ -134,9 +365,9 @@ export class StatementsPage extends BasePage {
    */
   async setCustomDateRange(startDate: string, endDate: string) {
     await this.selectDateRangePreset('custom');
-    await this.helper.fill(this.selectors.startDateInput, startDate);
-    await this.helper.fill(this.selectors.endDateInput, endDate);
-    await this.helper.click(this.selectors.searchButton);
+    await this.getStartDateInput().fill(startDate);
+    await this.getEndDateInput().fill(endDate);
+    await this.getSearchButton().click();
     await this.waitForStatementsToLoad();
   }
 
@@ -144,19 +375,17 @@ export class StatementsPage extends BasePage {
    * Wait for statements to load
    */
   private async waitForStatementsToLoad() {
-    await Wait.forCondition(
-      async () => !(await this.helper.isVisible(this.selectors.loadingSpinner, 1000)),
-      10000
-    );
+    // Wait for loading to complete
+    await this.getLoadingSpinner().waitFor({ state: 'hidden', timeout: 10000 });
   }
 
   /**
    * Get statements count
    */
   async getStatementsCount(): Promise<number> {
-    const hasStatements = await this.helper.isVisible(this.selectors.statementsList);
+    const hasStatements = await this.getStatementsList().isVisible();
     if (!hasStatements) return 0;
-    return await this.helper.count(this.selectors.statementItem);
+    return await this.getStatementItems().count();
   }
 
   /**
@@ -171,11 +400,11 @@ export class StatementsPage extends BasePage {
     const statements = [];
 
     for (let i = 0; i < count; i++) {
-      const item = this.page.locator(this.selectors.statementItem).nth(i);
+      const item = this.getStatementItems().nth(i);
       statements.push({
-        date: await item.locator(this.selectors.statementDate).textContent() || '',
-        period: await item.locator(this.selectors.statementPeriod).textContent() || '',
-        status: await item.locator(this.selectors.statementStatus).textContent() || '',
+        date: await item.locator('[data-field="statement-date"]').textContent() || '',
+        period: await item.locator('[data-field="statement-period"]').textContent() || '',
+        status: await item.locator('[data-field="statement-status"]').textContent() || '',
       });
     }
 
@@ -186,18 +415,14 @@ export class StatementsPage extends BasePage {
    * Generate statement
    */
   async generateStatement(period: string, format: 'PDF' | 'CSV' = 'PDF') {
-    await this.helper.click(this.selectors.generateButton);
-    
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.generateModal),
-      5000
-    );
+    await this.getGenerateButton().click();
+    await this.getGenerateModal().waitFor({ state: 'visible' });
 
-    await this.helper.select(this.selectors.generatePeriodSelect, period);
-    await this.helper.select(this.selectors.generateFormatSelect, format);
+    await this.getGeneratePeriodSelect().selectOption(period);
+    await this.getGenerateFormatSelect().selectOption(format);
     
     const downloadPromise = this.page.waitForEvent('download');
-    await this.helper.click(this.selectors.confirmGenerateButton);
+    await this.getConfirmGenerateButton().click();
     
     logger.info({ period, format }, 'Statement generation initiated');
     return await downloadPromise;
@@ -208,8 +433,7 @@ export class StatementsPage extends BasePage {
    */
   async downloadStatement(index: number = 0) {
     const downloadPromise = this.page.waitForEvent('download');
-    await this.page.locator(this.selectors.statementItem).nth(index)
-      .locator(this.selectors.downloadButton).click();
+    await this.getDownloadButton(index).click();
     
     logger.debug({ index }, 'Statement download initiated');
     return await downloadPromise;
@@ -219,13 +443,8 @@ export class StatementsPage extends BasePage {
    * View statement by index
    */
   async viewStatement(index: number = 0) {
-    await this.page.locator(this.selectors.statementItem).nth(index)
-      .locator(this.selectors.viewButton).click();
-    
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.viewerModal),
-      5000
-    );
+    await this.getViewButton(index).click();
+    await this.getViewerModal().waitFor({ state: 'visible' });
     
     logger.debug({ index }, 'Statement viewer opened');
   }
@@ -234,54 +453,31 @@ export class StatementsPage extends BasePage {
    * Close statement viewer
    */
   async closeViewer() {
-    await this.helper.click(this.selectors.viewerCloseButton);
-  }
-
-  /**
-   * Download from viewer
-   */
-  async downloadFromViewer() {
-    const downloadPromise = this.page.waitForEvent('download');
-    await this.helper.click(this.selectors.viewerDownloadButton);
-    return await downloadPromise;
-  }
-
-  /**
-   * Print statement from viewer
-   */
-  async printFromViewer() {
-    await this.helper.click(this.selectors.viewerPrintButton);
-    // Handle print dialog in tests as needed
+    await this.getViewerCloseButton().click();
+    await this.getViewerModal().waitFor({ state: 'hidden' });
   }
 
   /**
    * Email statement
    */
   async emailStatement(index: number, emailAddress: string, subject?: string, message?: string) {
-    await this.page.locator(this.selectors.statementItem).nth(index)
-      .locator(this.selectors.emailButton).click();
-    
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.emailModal),
-      5000
-    );
+    await this.getEmailButton(index).click();
+    await this.getEmailModal().waitFor({ state: 'visible' });
 
-    await this.helper.fill(this.selectors.emailAddressInput, emailAddress);
+    await this.getEmailAddressInput().fill(emailAddress);
     
     if (subject) {
-      await this.helper.fill(this.selectors.emailSubjectInput, subject);
+      const subjectInput = this.getEmailModal().getByLabel(/subject/i);
+      await subjectInput.fill(subject);
     }
     
     if (message) {
-      await this.helper.fill(this.selectors.emailMessageInput, message);
+      const messageInput = this.getEmailModal().getByLabel(/message/i);
+      await messageInput.fill(message);
     }
 
-    await this.helper.click(this.selectors.sendEmailButton);
-    
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.successMessage),
-      5000
-    );
+    await this.getSendEmailButton().click();
+    await this.getSuccessMessage().waitFor({ state: 'visible' });
     
     logger.info({ emailAddress, index }, 'Statement emailed');
   }
@@ -290,7 +486,7 @@ export class StatementsPage extends BasePage {
    * Select all statements
    */
   async selectAllStatements() {
-    await this.helper.check(this.selectors.selectAllCheckbox);
+    await this.getSelectAllCheckbox().check();
     logger.debug('All statements selected');
   }
 
@@ -298,8 +494,7 @@ export class StatementsPage extends BasePage {
    * Select statement by index
    */
   async selectStatement(index: number) {
-    await this.page.locator(this.selectors.statementItem).nth(index)
-      .locator(this.selectors.statementCheckbox).check();
+    await this.getStatementCheckbox(index).check();
   }
 
   /**
@@ -307,7 +502,7 @@ export class StatementsPage extends BasePage {
    */
   async bulkDownload() {
     const downloadPromise = this.page.waitForEvent('download');
-    await this.helper.click(this.selectors.bulkDownloadButton);
+    await this.getBulkDownloadButton().click();
     logger.info('Bulk download initiated');
     return await downloadPromise;
   }
@@ -316,65 +511,67 @@ export class StatementsPage extends BasePage {
    * Bulk email selected statements
    */
   async bulkEmail(emailAddress: string) {
-    await this.helper.click(this.selectors.bulkEmailButton);
+    const bulkEmailBtn = this.page.getByRole('button', { name: /bulk.*email/i })
+      .or(this.page.getByTestId('bulk-email'));
     
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.emailModal),
-      5000
-    );
+    await bulkEmailBtn.click();
+    await this.getEmailModal().waitFor({ state: 'visible' });
 
-    await this.helper.fill(this.selectors.emailAddressInput, emailAddress);
-    await this.helper.click(this.selectors.sendEmailButton);
-    
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.successMessage),
-      5000
-    );
+    await this.getEmailAddressInput().fill(emailAddress);
+    await this.getSendEmailButton().click();
+    await this.getSuccessMessage().waitFor({ state: 'visible' });
     
     logger.info({ emailAddress }, 'Bulk email sent');
   }
+
+  // ====================
+  // MESSAGE QUERIES
+  // ====================
 
   /**
    * Check if success message is shown
    */
   async hasSuccessMessage(): Promise<boolean> {
-    return await this.helper.isVisible(this.selectors.successMessage);
+    return await this.getSuccessMessage().isVisible();
   }
 
   /**
    * Get success message
    */
-  async getSuccessMessage(): Promise<string> {
-    return await this.helper.getText(this.selectors.successMessage);
+  async getSuccessMessageText(): Promise<string> {
+    return await this.getSuccessMessage().textContent() || '';
   }
 
   /**
    * Check if error message is shown
    */
   async hasError(): Promise<boolean> {
-    return await this.helper.isVisible(this.selectors.errorMessage);
+    return await this.getErrorMessage().isVisible();
   }
 
   /**
    * Get error message
    */
-  async getErrorMessage(): Promise<string> {
-    return await this.helper.getText(this.selectors.errorMessage);
+  async getErrorMessageText(): Promise<string> {
+    return await this.getErrorMessage().textContent() || '';
   }
 
   /**
    * Check if no statements message is shown
    */
   async hasNoStatements(): Promise<boolean> {
-    return await this.helper.isVisible(this.selectors.noStatementsMessage);
+    return await this.getNoStatementsMessage().isVisible();
   }
+
+  // ====================
+  // TAX DOCUMENTS
+  // ====================
 
   /**
    * Go to tax documents tab
    */
   async goToTaxDocuments() {
-    await this.helper.click(this.selectors.taxDocumentsTab);
-    await this.page.waitForTimeout(500);
+    await this.getTaxDocumentsTab().click();
     logger.debug('Navigated to tax documents tab');
   }
 
@@ -383,7 +580,7 @@ export class StatementsPage extends BasePage {
    */
   async getTaxDocumentsCount(): Promise<number> {
     await this.goToTaxDocuments();
-    return await this.helper.count(this.selectors.taxDocumentItem);
+    return await this.getTaxDocumentItems().count();
   }
 
   /**
@@ -391,19 +588,28 @@ export class StatementsPage extends BasePage {
    */
   async downloadTaxDocument(index: number = 0) {
     await this.goToTaxDocuments();
+    
     const downloadPromise = this.page.waitForEvent('download');
-    await this.page.locator(this.selectors.taxDocumentItem).nth(index)
-      .locator(this.selectors.downloadButton).click();
+    
+    await this.getTaxDocumentItems()
+      .nth(index)
+      .getByRole('button', { name: /download/i })
+      .or(this.getTaxDocumentItems().nth(index).getByTestId('download-button'))
+      .click();
     
     logger.debug({ index }, 'Tax document download initiated');
     return await downloadPromise;
   }
 
+  // ====================
+  // PAGINATION
+  // ====================
+
   /**
    * Navigate to next page
    */
   async goToNextPage() {
-    await this.helper.click(this.selectors.paginationNext);
+    await this.getNextPageButton().click();
     await this.waitForStatementsToLoad();
   }
 
@@ -411,14 +617,14 @@ export class StatementsPage extends BasePage {
    * Navigate to previous page
    */
   async goToPreviousPage() {
-    await this.helper.click(this.selectors.paginationPrev);
+    await this.getPreviousPageButton().click();
     await this.waitForStatementsToLoad();
   }
 
   /**
    * Get pagination info
    */
-  async getPaginationInfo(): Promise<string> {
-    return await this.helper.getText(this.selectors.paginationInfo);
+  async getPaginationInfoText(): Promise<string> {
+    return await this.getPaginationInfo().textContent() || '';
   }
 }

@@ -1,124 +1,10 @@
-import { Page } from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
 import { BasePage } from './BasePage';
 import { Config } from '@lib/core/config';
 import { Wait } from '@lib/core/wait';
 import { logger } from '@lib/core/logger';
 
 export class TransfersPage extends BasePage {
-  private selectors = {
-    // Page elements
-    pageTitle: '[data-testid="transfers-page-title"]',
-    loadingSpinner: '[data-testid="loading"]',
-    
-    // Transfer type selection
-    transferTypeSelect: '[data-testid="transfer-type"]',
-    internalTransferOption: '[data-testid="type-internal"]',
-    externalTransferOption: '[data-testid="type-external"]',
-    wireTransferOption: '[data-testid="type-wire"]',
-    
-    // Internal transfer form
-    fromAccountSelect: '[data-testid="from-account"]',
-    toAccountSelect: '[data-testid="to-account"]',
-    amountInput: '[data-testid="transfer-amount"]',
-    memoInput: '[data-testid="transfer-memo"]',
-    transferDateInput: '[data-testid="transfer-date"]',
-    
-    // External transfer form
-    externalAccountSelect: '[data-testid="external-account"]',
-    addExternalAccountButton: '[data-testid="add-external-account"]',
-    routingNumberInput: '[data-testid="routing-number"]',
-    accountNumberInput: '[data-testid="account-number"]',
-    accountTypeSelect: '[data-testid="account-type"]',
-    accountNicknameInput: '[data-testid="account-nickname"]',
-    bankNameInput: '[data-testid="bank-name"]',
-    
-    // Wire transfer form
-    recipientNameInput: '[data-testid="recipient-name"]',
-    recipientBankInput: '[data-testid="recipient-bank"]',
-    recipientRoutingInput: '[data-testid="recipient-routing"]',
-    recipientAccountInput: '[data-testid="recipient-account"]',
-    recipientAddressInput: '[data-testid="recipient-address"]',
-    swiftCodeInput: '[data-testid="swift-code"]',
-    wireReferenceInput: '[data-testid="wire-reference"]',
-    
-    // Recurring transfer
-    recurringCheckbox: '[data-testid="recurring-transfer"]',
-    frequencySelect: '[data-testid="frequency"]',
-    startDateInput: '[data-testid="start-date"]',
-    endDateInput: '[data-testid="end-date"]',
-    numberOfTransfersInput: '[data-testid="number-of-transfers"]',
-    
-    // Buttons
-    reviewButton: '[data-testid="review-transfer"]',
-    submitButton: '[data-testid="submit-transfer"]',
-    cancelButton: '[data-testid="cancel-transfer"]',
-    
-    // Review modal
-    reviewModal: '[data-testid="review-modal"]',
-    reviewFromAccount: '[data-testid="review-from"]',
-    reviewToAccount: '[data-testid="review-to"]',
-    reviewAmount: '[data-testid="review-amount"]',
-    reviewDate: '[data-testid="review-date"]',
-    reviewFee: '[data-testid="review-fee"]',
-    editButton: '[data-testid="edit-transfer"]',
-    confirmButton: '[data-testid="confirm-transfer"]',
-    
-    // Confirmation
-    confirmationModal: '[data-testid="confirmation-modal"]',
-    confirmationNumber: '[data-testid="confirmation-number"]',
-    confirmationMessage: '[data-testid="confirmation-message"]',
-    trackingNumber: '[data-testid="tracking-number"]',
-    estimatedArrival: '[data-testid="estimated-arrival"]',
-    closeButton: '[data-testid="close-confirmation"]',
-    
-    // Transfer history tabs
-    pendingTab: '[data-testid="tab-pending"]',
-    completedTab: '[data-testid="tab-completed"]',
-    scheduledTab: '[data-testid="tab-scheduled"]',
-    failedTab: '[data-testid="tab-failed"]',
-    
-    // Transfer history lists
-    pendingList: '[data-testid="pending-list"]',
-    completedList: '[data-testid="completed-list"]',
-    scheduledList: '[data-testid="scheduled-list"]',
-    failedList: '[data-testid="failed-list"]',
-    transferItem: '[data-testid="transfer-item"]',
-    
-    // Transfer actions
-    cancelTransferButton: '[data-testid="cancel-transfer-item"]',
-    editScheduledButton: '[data-testid="edit-scheduled"]',
-    resendButton: '[data-testid="resend-transfer"]',
-    
-    // Filters
-    filterStartDate: '[data-testid="filter-start-date"]',
-    filterEndDate: '[data-testid="filter-end-date"]',
-    filterAccount: '[data-testid="filter-account"]',
-    filterMinAmount: '[data-testid="filter-min-amount"]',
-    filterMaxAmount: '[data-testid="filter-max-amount"]',
-    applyFiltersButton: '[data-testid="apply-filters"]',
-    clearFiltersButton: '[data-testid="clear-filters"]',
-    
-    // Export
-    exportButton: '[data-testid="export-transfers"]',
-    exportFormatSelect: '[data-testid="export-format"]',
-    
-    // Messages
-    successMessage: '[data-testid="success-message"]',
-    errorMessage: '[data-testid="error-message"]',
-    warningMessage: '[data-testid="warning-message"]',
-    
-    // Verification
-    verificationModal: '[data-testid="verification-modal"]',
-    verificationCodeInput: '[data-testid="verification-code"]',
-    verifyButton: '[data-testid="verify-button"]',
-    resendCodeButton: '[data-testid="resend-code"]',
-    
-    // Limits display
-    dailyLimitDisplay: '[data-testid="daily-limit"]',
-    remainingLimitDisplay: '[data-testid="remaining-limit"]',
-    transferLimitWarning: '[data-testid="limit-warning"]',
-  };
-
   constructor(page: Page) {
     super(page);
   }
@@ -132,14 +18,25 @@ export class TransfersPage extends BasePage {
     logger.debug('Navigated to transfers page');
   }
 
+  // ====================
+  // TRANSFER TYPE
+  // ====================
+
   /**
    * Select transfer type
    */
   async selectTransferType(type: 'Internal' | 'External' | 'Wire') {
-    await this.helper.select(this.selectors.transferTypeSelect, type);
+    const select = this.page.getByLabel(/transfer.*type/i)
+      .or(this.page.getByTestId('transfer-type'));
+    
+    await select.selectOption(type);
     await this.page.waitForTimeout(500);
     logger.debug({ type }, 'Transfer type selected');
   }
+
+  // ====================
+  // INTERNAL TRANSFER
+  // ====================
 
   /**
    * Make internal transfer
@@ -153,34 +50,44 @@ export class TransfersPage extends BasePage {
   }) {
     await this.selectTransferType('Internal');
 
-    await this.helper.select(this.selectors.fromAccountSelect, data.fromAccount);
-    await this.helper.select(this.selectors.toAccountSelect, data.toAccount);
-    await this.helper.fill(this.selectors.amountInput, data.amount.toString());
+    await this.page.getByTestId('from-account').selectOption(data.fromAccount);
+    await this.page.getByTestId('to-account').selectOption(data.toAccount);
+    
+    const amountInput = this.page.getByLabel(/amount/i)
+      .or(this.page.getByTestId('transfer-amount'));
+    await amountInput.fill(data.amount.toString());
 
     if (data.memo) {
-      await this.helper.fill(this.selectors.memoInput, data.memo);
+      const memoInput = this.page.getByLabel(/memo/i)
+        .or(this.page.getByTestId('transfer-memo'));
+      await memoInput.fill(data.memo);
     }
 
     if (data.date) {
-      await this.helper.fill(this.selectors.transferDateInput, data.date);
+      await this.page.getByTestId('transfer-date').fill(data.date);
     }
 
-    await this.helper.click(this.selectors.reviewButton);
+    const reviewBtn = this.page.getByRole('button', { name: /review/i })
+      .or(this.page.getByTestId('review-transfer'));
+    await reviewBtn.click();
 
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.reviewModal),
-      5000
-    );
+    const reviewModal = this.page.getByRole('dialog')
+      .or(this.page.getByTestId('review-modal'));
+    await reviewModal.waitFor({ state: 'visible', timeout: 5000 });
 
-    await this.helper.click(this.selectors.confirmButton);
+    const confirmBtn = this.page.getByRole('button', { name: /confirm/i })
+      .or(this.page.getByTestId('confirm-transfer'));
+    await confirmBtn.click();
 
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.confirmationModal),
-      10000
-    );
+    const confirmationModal = this.page.getByTestId('confirmation-modal');
+    await confirmationModal.waitFor({ state: 'visible', timeout: 10000 });
 
     logger.info({ from: data.fromAccount, to: data.toAccount, amount: data.amount }, 'Internal transfer completed');
   }
+
+  // ====================
+  // EXTERNAL ACCOUNT
+  // ====================
 
   /**
    * Add external account
@@ -193,22 +100,25 @@ export class TransfersPage extends BasePage {
     bankName: string;
   }) {
     await this.selectTransferType('External');
-    await this.helper.click(this.selectors.addExternalAccountButton);
+    
+    const addBtn = this.page.getByRole('button', { name: /add.*external/i })
+      .or(this.page.getByTestId('add-external-account'));
+    await addBtn.click();
 
     await this.page.waitForTimeout(1000);
 
-    await this.helper.fill(this.selectors.routingNumberInput, data.routingNumber);
-    await this.helper.fill(this.selectors.accountNumberInput, data.accountNumber);
-    await this.helper.select(this.selectors.accountTypeSelect, data.accountType);
-    await this.helper.fill(this.selectors.accountNicknameInput, data.nickname);
-    await this.helper.fill(this.selectors.bankNameInput, data.bankName);
+    await this.page.getByTestId('routing-number').fill(data.routingNumber);
+    await this.page.getByTestId('account-number').fill(data.accountNumber);
+    await this.page.getByTestId('account-type').selectOption(data.accountType);
+    await this.page.getByTestId('account-nickname').fill(data.nickname);
+    await this.page.getByTestId('bank-name').fill(data.bankName);
 
-    await this.page.click('button:has-text("Save")'); // Adjust as needed
+    const saveBtn = this.page.getByRole('button', { name: /save/i });
+    await saveBtn.click();
 
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.successMessage),
-      5000
-    );
+    const successMsg = this.page.getByRole('alert')
+      .or(this.page.getByTestId('success-message'));
+    await successMsg.waitFor({ state: 'visible', timeout: 5000 });
 
     logger.info({ nickname: data.nickname }, 'External account added');
   }
@@ -224,31 +134,40 @@ export class TransfersPage extends BasePage {
   }) {
     await this.selectTransferType('External');
 
-    await this.helper.select(this.selectors.fromAccountSelect, data.fromAccount);
-    await this.helper.select(this.selectors.externalAccountSelect, data.toExternalAccount);
-    await this.helper.fill(this.selectors.amountInput, data.amount.toString());
+    await this.page.getByTestId('from-account').selectOption(data.fromAccount);
+    await this.page.getByTestId('external-account').selectOption(data.toExternalAccount);
+    
+    const amountInput = this.page.getByLabel(/amount/i)
+      .or(this.page.getByTestId('transfer-amount'));
+    await amountInput.fill(data.amount.toString());
 
     if (data.memo) {
-      await this.helper.fill(this.selectors.memoInput, data.memo);
+      const memoInput = this.page.getByLabel(/memo/i)
+        .or(this.page.getByTestId('transfer-memo'));
+      await memoInput.fill(data.memo);
     }
 
-    await this.helper.click(this.selectors.reviewButton);
+    const reviewBtn = this.page.getByRole('button', { name: /review/i })
+      .or(this.page.getByTestId('review-transfer'));
+    await reviewBtn.click();
 
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.reviewModal),
-      5000
-    );
+    const reviewModal = this.page.getByRole('dialog')
+      .or(this.page.getByTestId('review-modal'));
+    await reviewModal.waitFor({ state: 'visible', timeout: 5000 });
 
-    await this.helper.click(this.selectors.confirmButton);
+    const confirmBtn = this.page.getByRole('button', { name: /confirm/i })
+      .or(this.page.getByTestId('confirm-transfer'));
+    await confirmBtn.click();
 
     // May require verification
-    if (await this.helper.isVisible(this.selectors.verificationModal, 3000)) {
+    const verificationModal = this.page.getByTestId('verification-modal');
+    const isVerificationVisible = await verificationModal.isVisible({ timeout: 3000 }).catch(() => false);
+    
+    if (isVerificationVisible) {
       logger.info('Verification required for external transfer');
     } else {
-      await Wait.forCondition(
-        async () => await this.helper.isVisible(this.selectors.confirmationModal),
-        10000
-      );
+      const confirmationModal = this.page.getByTestId('confirmation-modal');
+      await confirmationModal.waitFor({ state: 'visible', timeout: 10000 });
     }
 
     logger.info({ amount: data.amount }, 'External transfer initiated');
@@ -258,16 +177,21 @@ export class TransfersPage extends BasePage {
    * Verify transfer with code
    */
   async verifyTransfer(code: string) {
-    await this.helper.fill(this.selectors.verificationCodeInput, code);
-    await this.helper.click(this.selectors.verifyButton);
+    await this.page.getByTestId('verification-code').fill(code);
+    
+    const verifyBtn = this.page.getByRole('button', { name: /verify/i })
+      .or(this.page.getByTestId('verify-button'));
+    await verifyBtn.click();
 
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.confirmationModal),
-      10000
-    );
+    const confirmationModal = this.page.getByTestId('confirmation-modal');
+    await confirmationModal.waitFor({ state: 'visible', timeout: 10000 });
 
     logger.info('Transfer verified');
   }
+
+  // ====================
+  // WIRE TRANSFER
+  // ====================
 
   /**
    * Make wire transfer
@@ -285,38 +209,47 @@ export class TransfersPage extends BasePage {
   }) {
     await this.selectTransferType('Wire');
 
-    await this.helper.select(this.selectors.fromAccountSelect, data.fromAccount);
-    await this.helper.fill(this.selectors.amountInput, data.amount.toString());
-    await this.helper.fill(this.selectors.recipientNameInput, data.recipientName);
-    await this.helper.fill(this.selectors.recipientBankInput, data.recipientBank);
-    await this.helper.fill(this.selectors.recipientRoutingInput, data.recipientRouting);
-    await this.helper.fill(this.selectors.recipientAccountInput, data.recipientAccount);
-    await this.helper.fill(this.selectors.recipientAddressInput, data.recipientAddress);
+    await this.page.getByTestId('from-account').selectOption(data.fromAccount);
+    
+    const amountInput = this.page.getByLabel(/amount/i)
+      .or(this.page.getByTestId('transfer-amount'));
+    await amountInput.fill(data.amount.toString());
+    
+    await this.page.getByTestId('recipient-name').fill(data.recipientName);
+    await this.page.getByTestId('recipient-bank').fill(data.recipientBank);
+    await this.page.getByTestId('recipient-routing').fill(data.recipientRouting);
+    await this.page.getByTestId('recipient-account').fill(data.recipientAccount);
+    await this.page.getByTestId('recipient-address').fill(data.recipientAddress);
 
     if (data.swiftCode) {
-      await this.helper.fill(this.selectors.swiftCodeInput, data.swiftCode);
+      await this.page.getByTestId('swift-code').fill(data.swiftCode);
     }
 
     if (data.reference) {
-      await this.helper.fill(this.selectors.wireReferenceInput, data.reference);
+      await this.page.getByTestId('wire-reference').fill(data.reference);
     }
 
-    await this.helper.click(this.selectors.reviewButton);
+    const reviewBtn = this.page.getByRole('button', { name: /review/i })
+      .or(this.page.getByTestId('review-transfer'));
+    await reviewBtn.click();
 
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.reviewModal),
-      5000
-    );
+    const reviewModal = this.page.getByRole('dialog')
+      .or(this.page.getByTestId('review-modal'));
+    await reviewModal.waitFor({ state: 'visible', timeout: 5000 });
 
-    await this.helper.click(this.selectors.confirmButton);
+    const confirmBtn = this.page.getByRole('button', { name: /confirm/i })
+      .or(this.page.getByTestId('confirm-transfer'));
+    await confirmBtn.click();
 
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.confirmationModal),
-      10000
-    );
+    const confirmationModal = this.page.getByTestId('confirmation-modal');
+    await confirmationModal.waitFor({ state: 'visible', timeout: 10000 });
 
     logger.info({ amount: data.amount, recipient: data.recipientName }, 'Wire transfer initiated');
   }
+
+  // ====================
+  // RECURRING TRANSFER
+  // ====================
 
   /**
    * Schedule recurring transfer
@@ -332,115 +265,139 @@ export class TransfersPage extends BasePage {
   }) {
     await this.selectTransferType('Internal');
 
-    await this.helper.select(this.selectors.fromAccountSelect, data.fromAccount);
-    await this.helper.select(this.selectors.toAccountSelect, data.toAccount);
-    await this.helper.fill(this.selectors.amountInput, data.amount.toString());
+    await this.page.getByTestId('from-account').selectOption(data.fromAccount);
+    await this.page.getByTestId('to-account').selectOption(data.toAccount);
+    
+    const amountInput = this.page.getByLabel(/amount/i)
+      .or(this.page.getByTestId('transfer-amount'));
+    await amountInput.fill(data.amount.toString());
 
-    await this.helper.check(this.selectors.recurringCheckbox);
+    const recurringCheckbox = this.page.getByRole('checkbox', { name: /recurring/i })
+      .or(this.page.getByTestId('recurring-transfer'));
+    await recurringCheckbox.check();
 
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.frequencySelect),
-      3000
-    );
-
-    await this.helper.select(this.selectors.frequencySelect, data.frequency);
-    await this.helper.fill(this.selectors.startDateInput, data.startDate);
+    const frequencySelect = this.page.getByLabel(/frequency/i)
+      .or(this.page.getByTestId('frequency'));
+    await frequencySelect.waitFor({ state: 'visible', timeout: 3000 });
+    await frequencySelect.selectOption(data.frequency);
+    
+    await this.page.getByTestId('start-date').fill(data.startDate);
 
     if (data.endDate) {
-      await this.helper.fill(this.selectors.endDateInput, data.endDate);
+      await this.page.getByTestId('end-date').fill(data.endDate);
     }
 
     if (data.numberOfTransfers) {
-      await this.helper.fill(this.selectors.numberOfTransfersInput, data.numberOfTransfers.toString());
+      await this.page.getByTestId('number-of-transfers').fill(data.numberOfTransfers.toString());
     }
 
-    await this.helper.click(this.selectors.reviewButton);
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.reviewModal),
-      5000
-    );
+    const reviewBtn = this.page.getByRole('button', { name: /review/i })
+      .or(this.page.getByTestId('review-transfer'));
+    await reviewBtn.click();
+    
+    const reviewModal = this.page.getByRole('dialog')
+      .or(this.page.getByTestId('review-modal'));
+    await reviewModal.waitFor({ state: 'visible', timeout: 5000 });
 
-    await this.helper.click(this.selectors.confirmButton);
+    const confirmBtn = this.page.getByRole('button', { name: /confirm/i })
+      .or(this.page.getByTestId('confirm-transfer'));
+    await confirmBtn.click();
 
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.confirmationModal),
-      10000
-    );
+    const confirmationModal = this.page.getByTestId('confirmation-modal');
+    await confirmationModal.waitFor({ state: 'visible', timeout: 10000 });
 
     logger.info({ frequency: data.frequency }, 'Recurring transfer scheduled');
   }
+
+  // ====================
+  // CONFIRMATION
+  // ====================
 
   /**
    * Get confirmation number
    */
   async getConfirmationNumber(): Promise<string> {
-    return await this.helper.getText(this.selectors.confirmationNumber);
+    return await this.page.getByTestId('confirmation-number').textContent() || '';
   }
 
   /**
    * Get tracking number
    */
   async getTrackingNumber(): Promise<string> {
-    return await this.helper.getText(this.selectors.trackingNumber);
+    return await this.page.getByTestId('tracking-number').textContent() || '';
   }
 
   /**
    * Get estimated arrival date
    */
   async getEstimatedArrival(): Promise<string> {
-    return await this.helper.getText(this.selectors.estimatedArrival);
+    return await this.page.getByTestId('estimated-arrival').textContent() || '';
   }
 
   /**
    * Close confirmation modal
    */
   async closeConfirmation() {
-    await this.helper.click(this.selectors.closeButton);
+    const closeBtn = this.page.getByRole('button', { name: /close/i })
+      .or(this.page.getByTestId('close-confirmation'));
+    await closeBtn.click();
   }
+
+  // ====================
+  // TRANSFER HISTORY TABS
+  // ====================
 
   /**
    * Go to pending transfers tab
    */
   async goToPending() {
-    await this.helper.click(this.selectors.pendingTab);
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.pendingList),
-      5000
-    );
+    const tab = this.page.getByRole('tab', { name: /pending/i })
+      .or(this.page.getByTestId('tab-pending'));
+    await tab.click();
+    
+    const list = this.page.getByTestId('pending-list');
+    await list.waitFor({ state: 'visible', timeout: 5000 });
   }
 
   /**
    * Go to completed transfers tab
    */
   async goToCompleted() {
-    await this.helper.click(this.selectors.completedTab);
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.completedList),
-      5000
-    );
+    const tab = this.page.getByRole('tab', { name: /completed/i })
+      .or(this.page.getByTestId('tab-completed'));
+    await tab.click();
+    
+    const list = this.page.getByTestId('completed-list');
+    await list.waitFor({ state: 'visible', timeout: 5000 });
   }
 
   /**
    * Go to scheduled transfers tab
    */
   async goToScheduled() {
-    await this.helper.click(this.selectors.scheduledTab);
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.scheduledList),
-      5000
-    );
+    const tab = this.page.getByRole('tab', { name: /scheduled/i })
+      .or(this.page.getByTestId('tab-scheduled'));
+    await tab.click();
+    
+    const list = this.page.getByTestId('scheduled-list');
+    await list.waitFor({ state: 'visible', timeout: 5000 });
   }
 
   /**
    * Go to failed transfers tab
    */
   async goToFailed() {
-    await this.helper.click(this.selectors.failedTab);
-    await Wait.forCondition(
-      async () => await this.helper.isVisible(this.selectors.failedList),
-      5000
-    );
+    const tab = this.page.getByRole('tab', { name: /failed/i })
+      .or(this.page.getByTestId('tab-failed'));
+    await tab.click();
+    
+    const list = this.page.getByTestId('failed-list');
+    await list.waitFor({ state: 'visible', timeout: 5000 });
   }
+
+  // ====================
+  // GET TRANSFERS
+  // ====================
 
   /**
    * Get all transfers from current tab
@@ -452,11 +409,13 @@ export class TransfersPage extends BasePage {
     date: string;
     status: string;
   }>> {
-    const count = await this.helper.count(this.selectors.transferItem);
+    const items = this.page.getByTestId('transfer-item');
+    const count = await items.count();
     const transfers = [];
 
     for (let i = 0; i < count; i++) {
-      const item = this.page.locator(this.selectors.transferItem).nth(i);
+      const item = items.nth(i);
+      
       transfers.push({
         from: await item.locator('[data-field="from"]').textContent() || '',
         to: await item.locator('[data-field="to"]').textContent() || '',
@@ -475,21 +434,31 @@ export class TransfersPage extends BasePage {
    * Cancel transfer by index
    */
   async cancelTransfer(index: number) {
-    await this.page.locator(this.selectors.transferItem).nth(index)
-      .locator(this.selectors.cancelTransferButton).click();
-
+    const cancelBtn = this.page.getByTestId('transfer-item').nth(index)
+      .getByRole('button', { name: /cancel/i })
+      .or(this.page.getByTestId('cancel-transfer-item'));
+    
+    await cancelBtn.click();
     await this.page.waitForTimeout(1000);
 
     logger.info({ index }, 'Transfer cancelled');
   }
 
+  // ====================
+  // FILTERS
+  // ====================
+
   /**
    * Filter transfers by date range
    */
   async filterByDateRange(startDate: string, endDate: string) {
-    await this.helper.fill(this.selectors.filterStartDate, startDate);
-    await this.helper.fill(this.selectors.filterEndDate, endDate);
-    await this.helper.click(this.selectors.applyFiltersButton);
+    await this.page.getByTestId('filter-start-date').fill(startDate);
+    await this.page.getByTestId('filter-end-date').fill(endDate);
+    
+    const applyBtn = this.page.getByRole('button', { name: /apply/i })
+      .or(this.page.getByTestId('apply-filters'));
+    await applyBtn.click();
+    
     await this.page.waitForTimeout(1000);
   }
 
@@ -497,9 +466,13 @@ export class TransfersPage extends BasePage {
    * Filter transfers by amount
    */
   async filterByAmount(minAmount: number, maxAmount: number) {
-    await this.helper.fill(this.selectors.filterMinAmount, minAmount.toString());
-    await this.helper.fill(this.selectors.filterMaxAmount, maxAmount.toString());
-    await this.helper.click(this.selectors.applyFiltersButton);
+    await this.page.getByTestId('filter-min-amount').fill(minAmount.toString());
+    await this.page.getByTestId('filter-max-amount').fill(maxAmount.toString());
+    
+    const applyBtn = this.page.getByRole('button', { name: /apply/i })
+      .or(this.page.getByTestId('apply-filters'));
+    await applyBtn.click();
+    
     await this.page.waitForTimeout(1000);
   }
 
@@ -507,27 +480,41 @@ export class TransfersPage extends BasePage {
    * Clear filters
    */
   async clearFilters() {
-    await this.helper.click(this.selectors.clearFiltersButton);
+    const clearBtn = this.page.getByRole('button', { name: /clear/i })
+      .or(this.page.getByTestId('clear-filters'));
+    await clearBtn.click();
+    
     await this.page.waitForTimeout(1000);
   }
+
+  // ====================
+  // EXPORT
+  // ====================
 
   /**
    * Export transfers
    */
   async exportTransfers(format: 'CSV' | 'PDF' | 'Excel') {
-    await this.helper.select(this.selectors.exportFormatSelect, format);
+    await this.page.getByTestId('export-format').selectOption(format);
     
     const downloadPromise = this.page.waitForEvent('download');
-    await this.helper.click(this.selectors.exportButton);
+    
+    const exportBtn = this.page.getByRole('button', { name: /export/i })
+      .or(this.page.getByTestId('export-transfers'));
+    await exportBtn.click();
     
     return await downloadPromise;
   }
+
+  // ====================
+  // LIMITS
+  // ====================
 
   /**
    * Get daily limit
    */
   async getDailyLimit(): Promise<number> {
-    const text = await this.helper.getText(this.selectors.dailyLimitDisplay);
+    const text = await this.page.getByTestId('daily-limit').textContent() || '$0';
     return parseFloat(text.replace(/[$,]/g, ''));
   }
 
@@ -535,42 +522,54 @@ export class TransfersPage extends BasePage {
    * Get remaining limit
    */
   async getRemainingLimit(): Promise<number> {
-    const text = await this.helper.getText(this.selectors.remainingLimitDisplay);
+    const text = await this.page.getByTestId('remaining-limit').textContent() || '$0';
     return parseFloat(text.replace(/[$,]/g, ''));
   }
+
+  // ====================
+  // MESSAGES
+  // ====================
 
   /**
    * Check if success message is shown
    */
   async hasSuccessMessage(): Promise<boolean> {
-    return await this.helper.isVisible(this.selectors.successMessage);
+    const successMsg = this.page.getByRole('alert')
+      .or(this.page.getByTestId('success-message'));
+    return await successMsg.isVisible();
   }
 
   /**
    * Get success message
    */
   async getSuccessMessage(): Promise<string> {
-    return await this.helper.getText(this.selectors.successMessage);
+    const successMsg = this.page.getByRole('alert')
+      .or(this.page.getByTestId('success-message'));
+    return await successMsg.textContent() || '';
   }
 
   /**
    * Check if error message is shown
    */
   async hasError(): Promise<boolean> {
-    return await this.helper.isVisible(this.selectors.errorMessage);
+    const errorMsg = this.page.getByRole('alert')
+      .or(this.page.getByTestId('error-message'));
+    return await errorMsg.isVisible();
   }
 
   /**
    * Get error message
    */
   async getErrorMessage(): Promise<string> {
-    return await this.helper.getText(this.selectors.errorMessage);
+    const errorMsg = this.page.getByRole('alert')
+      .or(this.page.getByTestId('error-message'));
+    return await errorMsg.textContent() || '';
   }
 
   /**
    * Check if limit warning is shown
    */
   async hasLimitWarning(): Promise<boolean> {
-    return await this.helper.isVisible(this.selectors.transferLimitWarning);
+    return await this.page.getByTestId('transfer-limit-warning').isVisible();
   }
 }
